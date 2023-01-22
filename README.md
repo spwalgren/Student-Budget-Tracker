@@ -6,7 +6,18 @@ Backend: Handling financial data and providing analytics
 Other versions: Budget planner, savings calculator, expense tracker
 
 Members:
-Emily Jiji (Front-end)
-Grayson Kornberg (Back-end)
-Bryan Magnuson (Front-end)
-Spencer Walgren (Back-end)
+<ul>
+<li>Emily Jiji (Front-end)</li>
+<li>Grayson Kornberg (Back-end)</li>
+<li>Brian Magnuson (Front-end)</li>
+<li>Spencer Walgren (Back-end)</li>
+</ul>
+
+
+
+
+
+
+
+
+
