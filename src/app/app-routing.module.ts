@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import {Routes} from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
+
+// Page components
 import { LandingComponent } from './component/landing/landing.component';
 import { LoginComponent } from './component/login/login.component';
 import { SignUpComponent } from './component/sign-up/sign-up.component';
@@ -10,26 +11,24 @@ const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    component: LandingComponent
+    redirectTo: '/landing'
   },
   {
-    path:'login',
+    path: 'login',
     component: LoginComponent
   },
   {
-    path:'sign-up',
+    path: 'sign-up',
     component: SignUpComponent
   },
   {
-    path:'landing',
+    path: 'landing',
     component: LandingComponent
   }
 ];
 
 @NgModule({
-  declarations: [],
-  imports: [
-    CommonModule
-  ]
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
 })
 export class AppRoutingModule { }
