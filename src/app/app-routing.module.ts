@@ -2,9 +2,9 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 // Page components
-import { LandingComponent } from './component/landing/landing.component';
-import { LoginComponent } from './component/login/login.component';
-import { SignUpComponent } from './component/sign-up/sign-up.component';
+import { LandingComponent } from './routes/landing/landing.component';
+import { LoginComponent } from './routes/login/login.component';
+import { SignUpComponent } from './routes/sign-up/sign-up.component';
 
 
 const routes: Routes = [

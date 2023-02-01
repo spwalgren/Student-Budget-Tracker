@@ -1,16 +1,20 @@
+// Angular modules
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing.module';
 
 // Material modules
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 
-// All components
-import { LandingComponent } from './component/landing/landing.component';
-import { LoginComponent } from './component/login/login.component';
-import { SignUpComponent } from './component/sign-up/sign-up.component';
-import { HomeComponent } from './component/home/home.component';
+// Route components
+import { LandingComponent } from './routes/landing/landing.component';
+import { LoginComponent } from './routes/login/login.component';
+import { SignUpComponent } from './routes/sign-up/sign-up.component';
+import { HomeComponent } from './routes/home/home.component';
+
+// Other components
+import { AppComponent } from './app.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +28,7 @@ import { HomeComponent } from './component/home/home.component';
     BrowserModule,
     MatToolbarModule,
     MatIconModule,
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]
