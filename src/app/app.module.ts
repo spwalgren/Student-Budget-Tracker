@@ -6,6 +6,9 @@ import { AppRoutingModule } from './app-routing.module';
 // Material modules
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 // Route components
 import { LandingComponent } from './routes/landing/landing.component';
@@ -26,9 +29,12 @@ import { AppComponent } from './app.component';
   ],
   imports: [
     BrowserModule,
+    AppRoutingModule,
     MatToolbarModule,
     MatIconModule,
-    AppRoutingModule
+    MatCardModule,
+    MatInputModule,
+    MatButtonModule
   ],
   providers: [],
   bootstrap: [AppComponent]
