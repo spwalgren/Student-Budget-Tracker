@@ -13,6 +13,13 @@ mat-card-header {
   margin-bottom: 20px;
 }
 
+.sign-up__names {
+  /* content align */
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
 mat-form-field {
   /* self align */
   width: 100%;
