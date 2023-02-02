@@ -48,11 +48,12 @@
               matInput
               required
               formControlName="reenteredPass"
+              [errorStateMatcher]="passwordChecker"
             />
             <mat-error> Passwords do not match </mat-error>
           </mat-form-field>
 
-          <button mat-flat-button type="button" color="primary">Sign Up</button>
+          <button mat-flat-button type="submit" color="primary">Sign Up</button>
         </form>
 
         <p>Already have an account? Log in!</p>
