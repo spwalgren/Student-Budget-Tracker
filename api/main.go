@@ -5,22 +5,23 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 )
 
-type userInfo struct {
-	ID       string `json:"id"`
+type UserInfo struct {
 	Name     string `json:"name"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-var users = []userInfo{
-	{ID: "1", Name: "John Doe", Password: "12345"},
-	{ID: "2", Name: "Jane Day", Password: "54321"},
+type UserLoginInfo struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
+
+var users = []UserInfo{} // temporary database for testing purposes
 
 var (
 	key   = []byte("super-secret-key")
@@ -52,9 +53,20 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "cookie-name")
 
 	// Check username and password
-	session.Values["authenticated"] = true
+	var userLoggingIn UserLoginInfo
+	_ = json.NewDecoder(r.Body).Decode(&userLoggingIn)
+	for _, entry := range users {
+		if entry.Email == userLoggingIn.Email && entry.Password == userLoggingIn.Password {
+			session.Values["authenticated"] = true
+			session.Save(r, w)
+			fmt.Fprintln(w, "Logging in")
+			return
+		}
+	}
+
+	session.Values["authenticated"] = false
 	session.Save(r, w)
-	fmt.Fprintln(w, "Logging in")
+	fmt.Fprintln(w, "That is not an email-password combination associated with a registered account")
 }
 
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
@@ -68,11 +80,20 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 
 func createUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var newUser userInfo
+
+	var newUser UserInfo
 	_ = json.NewDecoder(r.Body).Decode(&newUser)
-	newUser.ID = strconv.Itoa(len(users) + 1)
+
+	for _, entry := range users {
+		log.Println(entry)
+		if entry.Email == newUser.Email {
+			fmt.Println("Email already associated with an account")
+			return
+		}
+	}
+
 	users = append(users, newUser)
-	json.NewEncoder(w).Encode(&newUser)
+	json.NewEncoder(w).Encode(newUser)
 }
 
 func getUser(w http.ResponseWriter, r *http.Request) {
@@ -80,13 +101,13 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 	param := mux.Vars(r)
 
 	for _, item := range users {
-		if item.ID == param["id"] {
+		if item.Name == param["name"] {
 			json.NewEncoder(w).Encode(item)
 			return
 		}
 	}
 
-	json.NewEncoder(w).Encode(&userInfo{})
+	json.NewEncoder(w).Encode(&UserInfo{})
 }
 
 func getUsers(w http.ResponseWriter, r *http.Request) {
@@ -104,7 +125,7 @@ func main() {
 	r.HandleFunc("/logout", LogoutHandler).Methods("GET")
 	r.HandleFunc("/forbidden", ForbiddenHandler).Methods("GET")
 
-	r.HandleFunc("/user/{id}", getUser).Methods("GET")
+	r.HandleFunc("/user/{name}", getUser).Methods("GET")
 	r.HandleFunc("/users", getUsers).Methods("GET")
 	r.HandleFunc("/register", createUser).Methods("POST")
 
