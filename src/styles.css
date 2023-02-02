@@ -10,6 +10,12 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+a {
+  /* self style */
+  color: white;
+  text-decoration: none;
+}
+
 .section {
   /* self align */
   width: 100%;
