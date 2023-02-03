@@ -35,12 +35,16 @@ export class SignUpComponent {
   }
 
   goSubmitForm() {
-    console.log({
-      firstName: this.signUpForm.get('firstName')?.value,
-      lastName: this.signUpForm.get('lastName')?.value,
-      email: this.signUpForm.get('email')?.value,
-      password: this.signUpForm.get('password')?.value,
-      reenteredPass: this.signUpForm.get('reenteredPass')?.value,
-    })
+    if (!this.signUpForm.invalid) {
+      console.log({
+        firstName: this.signUpForm.get('firstName')?.value,
+        lastName: this.signUpForm.get('lastName')?.value,
+        email: this.signUpForm.get('email')?.value,
+        password: this.signUpForm.get('password')?.value,
+        reenteredPass: this.signUpForm.get('reenteredPass')?.value,
+      });
+    } else {
+      console.log('Invalid entry');
+    }
   }
 }

@@ -18,9 +18,13 @@ export class LoginComponent {
   }
 
   goSubmitForm() {
-    console.log({
-      email: this.logInForm.get('email')?.value,
-      password: this.logInForm.get('password')?.value
-    })
+    if (!this.logInForm.invalid) {
+      console.log({
+        email: this.logInForm.get('email')?.value,
+        password: this.logInForm.get('password')?.value
+      });
+    } else {
+      console.log('Invalid entry');
+    }
   }
 }
