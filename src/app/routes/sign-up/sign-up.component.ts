@@ -28,9 +28,19 @@ export class SignUpComponent {
     }, { validators: this.checkPasswords });
   }
 
-  checkPasswords: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
+  checkPasswords(group: AbstractControl): ValidationErrors | null {
     const password = group.get('password')?.value;
     const reenteredPass = group.get('reenteredPass')?.value;
     return password == reenteredPass ? null : { passwordMismatch: true };
+  }
+
+  goSubmitForm() {
+    console.log({
+      firstName: this.signUpForm.get('firstName')?.value,
+      lastName: this.signUpForm.get('lastName')?.value,
+      email: this.signUpForm.get('email')?.value,
+      password: this.signUpForm.get('password')?.value,
+      reenteredPass: this.signUpForm.get('reenteredPass')?.value,
+    })
   }
 }
