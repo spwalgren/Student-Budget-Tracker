@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, SimpleChanges } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { LoginService } from 'src/app/login.service';
+import User from 'src/types/User';
 
 @Component({
   selector: 'app-login',
@@ -9,12 +11,24 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 export class LoginComponent {
 
   logInForm: FormGroup;
+  users: User[] = [];
 
-  constructor() {
+  constructor(
+    private loginService: LoginService
+  ) {
     this.logInForm = new FormGroup({
       email: new FormControl('', [Validators.required]),
       password: new FormControl('', [Validators.required])
     });
+  }
+
+  ngOnInit() {
+    this.loginService.getUsers()
+      .subscribe(users => this.users = users);
+  }
+
+  ngDoCheck() {
+    console.log(this.users);
   }
 
   goSubmitForm() {
