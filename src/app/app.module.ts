@@ -27,7 +27,6 @@ import { HomeComponent } from './routes/home/home.component';
 import { AppComponent } from './app.component';
 
 // Services
-import { InMemoryDataService } from './in-memory-data.service';
 
 @NgModule({
   declarations: [
@@ -43,9 +42,6 @@ import { InMemoryDataService } from './in-memory-data.service';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    HttpClientInMemoryWebApiModule.forRoot(
-      InMemoryDataService, { dataEncapsulation: false }
-    ),
     AppRoutingModule,
     MatToolbarModule,
     MatIconModule,

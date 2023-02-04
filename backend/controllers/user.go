@@ -1,13 +1,14 @@
 package controllers
 
 import (
-	"net/http"
 	"encoding/json"
-	"log"
 	"fmt"
+	"log"
+	"net/http"
+
+	"budget-tracker/models"
 
 	"github.com/gorilla/mux"
-	"budget-tracker/models"
 )
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
@@ -27,12 +28,12 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Origin", "*")
 	var users []models.UserInfo
 	models.DB.Find(&users)
-	for _, item := range users {
-		json.NewEncoder(w).Encode(item)
-	}
+
+	json.NewEncoder(w).Encode(users)
+
 }
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {

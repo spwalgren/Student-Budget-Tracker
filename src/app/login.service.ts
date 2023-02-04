@@ -8,7 +8,7 @@ import User from 'src/types/User';
 })
 export class LoginService {
 
-  private usersUrl = 'api/users';
+  private usersUrl = 'http://localhost:8080/users';
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
