@@ -7,3 +7,12 @@ type UserInfo struct {
 	Email     string `json:"email"`
 	Password  string `json:"password"`
 }
+
+type UserLoginInfo struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type ReturnLoginInfo struct {
+	ID	string `json:"id"`
+}
