@@ -1,4 +1,39 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+a {
+  /* self style */
+  color: white;
+  text-decoration: none;
+}
+
+.section {
+  /* self align */
+  width: 100%;
+  /* content align */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+.container {
+  /* self align */
+  width: 100%;
+  max-width: 1000px;
+  height: 100%;
+  /* content align */
+  padding: 0 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

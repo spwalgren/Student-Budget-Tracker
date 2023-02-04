@@ -1,0 +1,70 @@
+<mat-toolbar color="primary">Student Budget Tracker</mat-toolbar>
+<div class="section sign-up">
+  <div class="container">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title> Sign Up </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form
+          class="sign-up__form"
+          [formGroup]="signUpForm"
+          (ngSubmit)="goSubmitForm()"
+        >
+          <div class="sign-up__names">
+            <mat-form-field class="sign-up__firstname">
+              <mat-label>First Name</mat-label>
+              <input
+                type="text"
+                matInput
+                required
+                formControlName="firstName"
+              />
+            </mat-form-field>
+
+            <mat-form-field class="sign-up__lastname">
+              <mat-label>Last Name</mat-label>
+              <input type="text" matInput required formControlName="lastName" />
+            </mat-form-field>
+          </div>
+
+          <mat-form-field class="sign-up__email">
+            <mat-label>Email</mat-label>
+            <input type="email" matInput required formControlName="email" />
+            <mat-error> Please enter a valid email address </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="sign-up__password">
+            <mat-label>Password</mat-label>
+            <input
+              type="password"
+              matInput
+              required
+              formControlName="password"
+            />
+          </mat-form-field>
+
+          <mat-form-field class="sign-up__reenter-pass">
+            <mat-label>Re-enter Password</mat-label>
+            <input
+              type="password"
+              matInput
+              required
+              formControlName="reenteredPass"
+              [errorStateMatcher]="passwordChecker"
+            />
+            <mat-error> Passwords do not match </mat-error>
+          </mat-form-field>
+
+          <button mat-flat-button type="submit" color="primary">Sign Up</button>
+        </form>
+
+        <p>Already have an account? Log in!</p>
+        <a routerLink="/login">
+          <button mat-flat-button type="button" color="primary">Log In</button>
+        </a>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

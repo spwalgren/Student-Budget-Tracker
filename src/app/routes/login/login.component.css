@@ -1,0 +1,24 @@
+.login {
+  height: 90%;
+}
+
+mat-card {
+  /* self align */
+  width: 400px;
+  align-self: center;
+}
+
+mat-card-header {
+  /* self align */
+  margin-bottom: 20px;
+}
+
+mat-form-field {
+  /* self align */
+  width: 100%;
+}
+
+form {
+  /* self align */
+  margin-bottom: 20px;
+}
