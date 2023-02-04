@@ -21,7 +21,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { LandingComponent } from './routes/landing/landing.component';
 import { LoginComponent } from './routes/login/login.component';
 import { SignUpComponent } from './routes/sign-up/sign-up.component';
-import { HomeComponent } from './routes/home/home.component';
 
 // Other components
 import { AppComponent } from './app.component';
@@ -34,7 +33,6 @@ import { AppComponent } from './app.component';
     LandingComponent,
     LoginComponent,
     SignUpComponent,
-    HomeComponent,
   ],
   imports: [
     BrowserModule,
