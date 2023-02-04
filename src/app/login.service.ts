@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, of, tap } from 'rxjs';
 import User from 'src/types/User';
+import UserData from 'src/types/UserData';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,14 @@ export class LoginService {
   };
 
   constructor(private http: HttpClient) { }
+
+  getAuthentication(username: string, password: string): Observable<string> {
+    return of('');
+  }
+
+  getUserData(token: string): Observable<UserData> {
+    return of({ customString: '' });
+  }
 
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.usersUrl)
