@@ -27,6 +27,7 @@ import { SignUpComponent } from './routes/sign-up/sign-up.component';
 // Other components
 import { AppComponent } from './app.component';
 import { AlertComponent } from './components/alert/alert.component';
+import { DashboardComponent } from './routes/dashboard/dashboard.component';
 
 // Services
 
@@ -37,6 +38,7 @@ import { AlertComponent } from './components/alert/alert.component';
     LoginComponent,
     SignUpComponent,
     AlertComponent,
+    DashboardComponent,
   ],
   imports: [
     BrowserModule,
