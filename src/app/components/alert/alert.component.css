@@ -1,0 +1,20 @@
+.login__alert {
+  /* self align */
+  margin-bottom: 15px;
+  /* self style */
+  background: #FDEDED;
+  border-radius: 4px;
+  color: #5B1C1B;
+  /* content align */
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.login__alert mat-icon {
+  /* self align */
+  margin-right: 5px;
+  /* self style */
+  color: #D74040;
+}
