@@ -2,7 +2,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, of, tap } from 'rxjs';
 import User from 'src/types/User';
-import UserData from 'src/types/UserData';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +29,26 @@ export class LoginService {
         catchError(err => {
           console.log(err);
           return of('')
+        })
+      );
+  }
+
+  createUser(firstname: string, lastname: string, email: string, password: string): Observable<any> {
+
+    const url = `${this.requestBase}/signup`;
+    const body = {
+      firstname: firstname,
+      lastname: lastname,
+      email: email,
+      password: password
+    }
+    const options = this.httpOptions
+
+    return this.http.post<any>(url, body, options)
+      .pipe(
+        catchError(err => {
+          console.log(err);
+          return of({})
         })
       );
   }

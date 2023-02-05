@@ -8,7 +8,7 @@ import { Component, Input } from '@angular/core';
 export class AlertComponent {
 
   @Input()
-  type?: "success" | "info" | "error"
+  type?: "success" | "info" | "error" | undefined
   @Input()
   message?: string;
 

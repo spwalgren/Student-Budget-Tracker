@@ -7,7 +7,11 @@
       </mat-card-header>
 
       <mat-card-content>
-        <app-alert *ngIf="showAlert" [message]="alertMessage"></app-alert>
+        <app-alert
+          *ngIf="showAlert"
+          [type]="alertType"
+          [message]="alertMessage"
+        ></app-alert>
 
         <form
           class="sign-up__form"
@@ -66,7 +70,7 @@
               [color]="awaitingRes ? 'disabled' : 'primary'"
               [disabled]="awaitingRes"
             >
-              Log In
+              Sign Up
             </button>
             <mat-spinner *ngIf="awaitingRes" diameter="36"></mat-spinner>
           </div>
