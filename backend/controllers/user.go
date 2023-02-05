@@ -1,12 +1,12 @@
 package controllers
 
 import (
+	"budget-tracker/models"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
-	"budget-tracker/models"
 
 	"github.com/gorilla/mux"
 )
@@ -54,15 +54,23 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(newUser)
 }
 
-
 /*  Checks authentication by looking for email/password combination in database.
-	 *  If that combo doesn't exist, checks if an email exists.
-	 *  Returns empty ID field for an account that doesn't exists under an email.
-	 *	Returns "-1" for a wrong password and returns the ID of the user that successfully
-	 *	logged in.
-	 */
+ *  If that combo doesn't exist, checks if an email exists.
+ *  Returns empty ID field for an account that doesn't exists under an email.
+ *	Returns "-1" for a wrong password and returns the ID of the user that successfully
+ *	logged in.
+ */
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Headers", "*")
+	w.Header().Set("Content-Type", "*")
+
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
 	var userLoggingIn models.UserLoginInfo
 	var info models.UserInfo
 	var returnInfo models.ReturnLoginInfo

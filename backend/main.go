@@ -1,26 +1,31 @@
 package main
 
 import (
+	"budget-tracker/controllers"
+	"budget-tracker/models"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"budget-tracker/models"
-	"budget-tracker/controllers"
-	"github.com/gorilla/handlers"
+	"github.com/rs/cors"
 )
 
 func main() {
 
-	corsObj:=handlers.AllowedOrigins([]string{"*"})
+	corsObj := cors.New(cors.Options{
+		AllowedOrigins:     []string{"*"},   // All origins
+		AllowedMethods:     []string{"GET"}, // Allowing only get, just an example
+		AllowedHeaders:     []string{"Origin", "Content-Length", "Content-Type"},
+		OptionsPassthrough: true,
+	})
+
 	r := mux.NewRouter()
 
 	models.Connect()
+	r.HandleFunc("/login", controllers.LoginHandler).Methods(http.MethodGet, http.MethodPut, http.MethodPatch, http.MethodOptions, http.MethodPost)
+	r.HandleFunc("/user/{name}", controllers.GetUser).Methods(http.MethodGet, http.MethodPut, http.MethodPatch, http.MethodOptions, http.MethodPost)
+	r.HandleFunc("/users", controllers.GetUsers).Methods(http.MethodGet, http.MethodPut, http.MethodPatch, http.MethodOptions, http.MethodPost)
+	r.HandleFunc("/signup", controllers.CreateUser).Methods(http.MethodGet, http.MethodPut, http.MethodPatch, http.MethodOptions, http.MethodPost)
 
-	r.HandleFunc("/login", controllers.LoginHandler).Methods("POST")
-	r.HandleFunc("/user/{name}", controllers.GetUser).Methods("GET")
-	r.HandleFunc("/users", controllers.GetUsers).Methods("GET")
-	r.HandleFunc("/signup", controllers.CreateUser).Methods("POST")
-
-	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(corsObj)(r)))
+	log.Fatal(http.ListenAndServe(":8080", corsObj.Handler(r)))
 }

@@ -9,7 +9,7 @@ import UserData from 'src/types/UserData';
 })
 export class LoginService {
 
-  private requestBase = 'localhost:8080';
+  private requestBase = 'http://localhost:8080';
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
