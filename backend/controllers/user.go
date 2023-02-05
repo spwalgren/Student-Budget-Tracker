@@ -16,7 +16,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	models.DB.Find(&users)
 
 	for _, item := range users {
-		if item.FirstName == param["firstname"] && item.LastName == param["lastname"] {
+		if item.FirstName == param["firstName"] && item.LastName == param["lastName"] {
 			json.NewEncoder(w).Encode(item)
 			return
 		}

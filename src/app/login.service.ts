@@ -4,53 +4,53 @@ import { Observable, catchError, of, tap } from 'rxjs';
 import User from 'src/types/User';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LoginService {
-
-  private requestBase = 'http://localhost:8080';
+  private requestBase = 'http://localhost:8080/api';
   httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
   };
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   createAuth(email: string, password: string): Observable<string> {
-
     const url = `${this.requestBase}/login`;
-    const body = { email: email, password: password }
-    const options = this.httpOptions
+    const body = { email: email, password: password };
+    const options = this.httpOptions;
 
-    return this.http.post<any>(url, body, options)
-      .pipe(
-        tap<any>(res => {
-          console.log(res)
-        }),
-        catchError(err => {
-          console.log(err);
-          return of('')
-        })
-      );
+    return this.http.post<any>(url, body, options).pipe(
+      tap<any>((res) => {
+        console.log(res);
+      }),
+      catchError((err) => {
+        console.log(err);
+        return of('');
+      })
+    );
   }
 
-  createUser(firstname: string, lastname: string, email: string, password: string): Observable<any> {
-
+  createUser(
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string
+  ): Observable<any> {
     const url = `${this.requestBase}/signup`;
     const body = {
-      firstname: firstname,
-      lastname: lastname,
+      firstName: firstName,
+      lastName: lastName,
       email: email,
-      password: password
-    }
-    const options = this.httpOptions
+      password: password,
+    };
+    const options = this.httpOptions;
 
-    return this.http.post<any>(url, body, options)
-      .pipe(
-        catchError(err => {
-          console.log(err);
-          return of({})
-        })
-      );
+    return this.http.post<any>(url, body, options).pipe(
+      catchError((err) => {
+        console.log(err);
+        return of({});
+      })
+    );
   }
 
   // getUserData(token: string): Observable<UserData> {

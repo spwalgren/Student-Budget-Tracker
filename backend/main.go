@@ -22,10 +22,10 @@ func main() {
 	r := mux.NewRouter()
 
 	models.Connect()
-	r.HandleFunc("/login", controllers.LoginHandler).Methods(http.MethodGet, http.MethodPut, http.MethodPatch, http.MethodOptions, http.MethodPost)
-	r.HandleFunc("/user/{name}", controllers.GetUser).Methods(http.MethodGet, http.MethodPut, http.MethodPatch, http.MethodOptions, http.MethodPost)
-	r.HandleFunc("/users", controllers.GetUsers).Methods(http.MethodGet, http.MethodPut, http.MethodPatch, http.MethodOptions, http.MethodPost)
-	r.HandleFunc("/signup", controllers.CreateUser).Methods(http.MethodGet, http.MethodPut, http.MethodPatch, http.MethodOptions, http.MethodPost)
+	r.HandleFunc("/api/login", controllers.LoginHandler).Methods(http.MethodGet, http.MethodPut, http.MethodPatch, http.MethodOptions, http.MethodPost)
+	r.HandleFunc("/api/user/{name}", controllers.GetUser).Methods(http.MethodGet, http.MethodPut, http.MethodPatch, http.MethodOptions, http.MethodPost)
+	r.HandleFunc("/api/users", controllers.GetUsers).Methods(http.MethodGet, http.MethodPut, http.MethodPatch, http.MethodOptions, http.MethodPost)
+	r.HandleFunc("/api/signup", controllers.CreateUser).Methods(http.MethodGet, http.MethodPut, http.MethodPatch, http.MethodOptions, http.MethodPost)
 
 	log.Fatal(http.ListenAndServe(":8080", corsObj.Handler(r)))
 }

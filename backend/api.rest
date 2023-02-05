@@ -4,8 +4,8 @@ POST http://{{host}}/signup HTTP/1.1
 content-type: application/json
 
 {
-    "firstname": "test-firstname",
-    "lastname": "test-lastname",
+    "firstName": "test-firstName",
+    "lastName": "test-lastName",
     "email": "test-email",
     "password": "test-password"
 }
@@ -16,8 +16,8 @@ POST http://{{host}}/signup HTTP/1.1
 content-type: application/json
 
 {
-    "firstname": "test-firstname2",
-    "lastname": "test-lastname2",
+    "firstName": "test-firstName2",
+    "lastName": "test-lastName2",
     "email": "test-email2",
     "password": "test-password2"
 }
@@ -28,8 +28,8 @@ POST http://{{host}}/signup HTTP/1.1
 content-type: application/json
 
 {
-    "firstname": "John",
-    "lastname": "Doe",
+    "firstName": "John",
+    "lastName": "Doe",
     "email": "johndoe@where.com",
     "password": "qwert"
 }
