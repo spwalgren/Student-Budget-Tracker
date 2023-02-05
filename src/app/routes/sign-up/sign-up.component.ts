@@ -17,6 +17,9 @@ export class SignUpComponent {
 
   signUpForm: FormGroup;
   passwordChecker = new PasswordChecker();
+  showAlert = false;
+  alertMessage = "";
+  awaitingRes = false;
 
   constructor() {
     this.signUpForm = new FormGroup({

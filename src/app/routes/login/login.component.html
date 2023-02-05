@@ -7,6 +7,8 @@
       </mat-card-header>
 
       <mat-card-content>
+        <app-alert *ngIf="showAlert" [message]="alertMessage"></app-alert>
+
         <form
           class="login__form"
           [formGroup]="logInForm"
@@ -26,7 +28,18 @@
               formControlName="password"
             />
           </mat-form-field>
-          <button mat-flat-button type="submit" color="primary">Log In</button>
+
+          <div class="login__button-field">
+            <button
+              mat-flat-button
+              type="submit"
+              [color]="awaitingRes ? 'disabled' : 'primary'"
+              [disabled]="awaitingRes"
+            >
+              Log In
+            </button>
+            <mat-spinner *ngIf="awaitingRes" diameter="36"></mat-spinner>
+          </div>
         </form>
 
         <p>Don't have an account? Sign up!</p>
