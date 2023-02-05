@@ -7,7 +7,11 @@
       </mat-card-header>
 
       <mat-card-content>
-        <app-alert *ngIf="showAlert" [message]="alertMessage"></app-alert>
+        <app-alert
+          *ngIf="showAlert"
+          type="error"
+          [message]="alertMessage"
+        ></app-alert>
 
         <form
           class="login__form"

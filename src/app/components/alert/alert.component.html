@@ -1,4 +1,4 @@
-<div class="login__alert">
-  <mat-icon fontIcon="error"></mat-icon>
+<div [class]="alertClassName()">
+  <mat-icon [fontIcon]="fontIcon()"></mat-icon>
   {{ message }}
 </div>
