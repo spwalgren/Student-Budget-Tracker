@@ -3,8 +3,6 @@ package controllers
 import (
 	"budget-tracker/models"
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -47,15 +45,15 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	var users []models.UserInfo
 	models.DB.Find(&users)
 	_ = json.NewDecoder(r.Body).Decode(&newUser)
+
 	for _, entry := range users {
-		log.Println(entry)
 		if entry.Email == newUser.Email {
-			fmt.Println("Email already associated with an account")
+			json.NewEncoder(w).Encode(models.ReturnInfo{ID: ""})
 			return
 		}
 	}
 	models.DB.Create(&newUser)
-	json.NewEncoder(w).Encode(newUser)
+	json.NewEncoder(w).Encode(models.ReturnInfo{ID: strconv.FormatUint(uint64(newUser.ID), 10)})
 }
 
 /*  Checks authentication by looking for email/password combination in database.
@@ -77,7 +75,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	var userLoggingIn models.UserLoginInfo
 	var info models.UserInfo
-	var returnInfo models.ReturnLoginInfo
+	var returnInfo models.ReturnInfo
 
 	_ = json.NewDecoder(r.Body).Decode(&userLoggingIn)
 	searchResult := models.DB.First(&info, userLoggingIn)
@@ -85,10 +83,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if searchResult.Error != nil {
 		emailSearch := models.DB.First(&info, "email=?", userLoggingIn.Email)
 		if emailSearch.Error != nil {
-			json.NewEncoder(w).Encode(models.ReturnLoginInfo{ID: ""})
+			json.NewEncoder(w).Encode(models.ReturnInfo{ID: ""})
 			return
 		}
-		json.NewEncoder(w).Encode(models.ReturnLoginInfo{ID: "-1"})
+		json.NewEncoder(w).Encode(models.ReturnInfo{ID: "-1"})
 		return
 	}
 

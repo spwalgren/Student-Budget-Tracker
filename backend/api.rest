@@ -2,7 +2,7 @@
 
 POST http://{{host}}/signup HTTP/1.1
 content-type: application/json
-    
+
 {
     "firstname": "test-firstname",
     "lastname": "test-lastname",
@@ -14,12 +14,24 @@ content-type: application/json
 
 POST http://{{host}}/signup HTTP/1.1
 content-type: application/json
-    
+
 {
     "firstname": "test-firstname2",
     "lastname": "test-lastname2",
     "email": "test-email2",
     "password": "test-password2"
+}
+
+###
+
+POST http://{{host}}/signup HTTP/1.1
+content-type: application/json
+
+{
+    "firstname": "John",
+    "lastname": "Doe",
+    "email": "johndoe@where.com",
+    "password": "qwert"
 }
 
 ###

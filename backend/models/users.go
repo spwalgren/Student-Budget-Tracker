@@ -13,6 +13,6 @@ type UserLoginInfo struct {
 	Password string `json:"password"`
 }
 
-type ReturnLoginInfo struct {
+type ReturnInfo struct {
 	ID	string `json:"id"`
 }
