@@ -62,7 +62,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	 *	logged in.
 	 */
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Origin", "*")
 	var userLoggingIn models.UserLoginInfo
 	var info models.UserInfo
 	var returnInfo models.ReturnLoginInfo

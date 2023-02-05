@@ -17,7 +17,7 @@ func main() {
 
 	models.Connect()
 
-	r.HandleFunc("/login", controllers.LoginHandler).Methods("GET")
+	r.HandleFunc("/login", controllers.LoginHandler).Methods("POST")
 	r.HandleFunc("/user/{name}", controllers.GetUser).Methods("GET")
 	r.HandleFunc("/users", controllers.GetUsers).Methods("GET")
 	r.HandleFunc("/signup", controllers.CreateUser).Methods("POST")
