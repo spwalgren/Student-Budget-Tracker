@@ -9,29 +9,43 @@ import UserData from 'src/types/UserData';
 })
 export class LoginService {
 
-  private usersUrl = 'http://localhost:8080/users';
+  private requestBase = 'localhost:8080';
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
 
   constructor(private http: HttpClient) { }
 
-  getAuthentication(username: string, password: string): Observable<string> {
-    return of('');
-  }
+  createAuth(email: string, password: string): Observable<string> {
 
-  getUserData(token: string): Observable<UserData> {
-    return of({ customString: '' });
-  }
+    const url = `${this.requestBase}/login`;
+    const body = { email: email, password: password }
+    const options = this.httpOptions
 
-  getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.usersUrl)
+    return this.http.post<any>(url, body, options)
       .pipe(
-        tap(_ => console.log("Got Users")),
-        catchError((err): Observable<User[]> => {
-          console.error(err);
-          return of([] as User[]);
+        tap<any>(res => {
+          console.log(res)
+        }),
+        catchError(err => {
+          console.log(err);
+          return of('')
         })
       );
   }
+
+  // getUserData(token: string): Observable<UserData> {
+  //   return of({ customString: '' });
+  // }
+
+  // getUsers(): Observable<User[]> {
+  //   return this.http.get<User[]>(this.requestBase)
+  //     .pipe(
+  //       tap(_ => console.log("Got Users")),
+  //       catchError((err): Observable<User[]> => {
+  //         console.error(err);
+  //         return of([] as User[]);
+  //       })
+  //     );
+  // }
 }

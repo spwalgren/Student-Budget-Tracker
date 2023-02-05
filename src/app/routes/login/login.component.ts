@@ -22,14 +22,14 @@ export class LoginComponent {
     });
   }
 
-  ngOnInit() {
-    this.loginService.getUsers()
-      .subscribe(users => this.users = users);
-  }
+  // ngOnInit() {
+  //   this.loginService.getUsers()
+  //     .subscribe(users => this.users = users);
+  // }
 
-  ngDoCheck() {
-    console.log(this.users);
-  }
+  // ngDoCheck() {
+  //   console.log(this.users);
+  // }
 
   goSubmitForm() {
     if (!this.logInForm.invalid) {
@@ -37,6 +37,8 @@ export class LoginComponent {
         email: this.logInForm.get('email')?.value,
         password: this.logInForm.get('password')?.value
       });
+      this.loginService.createAuth(this.logInForm.get('email')?.value, this.logInForm.get('password')?.value)
+        .subscribe();
     } else {
       console.log('Invalid entry');
     }
