@@ -73,11 +73,11 @@ export class SignUpComponent {
         .subscribe((res) => {
           this.awaitingRes = false;
           console.log(res);
-          if (res.id === '') {
+          if (res.Message) {
             this.showAlert = true;
             this.alertType = 'error';
             this.alertMessage = 'User with this email already exists';
-          } else if (res.id) {
+          } else if (res.ID) {
             this.showAlert = true;
             this.alertType = 'success';
             this.alertMessage = 'Registration successful. Redirecting...';
