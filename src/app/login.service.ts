@@ -1,7 +1,13 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, of, tap } from 'rxjs';
-import { GetUserDataResponse, LogInRequest, LogInResponse, SignUpRequest, SignUpResponse } from 'src/types/login-system';
+import {
+  GetUserDataResponse,
+  LogInRequest,
+  LogInResponse,
+  SignUpRequest,
+  SignUpResponse,
+} from 'src/types/login-system';
 
 @Injectable({
   providedIn: 'root',
@@ -12,17 +18,20 @@ export class LoginService {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
   };
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   logIn(logInRequest: LogInRequest): Observable<LogInResponse> {
     const url = `${this.requestBase}/login`;
     const body = { ...logInRequest };
-    const options = this.httpOptions;
+    const options = {
+      headers: this.httpOptions.headers,
+      withCredentials: true,
+    };
 
     return this.http.post<LogInResponse>(url, body, options).pipe(
       catchError((err) => {
         console.log(err);
-        return of({ Message: "Error" });
+        return of({ Message: 'Error' });
       })
     );
   }
@@ -35,19 +44,22 @@ export class LoginService {
     return this.http.post<SignUpResponse>(url, body, options).pipe(
       catchError((err) => {
         console.log(err);
-        return of({ id: "" });
+        return of({ id: '' });
       })
     );
   }
 
   getUserData(): Observable<GetUserDataResponse> {
     const url = `${this.requestBase}/user`;
-    const options = this.httpOptions;
+    const options = {
+      headers: this.httpOptions.headers,
+      withCredentials: true,
+    };
 
     return this.http.get<GetUserDataResponse>(url, options).pipe(
       catchError((err) => {
         console.log(err);
-        return of({ Message: "Error" });
+        return of({ Message: 'Error' });
       })
     );
   }

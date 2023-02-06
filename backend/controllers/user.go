@@ -12,7 +12,7 @@ import (
 )
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Origin", "*")
+	w.Header().Set("Access-Control-Origin", "http://127.0.0.1:4200")
 	var users []models.UserInfo
 	models.DB.Find(&users)
 
@@ -23,9 +23,9 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "http://127.0.0.1:4200")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Headers", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,X-CSRF-Token")
 	w.Header().Set("Content-Type", "*")
 
 	var newUser models.UserInfo
@@ -54,9 +54,10 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 *	If password matches, it creates token, sets cookies to that token, and returns "success"
  */
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "http://127.0.0.1:4200")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Headers", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,X-CSRF-Token")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Content-Type", "*")
 
 	if r.Method == "OPTIONS" {
@@ -103,8 +104,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	cookie := http.Cookie{
 		Name: "jtw",
 		Value: token,
+		Domain: "",
 		Expires: time.Now().Add(time.Hour * 24),
 		HttpOnly: true,
+		SameSite: http.SameSiteNoneMode,
+		Secure: true,
 	}
 	http.SetCookie(w, &cookie)
 	w.WriteHeader(http.StatusOK)
@@ -118,9 +122,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 *	Returns user based on user ID
 */
 func GetUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Origin", "http://127.0.0.1:4200")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Headers", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,X-CSRF-Token")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Content-Type", "*")
 	cookie, err := r.Cookie("jtw")
 	if err != nil {
