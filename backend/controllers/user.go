@@ -5,25 +5,11 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
-	"github.com/gorilla/mux"
+	"github.com/dgrijalva/jwt-go"
+	"golang.org/x/crypto/bcrypt"
 )
-
-func GetUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	param := mux.Vars(r)
-	var users []models.UserInfo
-	models.DB.Find(&users)
-
-	for _, item := range users {
-		if item.FirstName == param["firstName"] && item.LastName == param["lastName"] {
-			json.NewEncoder(w).Encode(item)
-			return
-		}
-	}
-
-	json.NewEncoder(w).Encode(&models.UserInfo{})
-}
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Origin", "*")
@@ -52,6 +38,8 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+	password, _ := bcrypt.GenerateFromPassword([]byte(newUser.Password), 14)
+	newUser.Password = string(password)
 	models.DB.Create(&newUser)
 	json.NewEncoder(w).Encode(models.ReturnInfo{ID: strconv.FormatUint(uint64(newUser.ID), 10)})
 }
@@ -75,22 +63,72 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	var userLoggingIn models.UserLoginInfo
 	var info models.UserInfo
-	var returnInfo models.ReturnInfo
+	// var returnInfo models.ReturnInfo
 
 	_ = json.NewDecoder(r.Body).Decode(&userLoggingIn)
-	searchResult := models.DB.First(&info, userLoggingIn)
 
+	searchResult := models.DB.Where("email = ?", userLoggingIn.Email).First(&info)
+
+	// No user with matching email is not found
 	if searchResult.Error != nil {
-		emailSearch := models.DB.First(&info, "email=?", userLoggingIn.Email)
-		if emailSearch.Error != nil {
-			json.NewEncoder(w).Encode(models.ReturnInfo{ID: ""})
-			return
-		}
-		json.NewEncoder(w).Encode(models.ReturnInfo{ID: "-1"})
+		// json.NewEncoder(w).Encode(models.ReturnInfo{ID: ""})
+		json.NewEncoder(w).Encode(models.Error{Message: "Email not found"})
 		return
 	}
 
-	// Successful login
-	returnInfo.ID = strconv.FormatUint(uint64(info.ID), 10)
-	json.NewEncoder(w).Encode(returnInfo)
+	// Password is incorrect
+	if err := bcrypt.CompareHashAndPassword([]byte(info.Password), []byte(userLoggingIn.Password)); err != nil {
+		// json.NewEncoder(w).Encode(models.ReturnInfo{ID: "-1"})
+		json.NewEncoder(w).Encode(models.Error{Message:string([]byte(info.Password)) + " " + string([]byte(userLoggingIn.Password))})
+		return
+	}
+
+	// Create Token
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+		Issuer: strconv.Itoa(int(info.ID)),
+		ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
+	})
+	token, err := claims.SignedString([]byte(models.SecretKey))
+
+	// Error creating token
+	if err != nil {
+		json.NewEncoder(w).Encode(models.Error{Message: "Could not login"})
+		return
+	}
+
+	// Set cookies to token if success
+	cookie := http.Cookie{
+		Name: "jtw",
+		Value: token,
+		Expires: time.Now().Add(time.Hour * 24),
+		HttpOnly: true,
+	}
+	http.SetCookie(w, &cookie)
+	
+	json.NewEncoder(w).Encode(models.Error{Message:"success"})
+}
+
+func GetUser(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("jtw")
+	if err != nil {
+        json.NewEncoder(w).Encode(models.Error{Message:"Error getting cookies"})
+		return
+    }
+	tempClaims := jwt.StandardClaims{}
+	token, err := jwt.ParseWithClaims(cookie.Value, &tempClaims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(models.SecretKey), nil
+	})
+
+	if err != nil {
+		json.NewEncoder(w).Encode(models.Error{Message:"unauthenticated"})
+		return
+	}
+	
+	claims := token.Claims.(*jwt.StandardClaims)
+
+	var user models.UserInfo
+
+	models.DB.Where("id = ?", claims.Issuer).First(&user)
+
+	json.NewEncoder(w).Encode(map[string]interface{}{"ID": user.ID, "email": user.Email, "firstName": user.FirstName, "lastName": user.LastName})
 }
