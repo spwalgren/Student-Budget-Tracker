@@ -16,6 +16,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	var users []models.UserInfo
 	models.DB.Find(&users)
 
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(users)
 
 }
@@ -34,21 +35,23 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	for _, entry := range users {
 		if entry.Email == newUser.Email {
-			json.NewEncoder(w).Encode(models.ReturnInfo{ID: ""})
+			w.WriteHeader(http.StatusConflict)
+			json.NewEncoder(w).Encode(models.Error{Message:"duplicate email"})
 			return
 		}
 	}
 	password, _ := bcrypt.GenerateFromPassword([]byte(newUser.Password), 14)
 	newUser.Password = string(password)
 	models.DB.Create(&newUser)
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(models.ReturnInfo{ID: strconv.FormatUint(uint64(newUser.ID), 10)})
 }
 
-/*  Checks authentication by looking for email/password combination in database.
- *  If that combo doesn't exist, checks if an email exists.
- *  Returns empty ID field for an account that doesn't exists under an email.
- *	Returns "-1" for a wrong password and returns the ID of the user that successfully
- *	logged in.
+/*
+*  Checks authentication by looking for user in database with matching email.
+*	If no user found, returns message "email not found", otherwise checks if password matches
+*	If password doesn't match, returns message "incorrect password"
+*	If password matches, it creates token, sets cookies to that token, and returns "success"
  */
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -63,7 +66,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	var userLoggingIn models.UserLoginInfo
 	var info models.UserInfo
-	// var returnInfo models.ReturnInfo
 
 	_ = json.NewDecoder(r.Body).Decode(&userLoggingIn)
 
@@ -71,15 +73,15 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// No user with matching email is not found
 	if searchResult.Error != nil {
-		// json.NewEncoder(w).Encode(models.ReturnInfo{ID: ""})
-		json.NewEncoder(w).Encode(models.Error{Message: "Email not found"})
+		w.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(w).Encode(models.Error{Message: "email not found"})
 		return
 	}
 
 	// Password is incorrect
 	if err := bcrypt.CompareHashAndPassword([]byte(info.Password), []byte(userLoggingIn.Password)); err != nil {
-		// json.NewEncoder(w).Encode(models.ReturnInfo{ID: "-1"})
-		json.NewEncoder(w).Encode(models.Error{Message:string([]byte(info.Password)) + " " + string([]byte(userLoggingIn.Password))})
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(models.Error{Message:"incorrect password"})
 		return
 	}
 
@@ -92,7 +94,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Error creating token
 	if err != nil {
-		json.NewEncoder(w).Encode(models.Error{Message: "Could not login"})
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(models.Error{Message: "could not login"})
 		return
 	}
 
@@ -104,14 +107,21 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 	}
 	http.SetCookie(w, &cookie)
-	
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(models.Error{Message:"success"})
 }
 
+/*
+*	Gets jwt token from cookies
+*	Gets claims from token
+*	Claims issuer contains the logged in user ID
+*	Returns user based on user ID
+*/
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("jtw")
 	if err != nil {
-        json.NewEncoder(w).Encode(models.Error{Message:"Error getting cookies"})
+		w.WriteHeader(http.StatusInternalServerError)
+        json.NewEncoder(w).Encode(models.Error{Message:"error getting cookies"})
 		return
     }
 	tempClaims := jwt.StandardClaims{}
@@ -120,6 +130,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(models.Error{Message:"unauthenticated"})
 		return
 	}
@@ -130,5 +141,6 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	models.DB.Where("id = ?", claims.Issuer).First(&user)
 
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]interface{}{"ID": user.ID, "email": user.Email, "firstName": user.FirstName, "lastName": user.LastName})
 }
