@@ -30,7 +30,7 @@ export class LoginComponent {
   goSubmitForm() {
     if (!this.logInForm.invalid) {
       const logInRequest: LogInRequest = {
-        email: this.logInForm.get('email')?.value,
+        email: this.logInForm.get('email')?.value.toLowerCase(),
         password: this.logInForm.get('password')?.value
       }
       console.log(logInRequest);
@@ -44,7 +44,7 @@ export class LoginComponent {
             this.alertMessage = "Success! Logging you in..."
             setTimeout(() => {
               this.router.navigate(['/dashboard']);
-            }, 3000);
+            }, 2000);
           } else {
             this.showAlert = true;
             this.alertMessage = "Could not verify credentials";

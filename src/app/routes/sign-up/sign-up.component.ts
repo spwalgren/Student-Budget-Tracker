@@ -61,7 +61,7 @@ export class SignUpComponent {
       const signUpRequest = {
         firstName: this.signUpForm.get('firstName')?.value,
         lastName: this.signUpForm.get('lastName')?.value,
-        email: this.signUpForm.get('email')?.value,
+        email: this.signUpForm.get('email')?.value.toLowerCase(),
         password: this.signUpForm.get('password')?.value,
       }
       console.log(signUpRequest);
