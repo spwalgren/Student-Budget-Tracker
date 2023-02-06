@@ -10,8 +10,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { AppRoutingModule } from './app-routing.module';
 
-import { CookieService } from 'ngx-cookie-service';
-
 // Material modules
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
@@ -56,9 +54,7 @@ import { DashboardComponent } from './routes/dashboard/dashboard.component';
     MatButtonModule,
     MatProgressSpinnerModule
   ],
-  providers: [
-    CookieService
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
