@@ -27,6 +27,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,X-CSRF-Token")
 	w.Header().Set("Content-Type", "*")
+	w.WriteHeader(http.StatusOK)
 
 	var newUser models.UserInfo
 	var users []models.UserInfo
@@ -128,6 +129,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,X-CSRF-Token")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Content-Type", "*")
+	w.WriteHeader(http.StatusOK)
 	cookie, err := r.Cookie("jtw")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
