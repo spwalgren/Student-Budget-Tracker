@@ -56,21 +56,20 @@ export class SignUpComponent {
 
   goSubmitForm() {
     if (!this.signUpForm.invalid) {
-      const firstName = this.signUpForm.get('firstName')?.value;
-      const lastName = this.signUpForm.get('lastName')?.value;
-      const email = this.signUpForm.get('email')?.value;
-      const password = this.signUpForm.get('password')?.value;
 
-      console.log({
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        password: password,
-      });
 
+      const signUpRequest = {
+        firstName: this.signUpForm.get('firstName')?.value,
+        lastName: this.signUpForm.get('lastName')?.value,
+        email: this.signUpForm.get('email')?.value,
+        password: this.signUpForm.get('password')?.value,
+      }
+      console.log(signUpRequest);
+
+      this.showAlert = false;
       this.awaitingRes = true;
       this.loginService
-        .createUser(firstName, lastName, email, password)
+        .signUp(signUpRequest)
         .subscribe((res) => {
           this.awaitingRes = false;
           console.log(res);

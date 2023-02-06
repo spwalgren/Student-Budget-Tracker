@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, of, tap } from 'rxjs';
-import User from 'src/types/User';
+import { GetUserDataResponse, LogInRequest, LogInResponse, SignUpRequest, SignUpResponse } from 'src/types/login-system';
 
 @Injectable({
   providedIn: 'root',
@@ -12,43 +12,42 @@ export class LoginService {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  createAuth(email: string, password: string): Observable<string> {
+  logIn(logInRequest: LogInRequest): Observable<LogInResponse> {
     const url = `${this.requestBase}/login`;
-    const body = { email: email, password: password };
+    const body = { ...logInRequest };
     const options = this.httpOptions;
 
-    return this.http.post<any>(url, body, options).pipe(
-      tap<any>((res) => {
-        console.log(res);
-      }),
+    return this.http.post<LogInResponse>(url, body, options).pipe(
       catchError((err) => {
         console.log(err);
-        return of('');
+        return of({ Message: "Error" });
       })
     );
   }
 
-  createUser(
-    firstName: string,
-    lastName: string,
-    email: string,
-    password: string
-  ): Observable<any> {
+  signUp(signUpRequest: SignUpRequest): Observable<SignUpResponse> {
     const url = `${this.requestBase}/signup`;
-    const body = {
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      password: password,
-    };
+    const body = { ...signUpRequest };
     const options = this.httpOptions;
 
-    return this.http.post<any>(url, body, options).pipe(
+    return this.http.post<SignUpResponse>(url, body, options).pipe(
       catchError((err) => {
         console.log(err);
-        return of({});
+        return of({ id: "" });
+      })
+    );
+  }
+
+  getUserData(): Observable<GetUserDataResponse> {
+    const url = `${this.requestBase}/user`;
+    const options = this.httpOptions;
+
+    return this.http.get<GetUserDataResponse>(url, options).pipe(
+      catchError((err) => {
+        console.log(err);
+        return of({ Message: "Error" });
       })
     );
   }
