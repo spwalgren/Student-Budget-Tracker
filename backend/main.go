@@ -13,11 +13,11 @@ import (
 func main() {
 
 	corsObj := cors.New(cors.Options{
-		AllowedOrigins:     []string{"http://127.0.0.1:4200"}, 
+		AllowedOrigins:     []string{"http://localhost:4200"},
 		AllowedMethods:     []string{"GET, OPTIONS, POST"},
-		AllowedHeaders:     []string{"Accept", "Content-Type", "Content-Length", "Accept-Encoding", "Authorization","X-CSRF-Token"},
+		AllowedHeaders:     []string{"Accept", "Content-Type", "Content-Length", "Accept-Encoding", "Authorization", "X-CSRF-Token"},
 		OptionsPassthrough: true,
-		AllowCredentials: true,
+		AllowCredentials:   true,
 	})
 
 	r := mux.NewRouter()

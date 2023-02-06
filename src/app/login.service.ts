@@ -18,7 +18,7 @@ export class LoginService {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   logIn(logInRequest: LogInRequest): Observable<LogInResponse> {
     const url = `${this.requestBase}/login`;

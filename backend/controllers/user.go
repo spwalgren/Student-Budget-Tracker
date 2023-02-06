@@ -12,7 +12,7 @@ import (
 )
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Origin", "http://127.0.0.1:4200")
+	w.Header().Set("Access-Control-Origin", "http://localhost:4200")
 	var users []models.UserInfo
 	models.DB.Find(&users)
 
@@ -23,7 +23,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
-	w.Header().Set("Access-Control-Allow-Origin", "http://127.0.0.1:4200")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,X-CSRF-Token")
 	w.Header().Set("Content-Type", "*")
@@ -36,7 +36,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	for _, entry := range users {
 		if entry.Email == newUser.Email {
 			w.WriteHeader(http.StatusConflict)
-			json.NewEncoder(w).Encode(models.Error{Message:"duplicate email"})
+			json.NewEncoder(w).Encode(models.Error{Message: "duplicate email"})
 			return
 		}
 	}
@@ -54,7 +54,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 *	If password matches, it creates token, sets cookies to that token, and returns "success"
  */
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://127.0.0.1:4200")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,X-CSRF-Token")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
@@ -82,13 +82,13 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// Password is incorrect
 	if err := bcrypt.CompareHashAndPassword([]byte(info.Password), []byte(userLoggingIn.Password)); err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(models.Error{Message:"incorrect password"})
+		json.NewEncoder(w).Encode(models.Error{Message: "incorrect password"})
 		return
 	}
 
 	// Create Token
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
-		Issuer: strconv.Itoa(int(info.ID)),
+		Issuer:    strconv.Itoa(int(info.ID)),
 		ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
 	})
 	token, err := claims.SignedString([]byte(models.SecretKey))
@@ -102,17 +102,18 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Set cookies to token if success
 	cookie := http.Cookie{
-		Name: "jtw",
-		Value: token,
-		Domain: "",
-		Expires: time.Now().Add(time.Hour * 24),
+		Name:     "jtw",
+		Value:    token,
+		Domain:   "localhost",
+		Path:     "/",
+		Expires:  time.Now().Add(time.Hour * 24),
 		HttpOnly: true,
-		SameSite: http.SameSiteNoneMode,
-		Secure: true,
+		SameSite: http.SameSiteLaxMode,
+		// Secure: true,
 	}
 	http.SetCookie(w, &cookie)
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(models.Error{Message:"success"})
+	json.NewEncoder(w).Encode(models.Error{Message: "success"})
 }
 
 /*
@@ -120,9 +121,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 *	Gets claims from token
 *	Claims issuer contains the logged in user ID
 *	Returns user based on user ID
-*/
+ */
 func GetUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://127.0.0.1:4200")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,X-CSRF-Token")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
@@ -130,9 +131,9 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("jtw")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-        json.NewEncoder(w).Encode(models.Error{Message:"error getting cookies"})
+		json.NewEncoder(w).Encode(models.Error{Message: "error getting cookies"})
 		return
-    }
+	}
 	tempClaims := jwt.StandardClaims{}
 	token, err := jwt.ParseWithClaims(cookie.Value, &tempClaims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(models.SecretKey), nil
@@ -140,10 +141,10 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(models.Error{Message:"unauthenticated"})
+		json.NewEncoder(w).Encode(models.Error{Message: "unauthenticated"})
 		return
 	}
-	
+
 	claims := token.Claims.(*jwt.StandardClaims)
 
 	var user models.UserInfo
