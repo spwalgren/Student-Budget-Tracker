@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 /bazel-out
+backend/*.exe
 
 # Node
 /node_modules
