@@ -7,7 +7,7 @@ export interface SignUpRequest {
 }
 
 export interface SignUpResponse {
-  ID?: string,
+  id?: string,
   Message?: string
 }
 

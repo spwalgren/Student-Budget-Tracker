@@ -3,14 +3,11 @@ module budget-tracker
 go 1.19
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gorilla/mux v1.8.0
+	golang.org/x/crypto v0.5.0
 	gorm.io/driver/mysql v1.4.5
 	gorm.io/gorm v1.24.5
-)
-
-require (
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
-	golang.org/x/crypto v0.5.0 // indirect
 )
 
 require (

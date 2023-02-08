@@ -44,7 +44,7 @@ export class LoginService {
     return this.http.post<SignUpResponse>(url, body, options).pipe(
       catchError((err) => {
         console.log(err);
-        return of({ ID: '' });
+        return of({ id: '' });
       })
     );
   }

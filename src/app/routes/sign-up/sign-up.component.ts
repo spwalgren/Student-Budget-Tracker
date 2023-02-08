@@ -77,7 +77,7 @@ export class SignUpComponent {
             this.showAlert = true;
             this.alertType = 'error';
             this.alertMessage = 'User with this email already exists';
-          } else if (res.ID) {
+          } else if (res.id) {
             this.showAlert = true;
             this.alertType = 'success';
             this.alertMessage = 'Registration successful. Redirecting...';
