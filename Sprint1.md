@@ -13,10 +13,10 @@
 11. As a site user, I would like to have my financial data displayed in an organized fashion, so I won't be overwhelmed.
 
 ## Issues We Planned to Address
-We wanted to focus on the login for this first sprint. Financial data is important and needs to be kept safe. Because of that, we wanted to focus on story 1.
+We wanted to focus on the login for this first sprint. Financial data is important and needs to be kept safe. Because of that, we wanted to focus on story 1. Our goal was to create a system that allowed the user to sign up with their name, email, and password, then sign in with their email and password. The user would then be brought to a dashboard page, displaying their data. Entering incorrect credentials or the credentials of a non-registered user would prevent the user from logging in.
 
 ## Issues We Successfully Completed
-We were able to create a login page for registered users which covers story 1. The login system utilizes password hashing and browser cookies to aide in ensuring whoever is logging in only gets access to their information.
+We were able to create a login page for registered users which covers story 1. The user is able to register using the sign-up page. Their password is hashed and then stored along with their email in a database. The login page allows the user to enter their credentials and login to the system. If successful, the backend will create a cookie in the browser containing a JSON web token. The user is then brought to the dashboard page where the frontend will check for the token, and then request the user's data from the backend. Their name is then displayed onscreen.
 
 ## Issues Not Successfuly Completed
-We have not fully implemented a logout system yet. We could also step up the security measures on the login system by creating an input validation method.
+We have not fully implemented a logout system yet. When the user is logged in, they will remain logged in until someone else logs in, or the cookie expires. We needed to spend more time on figuring out how to connect the frontend with the backend. We plan to implement the logout features in the upcoming sprint. Additionally, our login system lacks input validation, which can introduce security vulnerabilities. We wanted to approach our login system one step at a time and focus strictly on getting the system working first. We could step up the security measures on the login system by creating an input validation method in a future sprint.
