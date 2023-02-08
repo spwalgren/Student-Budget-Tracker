@@ -13,11 +13,10 @@
 11. As a site user, I would like to have my financial data displayed in an organized fashion, so I won't be overwhelmed.
 
 ## Issues We Planned to Address
-We wanted to focus on the login for this first sprint. Financial data is important and needs to be secured. Because of that, we wanted to focus on story 1.
+We wanted to focus on the login for this first sprint. Financial data is important and needs to be kept safe. Because of that, we wanted to focus on story 1.
 
 ## Issues We Successfully Completed
-We were able to create a login page for registered users which covers story 1. We were also able to implement login system where the user's information will be safe and 
-secure through utilizing browser cookies and password hashing.
+We were able to create a login page for registered users which covers story 1. The login system utilizes password hashing and browser cookies to aide in ensuring whoever is logging in only gets access to their information.
 
 ## Issues Not Successfuly Completed
-None. We had our focus on a single issue for this first sprint which allowed us to complete it successfully. 
+We have not fully implemented a logout system yet. We could also step up the security measures on the login system by creating an input validation method.
