@@ -49,6 +49,22 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
+ * Logout user by deleting the corresponding cookie
+ */
+func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:    "jtw",
+		Expires: time.Now().Add(-1),
+		Domain:   "localhost",
+		Path:     "/",
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	})
+
+	json.NewEncoder(w).Encode(models.Error{Message: "Logging Out"})
+}
+
+/*
 *  Checks authentication by looking for user in database with matching email.
 *	If no user found, returns message "email not found", otherwise checks if password matches
 *	If password doesn't match, returns message "incorrect password"

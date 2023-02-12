@@ -27,6 +27,7 @@ func main() {
 	r.HandleFunc("/api/users", controllers.GetUsers).Methods(http.MethodGet, http.MethodOptions)
 	r.HandleFunc("/api/signup", controllers.CreateUser).Methods(http.MethodOptions, http.MethodPost)
 	r.HandleFunc("/api/user", controllers.GetUser).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/api/logout", controllers.LogoutHandler).Methods(http.MethodPost)
 
 	log.Fatal(http.ListenAndServe(":8080", corsObj.Handler(r)))
 }
