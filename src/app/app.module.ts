@@ -16,18 +16,20 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 
 // Route components
 import { LandingComponent } from './routes/landing/landing.component';
 import { LoginComponent } from './routes/login/login.component';
 import { SignUpComponent } from './routes/sign-up/sign-up.component';
-import { HomeComponent } from './routes/home/home.component';
 
 // Other components
 import { AppComponent } from './app.component';
+import { AlertComponent } from './components/alert/alert.component';
+import { DashboardComponent } from './routes/dashboard/dashboard.component';
 
 // Services
-import { InMemoryDataService } from './in-memory-data.service';
 
 @NgModule({
   declarations: [
@@ -35,7 +37,8 @@ import { InMemoryDataService } from './in-memory-data.service';
     LandingComponent,
     LoginComponent,
     SignUpComponent,
-    HomeComponent,
+    AlertComponent,
+    DashboardComponent,
   ],
   imports: [
     BrowserModule,
@@ -43,15 +46,13 @@ import { InMemoryDataService } from './in-memory-data.service';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    HttpClientInMemoryWebApiModule.forRoot(
-      InMemoryDataService, { dataEncapsulation: false }
-    ),
     AppRoutingModule,
     MatToolbarModule,
     MatIconModule,
     MatCardModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    MatProgressSpinnerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

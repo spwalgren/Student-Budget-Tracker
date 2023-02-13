@@ -1,28 +1,101 @@
 @host = localhost:8080
 
-POST http://{{host}}/signup HTTP/1.1
+POST http://{{host}}/api/signup HTTP/1.1
 content-type: application/json
-    
+
 {
-    "firstname": "test-firstname",
-    "lastname": "test-lastname",
+    "firstName": "test-firstName",
+    "lastName": "test-lastName",
     "email": "test-email",
     "password": "test-password"
 }
 
 ###
 
-POST http://{{host}}/signup HTTP/1.1
+POST http://{{host}}/api/signup HTTP/1.1
 content-type: application/json
-    
+
 {
-    "firstname": "test-firstname2",
-    "lastname": "test-lastname2",
+    "firstName": "test-firstName2",
+    "lastName": "test-lastName2",
     "email": "test-email2",
     "password": "test-password2"
 }
 
 ###
 
-GET http://{{host}}/users
+POST http://{{host}}/api/signup HTTP/1.1
+content-type: application/json
+
+{
+    "firstName": "encryptionTest2-firstname",
+    "lastName": "encryptionTest2-lastname",
+    "email": "encryptionTest2-email",
+    "password": "asdfg"
+}
+
+###
+
+POST http://{{host}}/api/signup HTTP/1.1
+content-type: application/json
+
+{
+    "firstName": "encryptionTest3-firstname",
+    "lastName": "encryptionTest3-lastname",
+    "email": "encryptionTest3-email",
+    "password": "12345"
+}
+
+###
+
+POST http://{{host}}/api/signup HTTP/1.1
+content-type: application/json
+
+{
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "johndoe@where.com",
+    "password": "qwert"
+}
+
+###
+POST http://{{host}}/api/signup HTTP/1.1
+content-type: application/json
+
+{
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "johndoe@gmail.com",
+    "password": "qwert"
+}
+
+###
+POST http://{{host}}/api/signup HTTP/1.1
+content-type: application/json
+
+{
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "johndoe@icloud.com",
+    "password": "qwert"
+}
+
+###
+
+GET http://{{host}}/api/users
+content-type: application/json
+
+###
+
+POST http://{{host}}/api/login HTTP/1.1
+content-type: application/json
+
+{
+    "email": "encryptionTest3-email",
+    "password": "12345"
+}
+
+###
+
+GET http://{{host}}/api/user
 content-type: application/json

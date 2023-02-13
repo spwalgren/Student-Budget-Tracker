@@ -29,3 +29,11 @@ form {
   /* self align */
   margin-bottom: 20px;
 }
+
+.signup__button-field {
+  /* content align */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+}

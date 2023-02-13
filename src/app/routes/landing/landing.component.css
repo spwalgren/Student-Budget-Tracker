@@ -1,0 +1,28 @@
+mat-toolbar {
+  /* content align */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.toolbar__buttons {
+  /* content align */
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.main {
+  /* self align */
+  height: 80%;
+}
+
+.main__container {
+  /* content align */
+  align-items: center;
+}
+
+.main__container h1 {
+  /* self style */
+  font-size: 36px;
+}

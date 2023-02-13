@@ -1,58 +1,33 @@
 package main
 
 import (
+	"budget-tracker/controllers"
+	"budget-tracker/models"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"budget-tracker/models"
-	"budget-tracker/controllers"
+	"github.com/rs/cors"
 )
 
-// type UserInfo struct {
-// 	FirstName string `json:"firstname"`
-// 	LastName  string `json:"lastname"`
-// 	Email     string `json:"email"`
-// 	Password  string `json:"password"`
-// }
-
-type UserLoginInfo struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-// var users = []UserInfo{} // temporary database for testing purposes
-
-/*func loginHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	// Check username and password
-	var userLoggingIn UserLoginInfo
-	_ = json.NewDecoder(r.Body).Decode(&userLoggingIn)
-	for _, entry := range users {
-		if entry.Email == userLoggingIn.Email && entry.Password == userLoggingIn.Password {
-
-			fmt.Fprintln(w, "Logging in")
-
-			// Redirect to user homepage on success
-
-			return
-		}
-	}
-
-	// Populate error for email/password combo not matching
-	fmt.Fprintln(w, "That is not an email-password combination associated with a registered account")
-	loginHandler(w, r)
-}*/
-
 func main() {
+
+	corsObj := cors.New(cors.Options{
+		AllowedOrigins:     []string{"http://localhost:4200"},
+		AllowedMethods:     []string{"GET, OPTIONS, POST"},
+		AllowedHeaders:     []string{"Accept", "Content-Type", "Content-Length", "Accept-Encoding", "Authorization", "X-CSRF-Token"},
+		OptionsPassthrough: true,
+		AllowCredentials:   true,
+	})
+
 	r := mux.NewRouter()
 
 	models.Connect()
-	
-	//r.HandleFunc("/login", loginHandler).Methods("GET")
-	r.HandleFunc("/user/{name}", controllers.GetUser).Methods("GET")
-	r.HandleFunc("/users", controllers.GetUsers).Methods("GET")
-	r.HandleFunc("/signup", controllers.CreateUser).Methods("POST")
+	r.HandleFunc("/api/login", controllers.LoginHandler).Methods(http.MethodOptions, http.MethodPost)
+	r.HandleFunc("/api/users", controllers.GetUsers).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/api/signup", controllers.CreateUser).Methods(http.MethodOptions, http.MethodPost)
+	r.HandleFunc("/api/user", controllers.GetUser).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/api/logout", controllers.LogoutHandler).Methods(http.MethodPost, http.MethodOptions)
 
-	log.Fatal(http.ListenAndServe(":8080", r))
+	log.Fatal(http.ListenAndServe(":8080", corsObj.Handler(r)))
 }
