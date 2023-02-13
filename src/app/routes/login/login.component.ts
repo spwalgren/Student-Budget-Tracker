@@ -27,6 +27,15 @@ export class LoginComponent {
     });
   }
 
+  ngOnInit() {
+    this.loginService.getUserData()
+      .subscribe(res => {
+        if (res.firstName) {
+          this.router.navigate(['/dashboard']);
+        }
+      })
+  }
+
   goSubmitForm() {
     if (!this.logInForm.invalid) {
       const logInRequest: LogInRequest = {

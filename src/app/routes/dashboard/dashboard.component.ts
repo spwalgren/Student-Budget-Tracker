@@ -23,6 +23,7 @@ export class DashboardComponent {
           this.yourName = res.firstName;
         } else {
           this.yourName = 'ERROR';
+          this.router.navigate(['/login']);
         }
       })
   }
