@@ -52,9 +52,13 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
  * Logout user by deleting the corresponding cookie
  */
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,X-CSRF-Token")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.Header().Set("Content-Type", "*")
 	http.SetCookie(w, &http.Cookie{
-		Name:    "jtw",
-		Expires: time.Now().Add(-1),
+		Name:     "jtw",
+		Expires:  time.Now().Add(-1),
 		Domain:   "localhost",
 		Path:     "/",
 		HttpOnly: true,

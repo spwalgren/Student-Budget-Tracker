@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { LoginService } from 'src/app/login.service';
 
 @Component({
@@ -11,7 +12,8 @@ export class DashboardComponent {
   yourName: string = "";
 
   constructor(
-    private loginService: LoginService
+    private loginService: LoginService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -21,6 +23,15 @@ export class DashboardComponent {
           this.yourName = res.firstName;
         } else {
           this.yourName = 'ERROR';
+        }
+      })
+  }
+
+  goLogOut() {
+    this.loginService.logOut()
+      .subscribe(res => {
+        if (res.Message === "Logging Out") {
+          this.router.navigate(['/login']);
         }
       })
   }

@@ -5,6 +5,7 @@ import {
   GetUserDataResponse,
   LogInRequest,
   LogInResponse,
+  LogOutResponse,
   SignUpRequest,
   SignUpResponse,
 } from 'src/types/login-system';
@@ -57,6 +58,21 @@ export class LoginService {
     };
 
     return this.http.get<GetUserDataResponse>(url, options).pipe(
+      catchError((err) => {
+        console.log(err);
+        return of({ Message: 'Error' });
+      })
+    );
+  }
+
+  logOut(): Observable<LogOutResponse> {
+    const url = `${this.requestBase}/logout`;
+    const options = {
+      headers: this.httpOptions.headers,
+      withCredentials: true,
+    };
+
+    return this.http.post<LogOutResponse>(url, {}, options).pipe(
       catchError((err) => {
         console.log(err);
         return of({ Message: 'Error' });

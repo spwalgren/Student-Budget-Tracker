@@ -27,3 +27,7 @@ export interface GetUserDataResponse {
   lastName?: string,
   Message?: string
 }
+
+export interface LogOutResponse {
+  Message?: string
+}
