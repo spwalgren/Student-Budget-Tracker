@@ -37,6 +37,54 @@
           }
         }
       }
+    },
+    {
+      "label": "Start App",
+      "type": "shell",
+      "command": "echo",
+      "args": ["App Ready!"],
+      "dependsOrder": "parallel",
+      "dependsOn": ["Start Frontend", "Start Backend"]
+    },
+    {
+      "label": "Start Frontend",
+      "type": "shell",
+      "command": "ng",
+      "args": ["serve", "--open"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "isBackground": true
+    },
+    {
+      "label": "Start Backend",
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "command": "./main.exe",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "dependsOn": ["Build Backend"],
+      "isBackground": true
+    },
+    {
+      "label": "Build Backend",
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "command": "go",
+      "args": [
+        "build", 
+        "main.go",
+      ],
+      "presentation": {
+        "close": true
+      }
     }
   ]
 }
