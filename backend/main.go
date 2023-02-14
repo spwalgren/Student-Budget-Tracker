@@ -14,8 +14,8 @@ func main() {
 
 	corsObj := cors.New(cors.Options{
 		AllowedOrigins:     []string{"http://localhost:4200"},
-		AllowedMethods:     []string{"GET, OPTIONS, POST"},
-		AllowedHeaders:     []string{"Accept", "Content-Type", "Content-Length", "Accept-Encoding", "Authorization", "X-CSRF-Token"},
+		AllowedMethods:     []string{"GET", "OPTIONS", "POST"},
+		AllowedHeaders:     []string{"Accept", "Content-Type", "Content-Length", "Accept-Encoding", "Authorization", "X-CSRF-Token", "Origin"},
 		OptionsPassthrough: true,
 		AllowCredentials:   true,
 	})
@@ -24,7 +24,7 @@ func main() {
 
 	models.Connect()
 	r.HandleFunc("/api/login", controllers.LoginHandler).Methods(http.MethodOptions, http.MethodPost)
-	r.HandleFunc("/api/users", controllers.GetUsers).Methods(http.MethodGet, http.MethodOptions)
+	// r.HandleFunc("/api/users", controllers.GetUsers).Methods(http.MethodGet, http.MethodOptions)
 	r.HandleFunc("/api/signup", controllers.CreateUser).Methods(http.MethodOptions, http.MethodPost)
 	r.HandleFunc("/api/user", controllers.GetUser).Methods(http.MethodGet, http.MethodOptions)
 	r.HandleFunc("/api/logout", controllers.LogoutHandler).Methods(http.MethodPost, http.MethodOptions)

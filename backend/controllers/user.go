@@ -11,21 +11,17 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func GetUsers(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Origin", "http://localhost:4200")
-	var users []models.UserInfo
-	models.DB.Find(&users)
+// func GetUsers(w http.ResponseWriter, r *http.Request) {
+// 	w.Header().Set("Access-Control-Origin", "http://localhost:4200")
+// 	var users []models.UserInfo
+// 	models.DB.Find(&users)
 
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(users)
+// 	w.WriteHeader(http.StatusOK)
+// 	json.NewEncoder(w).Encode(users)
 
-}
+// }
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "*")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
-	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,X-CSRF-Token")
 	w.Header().Set("Content-Type", "*")
 	w.WriteHeader(http.StatusOK)
 
@@ -52,9 +48,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
  * Logout user by deleting the corresponding cookie
  */
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
-	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,X-CSRF-Token")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Content-Type", "*")
 	http.SetCookie(w, &http.Cookie{
 		Name:     "jtw",
@@ -75,10 +68,6 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 *	If password matches, it creates token, sets cookies to that token, and returns "success"
  */
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
-	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,X-CSRF-Token")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Content-Type", "*")
 
 	if r.Method == "OPTIONS" {
@@ -144,10 +133,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 *	Returns user based on user ID
  */
 func GetUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
-	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,X-CSRF-Token")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Content-Type", "*")
 	w.WriteHeader(http.StatusOK)
 	cookie, err := r.Cookie("jtw")
