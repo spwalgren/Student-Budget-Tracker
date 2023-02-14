@@ -1,7 +1,7 @@
 package models
 
 type UserInfo struct {
-	ID        uint   `json:"ID" gorm:"primary_key"`
+	ID        uint   `json:"id" gorm:"primary_key"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Email     string `json:"email" gorm:"unique"`
@@ -18,5 +18,5 @@ type ReturnInfo struct {
 }
 
 type Error struct {
-	Message string `json:"Message"`
+	Message string `json:"message"`
 }
