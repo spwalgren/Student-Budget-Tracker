@@ -152,4 +152,5 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	models.DB.Where("id = ?", claims.Issuer).First(&user)
 
 	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]interface{}{"ID": user.ID, "email": user.Email, "firstName": user.FirstName, "lastName": user.LastName})
 }
