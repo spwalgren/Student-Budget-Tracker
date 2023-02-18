@@ -20,3 +20,16 @@ type ReturnInfo struct {
 type Error struct {
 	Message string `json:"Message"`
 }
+
+type Transaction struct {
+	Amount	    float32		 `json:"amount"`
+	Name		    string `json:"name"`
+	Date        string `json:"date"`
+	Category    string `json:"category"`
+	Description string `json:"description"`
+}
+
+type FinancialInfo struct {
+	TransactionID	 uint				 `json:"ID"`
+	Transactions []Transaction `json:"transactions" gorm:"foreignKey:Transactions"`
+}

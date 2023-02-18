@@ -99,3 +99,24 @@ content-type: application/json
 
 GET http://{{host}}/api/user
 content-type: application/json
+
+###
+POST http://{{host}}/api/transaction
+content-type: application/json
+
+{
+    "amount": 12.76,
+    "name": "Wal-Mart",
+    "date": "12/23/2022",
+    "Category": "Groceries",
+    "Description": "Bought food for the week"
+}
+
+###
+POST http://{{host}}/api/login
+content-type: application/json
+
+{
+    "email": "test-email",
+    "password": "test-password"
+}
