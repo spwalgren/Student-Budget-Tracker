@@ -16,7 +16,7 @@ func Connect() {
 		panic("Cannot connect to DB")
 	}
 	log.Println("Connected to Database...")
-	err = database.AutoMigrate(&UserInfo{})
+	err = database.AutoMigrate(&UserInfo{}, &Transaction{})
         if err != nil {
                 return
         }

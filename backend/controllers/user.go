@@ -11,13 +11,13 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// func GetUsers(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Access-Control-Origin", "http://localhost:4200")
-// 	var users []models.UserInfo
-// 	models.DB.Find(&users)
-// 	w.WriteHeader(http.StatusOK)
-// 	json.NewEncoder(w).Encode(users)
-// }
+func GetUsers(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Origin", "http://localhost:4200")
+	var users []models.UserInfo
+	models.DB.Find(&users)
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(users)
+}
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
@@ -159,44 +159,4 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]interface{}{"id": user.ID, "email": user.Email, "firstName": user.FirstName, "lastName": user.LastName})
-}
-
-func CreateTransaction(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "*")
-
-	var newTransaction models.Transaction
-	var expenses models.FinancialInfo
-
-	_ = json.NewDecoder(r.Body).Decode(&newTransaction)
-
-	// Retrieve transactions for user. If none exist, create one. Retrieve the current cookie to get the user info
-	cookie, err := r.Cookie("jtw")
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode("oops")
-		return
-	}
-	tempClaims := jwt.StandardClaims{}
-	token, err := jwt.ParseWithClaims(cookie.Value, &tempClaims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(models.SecretKey), nil
-	})
-
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-
-	claims := token.Claims.(*jwt.StandardClaims)
-
-	result := models.DB.Where("ID = ?", claims.Issuer).First(&expenses)
-
-	// Transactions do not exist. Create one before moving forward
-	if result.Error != nil {
-		var user models.UserInfo
-		models.DB.Where("ID = ?", claims.Issuer).First(&user)
-		expenses.TransactionID = user.ID
-		expenses.Transactions = append(expenses.Transactions, newTransaction)
-	}
-
-	json.NewEncoder(w).Encode(expenses)
 }

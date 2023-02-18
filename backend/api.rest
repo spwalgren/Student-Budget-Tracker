@@ -105,11 +105,11 @@ POST http://{{host}}/api/transaction
 content-type: application/json
 
 {
-    "amount": 12.76,
+    "amount": 1000.00,
     "name": "Wal-Mart",
     "date": "12/23/2022",
-    "Category": "Groceries",
-    "Description": "Bought food for the week"
+    "category": "Groceries",
+    "description": "Bought food for the week"
 }
 
 ###
@@ -120,3 +120,7 @@ content-type: application/json
     "email": "test-email",
     "password": "test-password"
 }
+
+###
+GET http://{{host}}/api/transaction
+content-type: application/json
