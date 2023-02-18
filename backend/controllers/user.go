@@ -126,7 +126,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
  */
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
-	w.WriteHeader(http.StatusOK)
 	cookie, err := r.Cookie("jtw")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
