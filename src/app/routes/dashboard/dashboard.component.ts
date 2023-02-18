@@ -19,7 +19,7 @@ export class DashboardComponent {
   ngOnInit() {
     this.loginService.getUserData()
       .subscribe(res => {
-        if (res.firstName) {
+        if (!res.err) {
           this.yourName = res.firstName;
         } else {
           this.yourName = 'ERROR';

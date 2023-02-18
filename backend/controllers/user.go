@@ -45,16 +45,16 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
  */
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
-	w.WriteHeader(http.StatusOK)
-
 	http.SetCookie(w, &http.Cookie{
 		Name:     "jtw",
-		Expires:  time.Now().Add(-1),
+		Expires:  time.Now().Add(-24),
 		Domain:   "localhost",
 		Path:     "/",
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
 	})
+
+	w.WriteHeader(http.StatusOK)
 }
 
 /*
@@ -126,7 +126,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
  */
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
-	w.WriteHeader(http.StatusOK)
 	cookie, err := r.Cookie("jtw")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
