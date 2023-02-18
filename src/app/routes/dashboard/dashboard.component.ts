@@ -19,7 +19,7 @@ export class DashboardComponent {
   ngOnInit() {
     this.loginService.getUserData()
       .subscribe(res => {
-        if (res.firstName) {
+        if (!res.err) {
           this.yourName = res.firstName;
         } else {
           this.yourName = 'ERROR';
@@ -31,6 +31,8 @@ export class DashboardComponent {
   goLogOut() {
     this.loginService.logOut()
       .subscribe(res => {
+        console.log(res);
+
         if (!res.err) {
           this.router.navigate(['/login']);
         }

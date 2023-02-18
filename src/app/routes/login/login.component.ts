@@ -30,7 +30,9 @@ export class LoginComponent {
   ngOnInit() {
     this.loginService.getUserData()
       .subscribe(res => {
-        if (res.firstName) {
+        console.log(res);
+
+        if (!res.err) {
           this.router.navigate(['/dashboard']);
         }
       })

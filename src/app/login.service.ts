@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, of, tap } from 'rxjs';
+import { Observable, catchError, of, map } from 'rxjs';
 import {
   GenericResponse,
   GetUserDataResponse,
@@ -28,6 +28,7 @@ export class LoginService {
     };
 
     return this.http.post<GenericResponse>(url, body, options).pipe(
+      map((_) => ({})),
       catchError((err) => {
         console.log(err);
         return of({ err: "Could not log in" });
@@ -41,6 +42,7 @@ export class LoginService {
     const options = this.httpOptions;
 
     return this.http.post<GenericResponse>(url, body, options).pipe(
+      map((_) => ({})),
       catchError((err) => {
         console.log(err);
         return of({ err: "Could not create new user" });
@@ -74,6 +76,7 @@ export class LoginService {
     };
 
     return this.http.post<GenericResponse>(url, {}, options).pipe(
+      map((_) => ({})),
       catchError((err) => {
         console.log(err);
         return of({ err: "Unknown Error" });
