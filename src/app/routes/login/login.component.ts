@@ -47,7 +47,7 @@ export class LoginComponent {
       this.showAlert = false;
       this.loginService.logIn(logInRequest)
         .subscribe(res => {
-          if (res.Message == "success") {
+          if (!res.err) {
             this.showAlert = true;
             this.alertType = "success";
             this.alertMessage = "Success! Logging you in..."

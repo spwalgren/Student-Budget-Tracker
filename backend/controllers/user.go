@@ -149,11 +149,10 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	models.DB.Where("id = ?", claims.Issuer).First(&user)
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]interface{}{"ID": user.ID, "email": user.Email, "firstName": user.FirstName, "lastName": user.LastName})
+	json.NewEncoder(w).Encode(map[string]interface{}{"id": user.ID, "email": user.Email, "firstName": user.FirstName, "lastName": user.LastName})
 }
 
-
-func CreateTransaction(w http.ResponseWriter, r* http.Request) {
+func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
 
 	var newTransaction models.Transaction
@@ -182,13 +181,13 @@ func CreateTransaction(w http.ResponseWriter, r* http.Request) {
 
 	result := models.DB.Where("ID = ?", claims.Issuer).First(&expenses)
 
-	 // Transactions do not exist. Create one before moving forward
-	 if result.Error != nil {
+	// Transactions do not exist. Create one before moving forward
+	if result.Error != nil {
 		var user models.UserInfo
 		models.DB.Where("ID = ?", claims.Issuer).First(&user)
 		expenses.TransactionID = user.ID
 		expenses.Transactions = append(expenses.Transactions, newTransaction)
-	 }
+	}
 
 	json.NewEncoder(w).Encode(expenses)
 }

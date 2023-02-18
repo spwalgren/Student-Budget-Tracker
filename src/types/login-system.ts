@@ -6,28 +6,18 @@ export interface SignUpRequest {
   password: string
 }
 
-export interface SignUpResponse {
-  id?: string,
-  Message?: string
-}
-
 export interface LogInRequest {
   email: string,
   password: string
 }
 
-export interface LogInResponse {
-  Message: string
+export interface GenericResponse {
+  err?: string;
 }
 
-export interface GetUserDataResponse {
-  ID?: string,
-  email?: string,
-  firstName?: string,
-  lastName?: string,
-  Message?: string
-}
-
-export interface LogOutResponse {
-  Message?: string
+export interface GetUserDataResponse extends GenericResponse {
+  id: string,
+  email: string,
+  firstName: string,
+  lastName: string,
 }

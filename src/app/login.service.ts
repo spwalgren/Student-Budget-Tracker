@@ -2,12 +2,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, of, tap } from 'rxjs';
 import {
+  GenericResponse,
   GetUserDataResponse,
   LogInRequest,
-  LogInResponse,
-  LogOutResponse,
   SignUpRequest,
-  SignUpResponse,
 } from 'src/types/login-system';
 
 @Injectable({
@@ -21,7 +19,7 @@ export class LoginService {
 
   constructor(private http: HttpClient) { }
 
-  logIn(logInRequest: LogInRequest): Observable<LogInResponse> {
+  logIn(logInRequest: LogInRequest): Observable<GenericResponse> {
     const url = `${this.requestBase}/login`;
     const body = { ...logInRequest };
     const options = {
@@ -29,23 +27,23 @@ export class LoginService {
       withCredentials: true,
     };
 
-    return this.http.post<LogInResponse>(url, body, options).pipe(
+    return this.http.post<GenericResponse>(url, body, options).pipe(
       catchError((err) => {
         console.log(err);
-        return of({ Message: 'Error' });
+        return of({ err: "Could not log in" });
       })
     );
   }
 
-  signUp(signUpRequest: SignUpRequest): Observable<SignUpResponse> {
+  signUp(signUpRequest: SignUpRequest): Observable<GenericResponse> {
     const url = `${this.requestBase}/signup`;
     const body = { ...signUpRequest };
     const options = this.httpOptions;
 
-    return this.http.post<SignUpResponse>(url, body, options).pipe(
+    return this.http.post<GenericResponse>(url, body, options).pipe(
       catchError((err) => {
         console.log(err);
-        return of({ id: '' });
+        return of({ err: "Could not create new user" });
       })
     );
   }
@@ -60,22 +58,25 @@ export class LoginService {
     return this.http.get<GetUserDataResponse>(url, options).pipe(
       catchError((err) => {
         console.log(err);
-        return of({ Message: 'Error' });
+        return of({
+          err: "Not authorized",
+          id: "", email: "", firstName: "", lastName: ""
+        });
       })
     );
   }
 
-  logOut(): Observable<LogOutResponse> {
+  logOut(): Observable<GenericResponse> {
     const url = `${this.requestBase}/logout`;
     const options = {
       headers: this.httpOptions.headers,
       withCredentials: true,
     };
 
-    return this.http.post<LogOutResponse>(url, {}, options).pipe(
+    return this.http.post<GenericResponse>(url, {}, options).pipe(
       catchError((err) => {
         console.log(err);
-        return of({ Message: 'Error' });
+        return of({ err: "Unknown Error" });
       })
     );
   }
