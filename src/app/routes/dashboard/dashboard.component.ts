@@ -31,7 +31,7 @@ export class DashboardComponent {
   goLogOut() {
     this.loginService.logOut()
       .subscribe(res => {
-        if (res.Message === "Logging Out") {
+        if (!res.err) {
           this.router.navigate(['/login']);
         }
       })
