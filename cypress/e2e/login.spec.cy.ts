@@ -22,11 +22,32 @@ describe('login', () => {
     cy.visit('/')
     cy.get('[data-cy="Log In"]').click()
     cy.get('[formControlName="email"]').type('bob@gmail.com');
-    cy.get('[formControlName="password"]').type('b0btheb3st');
+    cy.get('[formControlName="password"]').type('bobbyIsTheBest');
     cy.url().should('includes', 'login');
-    cy.get('[data-cy="Sign Up"]').click()
+    cy.get('[data-cy="Sign-Up"]').click()
     cy.url().should('include', 'sign-up');
   })
+
+  // it('Should let user sign up... clicking \"Sign Up\" from login page', () => {
+  //   cy.visit('/')
+  //   cy.get('[data-cy="Log In"]').click()
+  //   cy.get('[formControlName="email"]').type('bob@gmail.com');
+  //   cy.get('[formControlName="password"]').type('b0btheb3st');
+  //   cy.url().should('includes', 'login');
+  //   cy.get('[data-cy="Sign-Up"]').click()
+  //   cy.url().should('include', 'sign-up');
+  //   cy.get('[formControlName="firstName"]').type('Bobby');
+  //   cy.get('[formControlName="lastName"]').type('Fergison');
+  //   cy.get('[formControlName="email"]').type('bobby@gmail.com');
+  //   cy.get('[formControlName="password"]').type('bobbyIsTheBest');
+  //   cy.get('[formControlName="reenteredPass"]').type('bobbyIsTheBest');
+  //   cy.url().should('includes', 'sign-up');
+  //   cy.get('[data-cy="Submit Sign-Up"]').click();
+  //   cy.url().should('include', 'dashboard');
+
+  // })
+
+  //test uncompleted sign up
 
 
 })
