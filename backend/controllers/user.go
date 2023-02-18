@@ -21,7 +21,11 @@ import (
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
-	w.WriteHeader(http.StatusOK)
+
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
 
 	var newUser models.UserInfo
 	var users []models.UserInfo
@@ -126,6 +130,12 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
  */
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
+
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
 	cookie, err := r.Cookie("jtw")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
