@@ -1,0 +1,16 @@
+main.section {
+  /* self align */
+  height: 100%;
+}
+
+h1 {
+  /* self style */
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 60px;
+}
+
+button {
+  /* self align */
+  width: 100px;
+}

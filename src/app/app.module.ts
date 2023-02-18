@@ -30,6 +30,7 @@ import { AlertComponent } from './components/alert/alert.component';
 import { DashboardComponent } from './routes/dashboard/dashboard.component';
 import { DashHomeComponent } from './components/dash-home/dash-home.component';
 import { DashTransactionsComponent } from './components/dash-transactions/dash-transactions.component';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 
 // Services
 
@@ -43,6 +44,7 @@ import { DashTransactionsComponent } from './components/dash-transactions/dash-t
     DashboardComponent,
     DashHomeComponent,
     DashTransactionsComponent,
+    PageNotFoundComponent,
   ],
   imports: [
     BrowserModule,

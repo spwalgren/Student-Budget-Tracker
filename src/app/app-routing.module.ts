@@ -8,6 +8,7 @@ import { SignUpComponent } from './routes/sign-up/sign-up.component';
 import { DashboardComponent } from './routes/dashboard/dashboard.component';
 import { DashHomeComponent } from './components/dash-home/dash-home.component';
 import { DashTransactionsComponent } from './components/dash-transactions/dash-transactions.component';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 
 
 const routes: Routes = [
@@ -39,8 +40,16 @@ const routes: Routes = [
       {
         path: 'transactions',
         component: DashTransactionsComponent
+      },
+      {
+        path: '**',
+        component: PageNotFoundComponent
       }
     ]
+  },
+  {
+    path: '**',
+    component: PageNotFoundComponent
   }
 ];
 
