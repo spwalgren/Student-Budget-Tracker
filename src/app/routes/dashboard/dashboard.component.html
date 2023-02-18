@@ -5,8 +5,15 @@
   </div>
 </mat-toolbar>
 
-<main class="section main">
-  <div class="container main__container">
-    <h1>Welcome to your dashboard, {{ yourName }}</h1>
-  </div>
-</main>
+<mat-sidenav-container>
+  <mat-sidenav #sidenav mode="side" opened>
+    <button mat-button>Home</button>
+    <button mat-button>Transactions</button>
+    <button mat-button>Goals</button>
+    <button mat-button>Calendar</button>
+    <button mat-button>Settings</button>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    Welcome to your dashboard {{ yourName }}
+  </mat-sidenav-content>
+</mat-sidenav-container>

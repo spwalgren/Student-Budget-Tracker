@@ -17,7 +17,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
+import { MatSidenavModule } from '@angular/material/sidenav';
 
 // Route components
 import { LandingComponent } from './routes/landing/landing.component';
@@ -52,7 +52,8 @@ import { DashboardComponent } from './routes/dashboard/dashboard.component';
     MatCardModule,
     MatInputModule,
     MatButtonModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatSidenavModule
   ],
   providers: [],
   bootstrap: [AppComponent]

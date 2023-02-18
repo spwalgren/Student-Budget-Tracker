@@ -12,17 +12,25 @@ mat-toolbar {
   gap: 10px;
 }
 
-.main {
+mat-sidenav-container {
   /* self align */
-  height: 80%;
+  height: 100%;
 }
 
-.main__container {
-  /* content align */
-  align-items: center;
-}
-
-.main__container h1 {
+mat-sidenav {
+  /* self align */
+  width: 200px;
   /* self style */
-  font-size: 36px;
+  /* background: red; */
+  /* content align */
+  padding: 15px;
+}
+
+button {
+  /* self align */
+  width: 100%;
+  /* content align */
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
 }
