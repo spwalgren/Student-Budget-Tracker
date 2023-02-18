@@ -7,13 +7,16 @@
 
 <mat-sidenav-container>
   <mat-sidenav #sidenav mode="side" opened>
-    <button mat-button>Home</button>
-    <button mat-button>Transactions</button>
-    <button mat-button>Goals</button>
-    <button mat-button>Calendar</button>
-    <button mat-button>Settings</button>
+    <button mat-button routerLink="/dashboard">Home</button>
+    <button mat-button routerLink="/dashboard/transactions">
+      Transactions
+    </button>
+    <button mat-button routerLink="/dashboard/goals">Goals</button>
+    <button mat-button routerLink="/dashboard/calendar">Calendar</button>
+    <button mat-button routerLink="/dashboard/settings">Settings</button>
   </mat-sidenav>
   <mat-sidenav-content>
-    Welcome to your dashboard {{ yourName }}
+    Dashboard works!
+    <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
