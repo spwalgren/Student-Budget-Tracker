@@ -54,7 +54,7 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetTransactions(w http.ResponseWriter, r *http.Request) {
-
+	w.Header().Set("Content-Type", "*")
 	cookie, err := r.Cookie("jtw")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
