@@ -34,3 +34,8 @@ button {
   flex-direction: row;
   justify-content: start;
 }
+
+.dash-content {
+  /* content align */
+  padding: 20px;
+}

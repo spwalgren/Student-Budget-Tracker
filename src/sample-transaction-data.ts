@@ -23,7 +23,31 @@ const transactions: Transaction[] = [
     date: "2023-01-12",
     category: "Supplies",
     description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non aspernatur voluptatum fugit aut aliquam nam autem impedit facere voluptatem sit!"
-  }
+  },
+  {
+    userId: 3,
+    name: "Bookstore",
+    amount: 25,
+    date: "2023-01-12",
+    category: "Supplies",
+    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non aspernatur voluptatum fugit aut aliquam nam autem impedit facere voluptatem sit!"
+  },
+  {
+    userId: 3,
+    name: "Bookstore",
+    amount: 25,
+    date: "2023-01-12",
+    category: "Supplies",
+    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non aspernatur voluptatum fugit aut aliquam nam autem impedit facere voluptatem sit!"
+  },
+  {
+    userId: 3,
+    name: "Bookstore",
+    amount: 25,
+    date: "2023-01-12",
+    category: "Supplies",
+    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non aspernatur voluptatum fugit aut aliquam nam autem impedit facere voluptatem sit!"
+  },
 ];
 
 async function pause<T>(ms: number): Promise<T> {

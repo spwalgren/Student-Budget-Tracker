@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { TransactionService } from 'src/app/transaction.service';
 import { Transaction } from 'src/types/transaction-system';
 
@@ -9,15 +12,18 @@ import { Transaction } from 'src/types/transaction-system';
 })
 export class DashTransactionsComponent {
 
-  transactionData: Transaction[] = [];
+  transactionData: MatTableDataSource<Transaction>;
+  displayedColumns = ['name', 'amount', 'category', 'date',];
 
-  constructor(private transactionService: TransactionService) { }
+  constructor(private transactionService: TransactionService) {
+    this.transactionData = new MatTableDataSource<Transaction>([]);
+  }
 
   ngOnInit() {
     this.transactionService.getTransactions()
       .subscribe((res) => {
         if (!res.err) {
-          this.transactionData = res.data;
+          this.transactionData = new MatTableDataSource(res.data);
         }
       })
   }
