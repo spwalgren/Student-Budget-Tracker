@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, of, map } from 'rxjs';
+import { GenericResponse } from 'src/types/api-system';
 import {
-  GenericResponse,
   GetUserDataResponse,
   LogInRequest,
   SignUpRequest,

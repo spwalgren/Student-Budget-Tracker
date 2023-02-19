@@ -164,6 +164,11 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
 
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
 	var newTransaction models.Transaction
 	var expenses models.FinancialInfo
 

@@ -1,3 +1,4 @@
+import { GenericResponse } from "./api-system"
 
 export interface SignUpRequest {
   firstName: string,
@@ -9,10 +10,6 @@ export interface SignUpRequest {
 export interface LogInRequest {
   email: string,
   password: string
-}
-
-export interface GenericResponse {
-  err?: string;
 }
 
 export interface GetUserDataResponse extends GenericResponse {
