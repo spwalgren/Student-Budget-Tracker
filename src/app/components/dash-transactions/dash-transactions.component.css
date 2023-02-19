@@ -1,0 +1,14 @@
+.transaction__description-row {
+  /* self align */
+  height: 0;
+}
+
+.transaction__row td {
+  /* self style */
+  border-bottom-width: 0;
+}
+
+.transaction__description {
+  /* content align */
+  overflow: hidden;
+}

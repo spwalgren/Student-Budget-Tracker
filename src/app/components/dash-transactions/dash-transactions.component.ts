@@ -1,22 +1,37 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { TransactionService } from 'src/app/transaction.service';
 import { Transaction } from 'src/types/transaction-system';
 
 @Component({
   selector: 'app-dash-transactions',
   templateUrl: './dash-transactions.component.html',
-  styleUrls: ['./dash-transactions.component.css']
+  styleUrls: ['./dash-transactions.component.css'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class DashTransactionsComponent {
 
   transactionData: MatTableDataSource<Transaction>;
-  displayedColumns = ['name', 'amount', 'category', 'date',];
+  displayedColumns = ['name', 'amount', 'category', 'date', 'expand'];
+  expandedRow: Transaction | null = null;
 
   constructor(private transactionService: TransactionService) {
     this.transactionData = new MatTableDataSource<Transaction>([]);
+  }
+
+  @ViewChild(MatSort) sort!: MatSort;
+
+  ngAfterViewInit() {
+    this.transactionData.sort = this.sort;
   }
 
   ngOnInit() {
@@ -24,6 +39,7 @@ export class DashTransactionsComponent {
       .subscribe((res) => {
         if (!res.err) {
           this.transactionData = new MatTableDataSource(res.data);
+          this.transactionData.sort = this.sort;
         }
       })
   }
