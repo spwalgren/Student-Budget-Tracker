@@ -2,9 +2,9 @@
   <div>
     <h1>Transactions</h1>
 
-      <!-- Icon for button -->
+    <!-- Icon for button -->
     <button mat-icon-button class="add-button" aria-label="add transaction">
-       <mat-icon>add</mat-icon>
+      <mat-icon>add</mat-icon>
     </button>
 
     <table
@@ -66,7 +66,6 @@
         </td>
       </ng-container>
 
-      
       <!-- Button column -->
       <ng-container matColumnDef="button">
         <th mat-header-cell *matHeaderCellDef></th>
@@ -86,10 +85,12 @@
           [attr.colspan]="displayedColumns.length"
         >
           <div
-            class="transaction__description"
+            class="transaction__detail"
             [@detailExpand]="elem == expandedRow ? 'expanded' : 'collapsed'"
           >
-            <div>{{ elem.description || "(none)" }}</div>
+            <div class="transaction__detail-contents">
+              Description: {{ elem.description || "[none]" }}
+            </div>
           </div>
         </td>
       </ng-container>
@@ -104,7 +105,7 @@
       <tr
         mat-row
         *matRowDef="let row; columns: ['expandedDetail']"
-        class="transaction__description-row"
+        class="transaction__detail-row"
       ></tr>
     </table>
   </div>
