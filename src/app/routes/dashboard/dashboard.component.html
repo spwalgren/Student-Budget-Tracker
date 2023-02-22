@@ -8,23 +8,13 @@
 <mat-sidenav-container>
   <mat-sidenav #sidenav mode="side" opened>
     <div *ngFor="let entry of routes">
-      <div
-        *ngIf="isCurrentPage(entry[1]); then thenBlock; else elseBlock"
-      ></div>
-      <ng-template #thenBlock
-        ><button
-          class="sidenav__button--selected"
-          mat-button
-          routerLink="{{ entry[1] }}"
-        >
-          {{ entry[0] }}
-        </button></ng-template
+      <button
+        [class.sidenav__button--selected]="isCurrentPage(entry[1])"
+        mat-button
+        routerLink="{{ entry[1] }}"
       >
-      <ng-template #elseBlock
-        ><button mat-button routerLink="{{ entry[1] }}">
-          {{ entry[0] }}
-        </button></ng-template
-      >
+        {{ entry[0] }}
+      </button>
     </div>
   </mat-sidenav>
   <mat-sidenav-content>
