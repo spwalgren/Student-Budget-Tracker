@@ -39,3 +39,8 @@ button {
   /* content align */
   padding: 20px;
 }
+
+.sidenav__button--selected {
+  /* self style */
+  background: lightgray;
+}
