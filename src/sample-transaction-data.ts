@@ -1,4 +1,5 @@
-import { GetTransactionsResponse, Transaction } from "./types/transaction-system";
+import { GenericResponse } from "./types/api-system";
+import { CreateTransactionRequest, GetTransactionsResponse, Transaction } from "./types/transaction-system";
 
 const transactions: Transaction[] = [
   {
@@ -59,4 +60,10 @@ export async function getTransactions(): Promise<GetTransactionsResponse> {
   await pause<void>(1000);
   newTransactions = [...transactions];
   return { data: newTransactions };
+}
+
+export async function createTransaction(createTransactionRequest: CreateTransactionRequest): Promise<GenericResponse> {
+  transactions.push(createTransactionRequest.data);
+  await pause<void>(1000);
+  return {};
 }
