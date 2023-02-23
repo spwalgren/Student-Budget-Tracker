@@ -1,6 +1,11 @@
-.transaction__description-row {
+.transaction__detail-row {
   /* self align */
   height: 0;
+}
+
+tr.transaction__row:hover {
+  /* self style */
+  background: whitesmoke;
 }
 
 .transaction__row td {
@@ -8,7 +13,21 @@
   border-bottom-width: 0;
 }
 
-.transaction__description {
+
+.transaction__detail {
   /* content align */
   overflow: hidden;
+}
+
+.transaction__detail-contents {
+  /* self style */
+  /* background: blue; */
+  /* content align */
+  padding: 5px 0;
+}
+
+.add-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }

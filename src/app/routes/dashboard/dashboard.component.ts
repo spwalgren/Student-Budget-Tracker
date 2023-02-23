@@ -10,6 +10,13 @@ import { LoginService } from 'src/app/login.service';
 export class DashboardComponent {
 
   yourName: string = "";
+  routes = Object.entries({
+    "Home": "/dashboard",
+    "Transactions": "/dashboard/transactions",
+    "Goals": "/dashboard/goals",
+    "Calendar": "/dashboard/calendar",
+    "Settings": "/dashboard/settings",
+  });
 
   constructor(
     private loginService: LoginService,
@@ -35,5 +42,9 @@ export class DashboardComponent {
           this.router.navigate(['/login']);
         }
       })
+  }
+
+  isCurrentPage(location: string): boolean {
+    return location == this.router.url;
   }
 }

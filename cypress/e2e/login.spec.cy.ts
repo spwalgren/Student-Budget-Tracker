@@ -36,7 +36,7 @@ describe('login', () => {
     cy.url().should('include', 'sign-up');
     cy.get('[data-cy="testFirstName"]').type('Bobby');
     cy.get('[data-cy="testLastName"]').type('Fergison');
-    cy.get('[formControlName="email"]').type('bobby@gmail.com');
+    cy.get('[formControlName="email"]').type('bobby11@gmail.com');
     cy.get('[formControlName="password"]').type('bobbyIsTheBest');
     cy.get('[formControlName="reenteredPass"]').type('bobbyIsTheBest');
     cy.url().should('includes', 'sign-up');
