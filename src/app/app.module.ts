@@ -11,6 +11,7 @@ import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { AppRoutingModule } from './app-routing.module';
 
 // Material modules
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -34,6 +35,7 @@ import { DashboardComponent } from './routes/dashboard/dashboard.component';
 import { DashHomeComponent } from './components/dash-home/dash-home.component';
 import { DashTransactionsComponent } from './components/dash-transactions/dash-transactions.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { TransactionsModalComponent } from './components/transactions-modal/transactions-modal.component';
 
 // Services
 
@@ -48,6 +50,8 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
     DashHomeComponent,
     DashTransactionsComponent,
     PageNotFoundComponent,
+    TransactionsModalComponent, //added thus
+   
   ],
   imports: [
     BrowserModule,
@@ -65,7 +69,8 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
     MatSidenavModule,
     MatTableModule,
     MatPaginatorModule,
-    MatSortModule
+    MatSortModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

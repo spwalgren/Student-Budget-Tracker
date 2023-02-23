@@ -5,6 +5,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { TransactionService } from 'src/app/transaction.service';
 import { Transaction } from 'src/types/transaction-system';
+import { MatDialog } from '@angular/material/dialog'
+import { TransactionsModalComponent } from '../transactions-modal/transactions-modal.component';
+
 
 @Component({
   selector: 'app-dash-transactions',
@@ -24,7 +27,7 @@ export class DashTransactionsComponent {
   displayedColumns = ['name', 'amount', 'category', 'date', 'expand'];
   expandedRow: Transaction | null = null;
 
-  constructor(private transactionService: TransactionService) {
+  constructor(private transactionService: TransactionService, public dialog: MatDialog) {
     this.transactionData = new MatTableDataSource<Transaction>([]);
   }
 
@@ -43,4 +46,14 @@ export class DashTransactionsComponent {
         }
       })
   }
+
+  openDialog(): void {
+    let dialogRef = this.dialog.open(TransactionsModalComponent , {
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
+
 }
