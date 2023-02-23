@@ -49,6 +49,9 @@ export class DashTransactionsComponent {
 
   openDialog(): void {
     let dialogRef = this.dialog.open(TransactionsModalComponent , {
+      data: {
+        myVar: "MY VALS"
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
