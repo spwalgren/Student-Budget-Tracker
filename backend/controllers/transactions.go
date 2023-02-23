@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"budget-tracker/database"
 	"budget-tracker/models"
 	"encoding/json"
 	"fmt"
@@ -37,9 +38,9 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 
 	// Transactions do not exist. Create one before moving forward
 	var user models.UserInfo
-	models.DB.First(&user, claims.Issuer)
+	database.DB.First(&user, claims.Issuer)
 	newTransaction.UserID = user.ID
-	models.DB.Create(&newTransaction)
+	database.DB.Create(&newTransaction)
 	fmt.Println("error")
 	json.NewEncoder(w).Encode(newTransaction)
 
@@ -73,11 +74,11 @@ func GetTransactions(w http.ResponseWriter, r *http.Request) {
 
 	claims := token.Claims.(*jwt.StandardClaims)
 	var user models.UserInfo
-	models.DB.First(&user, claims.Issuer)
+	database.DB.First(&user, claims.Issuer)
 
 
 	var expenses []models.Transaction
-	models.DB.Find(&expenses, claims.Issuer)
+	database.DB.Find(&expenses, claims.Issuer)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(expenses)
 }

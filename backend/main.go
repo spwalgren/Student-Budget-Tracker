@@ -2,7 +2,7 @@ package main
 
 import (
 	"budget-tracker/controllers"
-	"budget-tracker/models"
+	"budget-tracker/database"
 	"log"
 	"net/http"
 
@@ -22,7 +22,7 @@ func main() {
 
 	r := mux.NewRouter()
 
-	models.Connect()
+	database.Initialize("budget_tracker")
 	r.HandleFunc("/api/login", controllers.LoginHandler).Methods(http.MethodOptions, http.MethodPost)
 	r.HandleFunc("/api/users", controllers.GetUsers).Methods(http.MethodGet, http.MethodOptions)
 	r.HandleFunc("/api/signup", controllers.CreateUser).Methods(http.MethodOptions, http.MethodPost)

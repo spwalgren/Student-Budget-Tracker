@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"budget-tracker/database"
 	"budget-tracker/models"
 	"encoding/json"
 	"net/http"
@@ -14,7 +15,7 @@ import (
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Origin", "http://localhost:4200")
 	var users []models.UserInfo
-	models.DB.Find(&users)
+	database.DB.Find(&users)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(users)
 }
@@ -29,7 +30,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	var newUser models.UserInfo
 	var users []models.UserInfo
-	models.DB.Find(&users)
+	database.DB.Find(&users)
 	_ = json.NewDecoder(r.Body).Decode(&newUser)
 
 	for _, entry := range users {
@@ -40,7 +41,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	password, _ := bcrypt.GenerateFromPassword([]byte(newUser.Password), 14)
 	newUser.Password = string(password)
-	models.DB.Create(&newUser)
+	database.DB.Create(&newUser)
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -80,7 +81,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	_ = json.NewDecoder(r.Body).Decode(&userLoggingIn)
 
-	searchResult := models.DB.Where("email = ?", userLoggingIn.Email).First(&info)
+	searchResult := database.DB.Where("email = ?", userLoggingIn.Email).First(&info)
 
 	// No user with matching email is not found
 	if searchResult.Error != nil {
@@ -138,7 +139,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	cookie, err := r.Cookie("jtw")
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 	tempClaims := jwt.StandardClaims{}
@@ -155,8 +156,8 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	var user models.UserInfo
 
-	models.DB.Where("id = ?", claims.Issuer).First(&user)
+	database.DB.Where("id = ?", claims.Issuer).First(&user)
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]interface{}{"id": user.ID, "email": user.Email, "firstName": user.FirstName, "lastName": user.LastName})
+	json.NewEncoder(w).Encode(models.UserReturnInfo{ID: user.ID, Email: user.Email, FirstName: user.FirstName, LastName: user.LastName})
 }
