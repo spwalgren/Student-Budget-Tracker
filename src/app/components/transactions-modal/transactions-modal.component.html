@@ -1,1 +1,10 @@
-<p>transactions-modal works!</p>
+<h2 mat-dialog-title>New Transaction</h2>
+
+<mat-dialog-content>
+    <p>Would you like to save?</p>
+</mat-dialog-content>
+
+<mat-dialog-content>
+    <button mat-button>Cancel</button>
+    <button mat-raised-button (click)="save()">Save</button>
+</mat-dialog-content>
