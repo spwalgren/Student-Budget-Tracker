@@ -23,6 +23,8 @@ import { TransactionsModalComponent } from '../transactions-modal/transactions-m
 })
 export class DashTransactionsComponent {
 
+  transactions: Transaction[] = [];
+
   transactionData: MatTableDataSource<Transaction>;
   displayedColumns = ['name', 'amount', 'category', 'date', 'expand'];
   expandedRow: Transaction | null = null;
@@ -49,12 +51,13 @@ export class DashTransactionsComponent {
 
   openDialog(): void {
     let dialogRef = this.dialog.open(TransactionsModalComponent , {
-      data: {
-        myVar: "MY VALS"
-      }
+      data: {}
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      if(result) {
+        this.transactions.push(result);
+      }
       console.log('The dialog was closed');
       console.log(result);
     });
