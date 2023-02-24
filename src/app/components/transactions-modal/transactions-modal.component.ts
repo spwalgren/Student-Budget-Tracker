@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import { Transaction } from 'src/types/transaction-system';
 
+
 @Component({
   selector: 'app-transactions-modal',
   templateUrl: './transactions-modal.component.html',
