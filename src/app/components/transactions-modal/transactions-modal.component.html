@@ -1,11 +1,19 @@
-<h2 mat-dialog-title>New Transaction</h2>
-
-<mat-dialog-content>
-    <p>Would you like to save?</p>
-    <p>{{data.myVar}}</p>
-</mat-dialog-content>
-
-<mat-dialog-content>
+<h2 mat-dialog-title>Add Transaction</h2>
+<div mat-dialog-content>
+    <mat-form-field>
+        <input matInput placeholder="Name" [(ngModel)]="transaction.name">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Amount" type="number" [(ngModel)]="transaction.amount">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Category" [(ngModel)]="transaction.category">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Description" [(ngModel)]="transaction.description">
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="transaction">Add</button>
     <button mat-button mat-dialog-close>Cancel</button>
-    <button mat-raised-button (click)="save()">Save</button>
-</mat-dialog-content>
+</div>
