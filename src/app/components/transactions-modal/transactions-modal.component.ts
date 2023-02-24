@@ -14,7 +14,7 @@ export class TransactionsModalComponent {
     userId: 0,
     name: '',
     amount: 0,
-    date: '',
+    date: new Date().toLocaleDateString('en-US', {month: '2-digit', day: '2-digit', year: 'numeric'}),
     category: '',
     description: ''
   };
