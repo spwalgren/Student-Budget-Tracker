@@ -38,7 +38,7 @@ tr.transaction__row:hover {
   text-decoration: underline;
 }
 
-.transaction__detail-clickable.transaction__detail-deleting {
+.transaction__detail-clickable.transaction__detail-changing {
   /* self style */
   color: gray;
   cursor: default;

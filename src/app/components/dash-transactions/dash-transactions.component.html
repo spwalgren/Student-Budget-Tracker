@@ -97,13 +97,14 @@
               <p>Description: {{ elem.description || "[none]" }}</p>
               <p
                 class="transaction__detail-clickable"
+                [class.transaction__detail-changing]="isChanging"
                 (click)="openEditDialog(elem)"
               >
                 Edit this transaction
               </p>
               <p
                 class="transaction__detail-clickable"
-                [class.transaction__detail-deleting]="isDeleting"
+                [class.transaction__detail-changing]="isChanging"
                 (click)="goDeleteTransaction(elem.date)"
               >
                 Delete this transaction
