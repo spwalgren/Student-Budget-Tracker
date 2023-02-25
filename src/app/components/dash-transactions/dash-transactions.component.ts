@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { TransactionService } from 'src/app/transaction.service';
 import { Transaction } from 'src/types/transaction-system';
@@ -23,8 +23,6 @@ import { TransactionsModalComponent } from '../transactions-modal/transactions-m
 })
 export class DashTransactionsComponent {
 
-  transactions: Transaction[] = [];
-
   transactionData: MatTableDataSource<Transaction>;
   displayedColumns = ['name', 'amount', 'category', 'date', 'expand'];
   expandedRow: Transaction | null = null;
@@ -33,6 +31,7 @@ export class DashTransactionsComponent {
     this.transactionData = new MatTableDataSource<Transaction>([]);
   }
 
+  @ViewChild(MatTable) table!: MatTable<Transaction>;
   @ViewChild(MatSort) sort!: MatSort;
 
   ngAfterViewInit() {
@@ -50,17 +49,23 @@ export class DashTransactionsComponent {
   }
 
   openDialog(): void {
-    let dialogRef = this.dialog.open(TransactionsModalComponent , {
+    let dialogRef = this.dialog.open(TransactionsModalComponent, {
       data: {}
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if(result) {
-        this.transactions.push(result);
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.transactionData = new MatTableDataSource([...this.transactionData.data, res.data]);
+        this.transactionData.sort = this.sort;
+        this.table.renderRows();
       }
       console.log('The dialog was closed');
-      console.log(result);
+      console.log(res.data);
     });
+  }
+
+  parseDate(str: string) {
+    return new Date(str).toLocaleDateString();
   }
 
 }

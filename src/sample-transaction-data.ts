@@ -5,41 +5,41 @@ const transactions: Transaction[] = [
   {
     name: "Publix",
     amount: 30,
-    date: "2023-02-18",
+    date: new Date("2023-02-18").toISOString(),
     category: "Groceries"
   },
   {
     name: "Starbucks",
     amount: 8,
-    date: "2023-01-19",
+    date: new Date("2023-01-19").toISOString(),
     category: "Food",
     description: "Also paid for my friend's drink."
   },
   {
     name: "Bookstore",
     amount: 25,
-    date: "2023-01-12",
+    date: new Date("2023-01-12").toISOString(),
     category: "Supplies",
     description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non aspernatur voluptatum fugit aut aliquam nam autem impedit facere voluptatem sit!"
   },
   {
     name: "Bookstore",
     amount: 25,
-    date: "2023-01-12",
+    date: new Date("2023-01-12").toISOString(),
     category: "Supplies",
     description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non aspernatur voluptatum fugit aut aliquam nam autem impedit facere voluptatem sit!"
   },
   {
     name: "Bookstore",
     amount: 25,
-    date: "2023-01-12",
+    date: new Date("2023-01-12").toISOString(),
     category: "Supplies",
     description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non aspernatur voluptatum fugit aut aliquam nam autem impedit facere voluptatem sit!"
   },
   {
     name: "Bookstore",
     amount: 25,
-    date: "2023-01-12",
+    date: new Date("2023-01-12").toISOString(),
     category: "Supplies",
     description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non aspernatur voluptatum fugit aut aliquam nam autem impedit facere voluptatem sit!"
   },
