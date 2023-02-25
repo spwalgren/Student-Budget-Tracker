@@ -1,5 +1,5 @@
 import { GenericResponse } from "./types/api-system";
-import { CreateTransactionRequest, GetTransactionsResponse, Transaction } from "./types/transaction-system";
+import { CreateTransactionRequest, EditTransactionRequest, GetTransactionsResponse, Transaction } from "./types/transaction-system";
 
 const transactions: Transaction[] = [
   {
@@ -18,21 +18,21 @@ const transactions: Transaction[] = [
   {
     name: "Bookstore",
     amount: 25,
-    date: new Date("2023-01-12").toISOString(),
+    date: new Date("2023-01-15").toISOString(),
     category: "Supplies",
     description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non aspernatur voluptatum fugit aut aliquam nam autem impedit facere voluptatem sit!"
   },
   {
     name: "Bookstore",
     amount: 25,
-    date: new Date("2023-01-12").toISOString(),
+    date: new Date("2023-01-14").toISOString(),
     category: "Supplies",
     description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non aspernatur voluptatum fugit aut aliquam nam autem impedit facere voluptatem sit!"
   },
   {
     name: "Bookstore",
     amount: 25,
-    date: new Date("2023-01-12").toISOString(),
+    date: new Date("2023-01-13").toISOString(),
     category: "Supplies",
     description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non aspernatur voluptatum fugit aut aliquam nam autem impedit facere voluptatem sit!"
   },
@@ -58,6 +58,19 @@ export async function getTransactions(): Promise<GetTransactionsResponse> {
 
 export async function createTransaction(createTransactionRequest: CreateTransactionRequest): Promise<GenericResponse> {
   transactions.push(createTransactionRequest.data);
+  await pause<void>(1000);
+  return {};
+}
+
+export async function editTransaction(editTransactionRequest: EditTransactionRequest): Promise<GenericResponse> {
+  transactions[editTransactionRequest.index] = editTransactionRequest.data;
+  console.log(transactions);
+  await pause<void>(1000);
+  return {};
+}
+
+export async function deleteTransaction(transactionIndex: number): Promise<GenericResponse> {
+  transactions.splice(transactionIndex, 1);
   await pause<void>(1000);
   return {};
 }

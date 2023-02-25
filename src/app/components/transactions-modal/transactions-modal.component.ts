@@ -4,6 +4,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TransactionService } from 'src/app/transaction.service';
 import { Transaction, CreateTransactionRequest } from 'src/types/transaction-system';
 
+interface TransactionModalData {
+  data: Transaction,
+  mode: "Add" | "Edit"
+}
 
 @Component({
   selector: 'app-transactions-modal',
@@ -13,22 +17,22 @@ import { Transaction, CreateTransactionRequest } from 'src/types/transaction-sys
 export class TransactionsModalComponent {
 
   transactionForm: FormGroup;
+  mode: "Add" | "Edit";
 
   constructor(
     private transactionService: TransactionService,
     public dialogRef: MatDialogRef<TransactionsModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: TransactionModalData,
   ) {
     this.transactionForm = new FormGroup({
-      name: new FormControl('', [Validators.required]),
-      amount: new FormControl(0, [Validators.required]),
-      date: new FormControl<Date>(new Date(), [Validators.required]),
-      category: new FormControl(''),
-      description: new FormControl('')
+      name: new FormControl(data.data.name, [Validators.required]),
+      amount: new FormControl(data.data.amount, [Validators.required]),
+      date: new FormControl<Date>(new Date(data.data.date), [Validators.required]),
+      category: new FormControl(data.data.category),
+      description: new FormControl(data.data.description)
     });
+    this.mode = data.mode;
   } //data b/w data and source
-
-  ngOnInit() { }
 
   goSubmitTransaction() {
     if (!this.transactionForm.invalid) {
@@ -43,11 +47,7 @@ export class TransactionsModalComponent {
           description: this.transactionForm.get("description")?.value,
         }
       }
-      this.transactionService.createTransaction(transactionRequest)
-        .subscribe(res => {
-          if (!res.err)
-            this.dialogRef.close(transactionRequest);
-        })
+      this.dialogRef.close(transactionRequest);
     }
   }
 }

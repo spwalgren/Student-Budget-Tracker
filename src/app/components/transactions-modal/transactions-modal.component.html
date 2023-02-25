@@ -1,5 +1,5 @@
 <div class="transaction-modal">
-  <h2 mat-dialog-title>Add Transaction</h2>
+  <h2 mat-dialog-title>{{ mode }} Transaction</h2>
   <form
     class="transaction-modal__form"
     mat-dialog-content
@@ -37,7 +37,7 @@
     </mat-form-field>
 
     <div mat-dialog-actions>
-      <button mat-button type="submit">Add</button>
+      <button mat-button type="submit">{{ mode }}</button>
       <button mat-button mat-dialog-close>Cancel</button>
     </div>
   </form>

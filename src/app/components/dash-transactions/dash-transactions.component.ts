@@ -26,6 +26,7 @@ export class DashTransactionsComponent {
   transactionData: MatTableDataSource<Transaction>;
   displayedColumns = ['name', 'amount', 'category', 'date', 'expand'];
   expandedRow: Transaction | null = null;
+  isDeleting: boolean = false;
 
   constructor(private transactionService: TransactionService, public dialog: MatDialog) {
     this.transactionData = new MatTableDataSource<Transaction>([]);
@@ -48,20 +49,83 @@ export class DashTransactionsComponent {
       })
   }
 
-  openDialog(): void {
+  openAddDialog(): void {
     let dialogRef = this.dialog.open(TransactionsModalComponent, {
-      data: {}
+      data: {
+        data: {
+          name: '',
+          amount: 0,
+          date: new Date().toISOString(),
+          category: '',
+          description: '',
+        },
+        mode: "Add"
+      }
     });
 
-    dialogRef.afterClosed().subscribe(res => {
-      if (res) {
-        this.transactionData = new MatTableDataSource([...this.transactionData.data, res.data]);
+    dialogRef.afterClosed().subscribe(dialogRes => {
+      if (dialogRes) {
+        this.transactionService.createTransaction(dialogRes)
+          .subscribe();
+        this.transactionData = new MatTableDataSource([...this.transactionData.data, dialogRes.data]);
         this.transactionData.sort = this.sort;
         this.table.renderRows();
       }
       console.log('The dialog was closed');
-      console.log(res.data);
+      console.log(dialogRes.data);
     });
+  }
+
+  openEditDialog(transaction: Transaction) {
+    let dialogRef = this.dialog.open(TransactionsModalComponent, {
+      data: {
+        data: transaction,
+        mode: "Edit"
+      },
+    });
+    dialogRef.afterClosed().subscribe(dialogRes => {
+      if (dialogRes) {
+        this.transactionService.getTransactions()
+          .subscribe((getRes) => {
+            if (!getRes.err) {
+              let targetIndex = getRes.data.findIndex((elem) => elem.date == transaction.date);
+              this.transactionService.editTransaction({
+                index: targetIndex,
+                data: dialogRes.data
+              })
+                .subscribe(_ => {
+                  this.transactionData.data.splice(getRes.data.findIndex((elem) => elem.date == transaction.date), 1, dialogRes.data)
+                  this.transactionData = new MatTableDataSource([...this.transactionData.data]);
+                  this.transactionData.sort = this.sort;
+                  this.table.renderRows();
+                });
+            }
+          })
+      }
+      console.log('The dialog was closed');
+      console.log(dialogRes.data);
+    });
+  }
+
+  goDeleteTransaction(date: string) {
+
+    if (!this.isDeleting) {
+      this.isDeleting = true;
+      this.transactionService.getTransactions()
+        .subscribe(res => {
+          if (!res.err) {
+            this.transactionService.deleteTransaction(res.data.findIndex((elem) => elem.date == date))
+              .subscribe(_ => {
+                this.transactionData.data.splice(res.data.findIndex((elem) => elem.date == date), 1)
+                this.transactionData = new MatTableDataSource([...this.transactionData.data]);
+                this.transactionData.sort = this.sort;
+                this.table.renderRows();
+                this.isDeleting = false;
+              });
+
+          }
+        })
+    }
   }
 
   parseDate(str: string) {

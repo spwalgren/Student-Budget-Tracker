@@ -12,6 +12,11 @@ export interface CreateTransactionRequest {
   data: Transaction
 }
 
+export interface EditTransactionRequest {
+  index: number,
+  data: Transaction
+}
+
 export interface GetTransactionsResponse extends GenericResponse {
   data: Transaction[]
 }
