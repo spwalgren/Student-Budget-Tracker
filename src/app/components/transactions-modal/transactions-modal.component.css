@@ -1,0 +1,7 @@
+.transaction-modal__form {
+  /* self align */
+  min-width: 500px;
+  /* content align */
+  display: flex;
+  flex-direction: column;
+}

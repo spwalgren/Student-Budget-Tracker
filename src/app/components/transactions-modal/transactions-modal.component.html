@@ -1,19 +1,39 @@
-<h2 mat-dialog-title>Add Transaction</h2>
-<div mat-dialog-content>
+<div class="transaction-modal">
+  <h2 mat-dialog-title>Add Transaction</h2>
+  <div class="transaction-modal__form" mat-dialog-content>
     <mat-form-field>
-        <input matInput placeholder="Name" [(ngModel)]="transaction.name">
+      <mat-label>Name</mat-label>
+      <input matInput [(ngModel)]="transaction.name" />
     </mat-form-field>
     <mat-form-field>
-        <input matInput placeholder="Amount" type="number" [(ngModel)]="transaction.amount">
+      <mat-label>Amount</mat-label>
+      <input
+        matInput
+        type="number"
+        step="0.01"
+        [(ngModel)]="transaction.amount"
+      />
     </mat-form-field>
     <mat-form-field>
-        <input matInput placeholder="Category" [(ngModel)]="transaction.category">
+      <mat-label>Date</mat-label>
+      <input matInput [matDatepicker]="picker" [(ngModel)]="transaction.date" />
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="picker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
     <mat-form-field>
-        <input matInput placeholder="Description" [(ngModel)]="transaction.description">
+      <mat-label>Category</mat-label>
+      <input matInput [(ngModel)]="transaction.category" />
     </mat-form-field>
-</div>
-<div mat-dialog-actions>
+    <mat-form-field>
+      <mat-label>Description</mat-label>
+      <textarea matInput [(ngModel)]="transaction.description"></textarea>
+    </mat-form-field>
+  </div>
+  <div mat-dialog-actions>
     <button mat-button [mat-dialog-close]="transaction">Add</button>
     <button mat-button mat-dialog-close>Cancel</button>
+  </div>
 </div>

@@ -22,6 +22,8 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 // Route components
 import { LandingComponent } from './routes/landing/landing.component';
@@ -53,7 +55,7 @@ import { DashGoalsComponent } from './components/dash-goals/dash-goals.component
     PageNotFoundComponent,
     TransactionsModalComponent,
     DashGoalsComponent, //added thus
-   
+
   ],
   imports: [
     BrowserModule,
@@ -72,7 +74,9 @@ import { DashGoalsComponent } from './components/dash-goals/dash-goals.component
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    MatDialogModule
+    MatDialogModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   providers: [],
   bootstrap: [AppComponent]

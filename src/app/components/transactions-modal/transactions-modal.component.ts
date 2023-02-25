@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Transaction } from 'src/types/transaction-system';
 
 
@@ -11,23 +11,24 @@ import { Transaction } from 'src/types/transaction-system';
 export class TransactionsModalComponent {
 
   transaction: Transaction = {
-    userId: 0,
     name: '',
     amount: 0,
-    date: new Date().toLocaleDateString('en-US', {month: '2-digit', day: '2-digit', year: 'numeric'}),
+    date: '',
     category: '',
     description: ''
   };
 
-  constructor(public dialogRef: MatDialogRef<TransactionsModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any) { 
+  constructor(
+    public dialogRef: MatDialogRef<TransactionsModalComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
 
-    } //data b/w data and source
+  } //data b/w data and source
 
-    ngOnInit(){}
+  ngOnInit() { }
 
-    save(){
-      this.dialogRef.close(this.transaction);
-      //save doc
-    }
+  save() {
+    this.dialogRef.close(this.transaction);
+    //save doc
+  }
 }
