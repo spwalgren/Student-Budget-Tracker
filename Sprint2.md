@@ -90,3 +90,36 @@ It parses the JWT token to extract the user information.
 It retrieves the user record from the database using the user information obtained from the JWT token.  
 It retrieves all transaction records associated with the user from the database.  
 It encodes the transaction records as a JSON array and sends it in the HTTP response body.  
+
+
+### UpdateTransaction()
+This is a handler function that updates a transaction in the database with the new information provided in the request body. It requires a valid JSON Web Token (JWT) in the HTTP request header to identify the user who is authorized to update the transaction.
+
+**Parameters**  
+w http.ResponseWriter - an interface that allows the handler to construct an HTTP response.
+r *http.Request - a pointer to a data structure that represents the client HTTP request.
+
+**Function Behavior**
+It extracts the transaction information to be updated from the request body and stores it in an updateTransaction variable of type models.Transaction.
+It extracts the JWT from the HTTP request cookie and parses it to obtain the user ID from the token's standard claims.
+It retrieves the user information from the database using the user ID from the token.
+It compares the user ID in the updateTransaction with the user ID from the token to verify that the requesting user is authorized to update the transaction.
+It retrieves the transaction information to be updated from the database using the transaction ID in the updateTransaction.
+It updates the transaction information in the expenses variable with the information from the updateTransaction variable.
+It saves the updated transaction information in the database.
+It sets the HTTP status code of the response to 200 (OK).
+
+### DeleteTransaction()
+This is a handler function that deletes a transaction from the database. It requires a valid JSON Web Token (JWT) in the HTTP request header to identify the user who is authorized to delete the transaction.
+
+**Parameters**
+w http.ResponseWriter - an interface that allows the handler to construct an HTTP response.
+r *http.Request - a pointer to a data structure that represents the client HTTP request.
+
+**Function Behavior**
+It extracts the transaction information to be deleted from the request body and stores it in a toDelete variable of type models.Transaction.
+It extracts the JWT from the HTTP request cookie and parses it to obtain the user ID from the token's standard claims.
+It retrieves the user information from the database using the user ID from the token.
+It compares the user ID in the toDelete with the user ID from the token to verify that the requesting user is authorized to delete the transaction.
+It deletes the transaction information from the database that matches the user ID and transaction ID in the toDelete variable.
+It sets the HTTP status code of the response to 200 (OK).
