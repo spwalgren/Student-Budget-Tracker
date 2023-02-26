@@ -31,3 +31,15 @@ tr.transaction__row:hover {
   top: 10px;
   right: 10px;
 }
+
+.transaction__detail-clickable:hover {
+  /* self style */
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.transaction__detail-clickable.transaction__detail-changing {
+  /* self style */
+  color: gray;
+  cursor: default;
+}

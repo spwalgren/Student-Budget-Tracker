@@ -1,7 +1,6 @@
 import { GenericResponse } from "./api-system"
 
 export interface Transaction {
-  userId: number,
   name: string,
   amount: number,
   date: string,
@@ -10,6 +9,11 @@ export interface Transaction {
 }
 
 export interface CreateTransactionRequest {
+  data: Transaction
+}
+
+export interface EditTransactionRequest {
+  index: number,
   data: Transaction
 }
 
