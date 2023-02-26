@@ -4,7 +4,6 @@ import (
 	"budget-tracker/database"
 	"budget-tracker/models"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
@@ -41,17 +40,8 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	database.DB.First(&user, claims.Issuer)
 	newTransaction.UserID = user.ID
 	database.DB.Create(&newTransaction)
-	fmt.Println("error")
 	json.NewEncoder(w).Encode(newTransaction)
 
-	//  else {
-	// 	fmt.Println("nil error")
-	// 	// Transactions already exist. Update.
-	// 	var temp models.FinancialInfo
-	// 	models.DB.First(&temp, claims.Issuer)
-	// 	temp.Transactions = append(temp.Transactions, newTransaction)
-	// 	models.DB.Model(&temp).First(&temp, claims.Issuer).Update("transactions", temp.Transactions)
-	// }
 }
 
 func GetTransactions(w http.ResponseWriter, r *http.Request) {
@@ -78,7 +68,90 @@ func GetTransactions(w http.ResponseWriter, r *http.Request) {
 
 
 	var expenses []models.Transaction
-	database.DB.Find(&expenses, claims.Issuer)
+	database.DB.Where(map[string]interface{}{"user_id": user.ID}).Find(&expenses)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(expenses)
+}
+
+func UpdateTransaction(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "*")
+
+	var updateTransaction models.Transaction
+	_ = json.NewDecoder(r.Body).Decode(&updateTransaction)
+
+
+	// get userID to get the list of transactions from current user
+	cookie, err := r.Cookie("jtw")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode("oops")
+		return
+	}
+	tempClaims := jwt.StandardClaims{}
+	token, err := jwt.ParseWithClaims(cookie.Value, &tempClaims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(models.SecretKey), nil
+	})
+
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	claims := token.Claims.(*jwt.StandardClaims)
+
+
+	var expenses models.Transaction
+	var user models.UserInfo
+
+	// If the user ID's don't match, the intruder shouldn't be in here anyways
+	database.DB.First(&user, claims.Issuer)
+	if user.ID != updateTransaction.UserID {
+		w.WriteHeader(http.StatusForbidden)
+	}
+
+	// Now using the unique transactionID, get the specific transaction that needs to be updated.
+	database.DB.First(&expenses, updateTransaction.TransactionID)
+	expenses = updateTransaction
+	database.DB.Save(expenses)
+	w.WriteHeader(http.StatusOK)
+}
+
+func DeleteTransaction(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "*")
+
+	var toDelete models.Transaction
+	_ = json.NewDecoder(r.Body).Decode(&toDelete)
+
+	// UserID and TransactionID will be in the request. Can setup a check to make sure the
+	// requesting user matches with the UserID
+
+	cookie, err := r.Cookie("jtw")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode("oops")
+		return
+	}
+	tempClaims := jwt.StandardClaims{}
+	token, err := jwt.ParseWithClaims(cookie.Value, &tempClaims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(models.SecretKey), nil
+	})
+
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	claims := token.Claims.(*jwt.StandardClaims)
+
+	var user models.UserInfo
+
+	// If the user ID's don't match, the intruder shouldn't be in here anyways
+	database.DB.First(&user, claims.Issuer)
+	if user.ID != toDelete.UserID {
+		w.WriteHeader(http.StatusForbidden)
+	}
+
+	// deletes entry based on the userID and the transactionID
+ database.DB.Where(map[string]interface{}{"user_id": toDelete.UserID, "transactionId": toDelete.TransactionID}).Delete(toDelete)
+
 }

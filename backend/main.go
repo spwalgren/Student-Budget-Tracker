@@ -30,6 +30,8 @@ func main() {
 	r.HandleFunc("/api/logout", controllers.LogoutHandler).Methods(http.MethodPost, http.MethodOptions)
 	r.HandleFunc("/api/transaction", controllers.CreateTransaction).Methods(http.MethodPost, http.MethodOptions)
 	r.HandleFunc("/api/transaction", controllers.GetTransactions).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/api/transaction", controllers.UpdateTransaction).Methods(http.MethodOptions, http.MethodPut)
+	r.HandleFunc("/api/transaction", controllers.DeleteTransaction).Methods(http.MethodOptions, http.MethodDelete)
 
 	log.Fatal(http.ListenAndServe(":8080", corsObj.Handler(r)))
 }
