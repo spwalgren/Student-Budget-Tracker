@@ -175,5 +175,10 @@ func DeleteTransaction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// deletes entry based on the userID and the transactionID
- database.DB.Where(map[string]interface{}{"user_id": deletingUserId, "transactionId": deletingTransactionId}).Delete(toDelete)
+	err = database.DB.Where(map[string]interface{}{"user_id": deletingUserId, "transactionId": deletingTransactionId}).First(&toDelete).Error
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+ 	database.DB.Delete(&toDelete)
 }
