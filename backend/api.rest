@@ -140,15 +140,17 @@ content-type: application/json
 }
 
 ###
-DELETE http://{{host}}/api/transaction
+DELETE http://{{host}}/api/transaction/35/6
+content-type: application/json
+
+###
+POST http://{{host}}/api/transaction
 content-type: application/json
 
 {
-    "userId": 35,
-    "transactionId": 7,
-    "amount": 1200,
-    "name": "Publix",
-    "date": "12/23/2022",
-    "category": "Groceries",
-    "description": "Bought food for the week"
+    "amount": 150.32,
+    "name": "UFStore",
+    "date": "12/25/2022",
+    "category": "School",
+    "description": "Textbook"
 }

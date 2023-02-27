@@ -154,11 +154,11 @@ func TestSignUp_DuplicateEmail(t *testing.T) {
     "password": "test-password"}`)
     req, _ := http.NewRequest("POST", "/api/signup", bytes.NewBuffer(payload))
     response := executeRequest(req)
-    
+
     a := assert.New(t)
     a.Equal(http.MethodPost, req.Method, "HTTP request method error")
     a.Equal(http.StatusOK, response.Code, "HTTP request status code error")
-    
+
     payload = []byte(`{"firstName": "test-firstName2",
     "lastName": "test-lastName2",
     "email": "test-email",
@@ -244,7 +244,7 @@ func TestGetUser_LoggedOut(t *testing.T) {
 		Unparsed:   []string{},
 	})
     response := executeRequest(req)
-    
+
     a := assert.New(t)
     a.Equal(http.MethodGet, req.Method, "HTTP request method error")
 	a.Equal(http.StatusUnauthorized, response.Code, "HTTP request status code error")
@@ -266,7 +266,7 @@ func TestGetUser_OK(t *testing.T) {
 	req, _ = http.NewRequest("GET", "/api/user", nil)
 	req.AddCookie(response.Result().Cookies()[0])
     response = executeRequest(req)
-    
+
     a := assert.New(t)
     a.Equal(http.MethodGet, req.Method, "HTTP request method error")
 	a.Equal(http.StatusOK, response.Code, "HTTP request status code error")
@@ -299,7 +299,7 @@ func TestLogout(t *testing.T) {
 	a.NotEmpty(response.Result().Cookies())
 	a.Empty(response.Result().Cookies()[0].Value)
 	a.Equal(http.MethodPost, req.Method, "HTTP request method error")
-	a.Equal(http.StatusOK, response.Code, "HTTP request status code error")	
+	a.Equal(http.StatusOK, response.Code, "HTTP request status code error")
 }
 
 func TestCreateTransaction(t *testing.T) {
@@ -315,7 +315,7 @@ func TestCreateTransaction(t *testing.T) {
     payload = []byte(`{"email": "test-email", "password": "test-password"}`)
     req, _ = http.NewRequest("POST", "/api/login", bytes.NewBuffer(payload))
     response := executeRequest(req)
-	
+
 	payload = []byte(`{"amount": 100, "name": "test-name", "date": "test-date", "category": "test-category", "description": "test-description"}`)
 
 	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
@@ -359,14 +359,14 @@ func TestGetTransaction(t *testing.T) {
     payload = []byte(`{"email": "test-email", "password": "test-password"}`)
     req, _ = http.NewRequest("POST", "/api/login", bytes.NewBuffer(payload))
     response := executeRequest(req)
-	
+
 	payload = []byte(`{"amount": 100, "name": "test-name", "date": "test-date", "category": "test-category", "description": "test-description"}`)
 
 	cookie := response.Result().Cookies()[0]
 
 	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
 	req.AddCookie(cookie)
-    response = executeRequest(req)
+  	response = executeRequest(req)
 
 	payload = []byte(`{"amount": 200, "name": "test-name2", "date": "test-date2", "category": "test-category2", "description": "test-description2"}`)
 
