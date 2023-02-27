@@ -24,7 +24,7 @@ export class TransactionService {
     return from(editTransaction(transactionRequest));
   }
 
-  deleteTransaction(transactionIndex: number): Observable<GenericResponse> {
-    return from(deleteTransaction(transactionIndex));
+  deleteTransaction(transactionId: number): Observable<GenericResponse> {
+    return from(deleteTransaction(transactionId));
   }
 }

@@ -4,7 +4,7 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { TransactionService } from 'src/app/transaction.service';
-import { Transaction } from 'src/types/transaction-system';
+import { EditTransactionRequest, Transaction } from 'src/types/transaction-system';
 import { MatDialog } from '@angular/material/dialog'
 import { TransactionsModalComponent } from '../transactions-modal/transactions-modal.component';
 
@@ -95,55 +95,42 @@ export class DashTransactionsComponent {
       dialogRef.afterClosed().subscribe(dialogRes => {
         // If the dialog has returned data...
         if (dialogRes) {
-          // Get the transactions from the database...
-          this.transactionService.getTransactions()
-            .subscribe((getRes) => {
-              if (!getRes.err) {
-                // Find the transaction to edit...
-                let targetIndex = getRes.data.findIndex((elem) => elem.date == transaction.date);
-                // Edit that transaction...
-                this.transactionService.editTransaction({
-                  index: targetIndex,
-                  data: dialogRes.data
-                })
-                  .subscribe(_ => {
-                    // ...Then update the table
-                    this.transactionData.data.splice(getRes.data.findIndex((elem) => elem.date == transaction.date), 1, dialogRes.data)
-                    this.transactionData = new MatTableDataSource([...this.transactionData.data]);
-                    this.transactionData.sort = this.sort;
-                    this.table.renderRows();
-                    this.isChanging = false;
-                  });
-              }
-            })
-        }
-        console.log('The dialog was closed');
-        // console.log(dialogRes.data);
-      });
-    }
-  }
-
-  goDeleteTransaction(date: string) {
-
-    if (!this.isChanging) {
-      this.isChanging = true;
-      // Get the transactions from the database...
-      this.transactionService.getTransactions()
-        .subscribe(res => {
-          if (!res.err) {
-            // Delete the transaction from the database...
-            this.transactionService.deleteTransaction(res.data.findIndex((elem) => elem.date == date))
-              .subscribe(_ => {
-                // ...Then update the table to show the new data
-                this.transactionData.data.splice(res.data.findIndex((elem) => elem.date == date), 1)
+          const req: EditTransactionRequest = {
+            data: dialogRes.data
+          }
+          this.transactionService.editTransaction(req)
+            .subscribe(res => {
+              if (!res.err) {
+                const targetIndex = this.transactionData.data.findIndex((elem) => elem.transactionId == transaction.transactionId);
+                this.transactionData.data.splice(targetIndex, 1, dialogRes.data);
                 this.transactionData = new MatTableDataSource([...this.transactionData.data]);
                 this.transactionData.sort = this.sort;
                 this.table.renderRows();
                 this.isChanging = false;
-              });
+              }
+            });
+        }
+        console.log('The dialog was closed');
+        console.log(dialogRes);
+      });
+    }
+  }
 
+  goDeleteTransaction(transaction: Transaction) {
+
+    if (!this.isChanging) {
+      this.isChanging = true;
+      this.transactionService.deleteTransaction(transaction.transactionId!)
+        .subscribe(res => {
+          if (!res.err) {
+            const targetIndex = this.transactionData.data.findIndex((elem) => elem.transactionId == transaction.transactionId);
+            this.transactionData.data.splice(targetIndex, 1);
+            this.transactionData = new MatTableDataSource([...this.transactionData.data]);
+            this.transactionData.sort = this.sort;
+            this.table.renderRows();
+            this.isChanging = false;
           }
-        })
+        });
     }
   }
 

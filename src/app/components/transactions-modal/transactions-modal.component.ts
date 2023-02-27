@@ -17,11 +17,11 @@ interface TransactionModalData {
 export class TransactionsModalComponent {
 
   transactionForm: FormGroup;
+  transactionId?: number;
   mode: "Add" | "Edit";
 
   constructor(
-    private transactionService: TransactionService,
-    public dialogRef: MatDialogRef<TransactionsModalComponent>,
+    public dialogRef: MatDialogRef<TransactionsModalComponent, CreateTransactionRequest>,
     @Inject(MAT_DIALOG_DATA) public data: TransactionModalData,
   ) {
     this.transactionForm = new FormGroup({
@@ -31,6 +31,8 @@ export class TransactionsModalComponent {
       category: new FormControl(data.data.category),
       description: new FormControl(data.data.description)
     });
+    // If mode is "Add", then transactionId will be undefined; this is intentional
+    this.transactionId = data.data.transactionId;
     this.mode = data.mode;
   } //data b/w data and source
 
@@ -40,6 +42,7 @@ export class TransactionsModalComponent {
 
       const transactionRequest: CreateTransactionRequest = {
         data: {
+          transactionId: this.transactionId,
           name: this.transactionForm.get("name")?.value,
           amount: this.transactionForm.get("amount")?.value,
           date: (this.transactionForm.get("date")?.value as Date).toISOString(),
