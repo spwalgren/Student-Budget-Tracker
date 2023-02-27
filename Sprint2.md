@@ -53,7 +53,7 @@ This is a handler function that checks the user's email and password, and create
 w http.ResponseWriter - an interface that allows the handler to construct an HTTP response.  
 r *http.Request - a pointer to a data structure that represents the client HTTP request.  
   
-**Function Flow**
+**Function Behavior**
 If the HTTP request method is OPTIONS, it sets the HTTP status code of the response to 200 (OK) and returns.  
 It decodes the request body into a new instance of the UserLoginInfo model.  
 It searches the database for a user record with the same email as the one provided in the request.  
@@ -123,3 +123,58 @@ It retrieves the user information from the database using the user ID from the t
 It compares the user ID in the toDelete with the user ID from the token to verify that the requesting user is authorized to delete the transaction.
 It deletes the transaction information from the database that matches the user ID and transaction ID in the toDelete variable.
 It sets the HTTP status code of the response to 200 (OK).
+
+# database/setup.go
+The database package provides functionality to interact with a MySQL database using the GORM library. It includes an Initialize function that establishes a connection to the database and automigrates the UserInfo and Transaction models. 
+
+### Initialize(dbname string)
+This function initializes a connection to the MySQL database and automigrates the models. It takes a dbname string parameter to specify the name of the database to connect to. It sets the package-level variable DB to the connected database.
+
+**Parameters:**
+dbname string - The name of the MySQL database to connect to.
+
+# models/
+This provides the data model for the financial and user information in our budget-tracker application. 
+
+## models/transactions.go
+**Transaction struct**
+This struct contains the following fields:
+
+UserID - The ID of the user who performed the transaction.
+TransactionID - The unique ID of the transaction.
+Amount - The amount of the transaction.
+Name - The name of the transaction.
+Date - The date the transaction was performed.
+Category - The category of the transaction.
+Description - The description of the transaction.
+
+## models/users.go
+**UserInfo Struct**
+The UserInfo struct represents user information and contains the following fields:
+
+ID - The unique ID of the user.
+FirstName - The first name of the user.
+LastName - The last name of the user.
+Email - The email address of the user. It has a unique constraint in the database.
+Password - The password of the user.
+
+
+**UserReturnInfo Struct**
+The UserReturnInfo struct represents user information to be returned to the client from the backend after a successful login and contains the following fields:
+
+ID - The unique ID of the user.
+FirstName - The first name of the user.
+LastName - The last name of the user.
+Email - The email address of the user. It has a unique constraint in the database.
+
+**UserLoginInfo Struct**
+The UserLoginInfo struct represents user login information to be used when a user is trying to login to the application and contains the following fields:
+
+Email - The email address of the user.
+Password - The password of the user.
+
+# main.go
+The main package is the entry point for the budget tracker application. It initializes the server and sets up the routing using the Gorilla mux router. It also sets up the Cross-Origin Resource Sharing (CORS) middleware using the rs/cors package to enable client-side applications to access the server.
+
+**Functions**
+main() - This function is the entry point for the application. It creates a new router using the Gorilla mux package, initializes the database connection, and sets up the necessary routes for the application. It also sets up CORS middleware using the rs/cors package to allow cross-origin requests from the specified origin. Finally, it starts the server on port 8080 and logs any errors that occur.
