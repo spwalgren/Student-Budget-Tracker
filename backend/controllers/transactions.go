@@ -5,8 +5,9 @@ import (
 	"budget-tracker/models"
 	"encoding/json"
 	"net/http"
-
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gorilla/mux"
+	"strconv"
 )
 
 func CreateTransaction(w http.ResponseWriter, r *http.Request) {
@@ -119,8 +120,9 @@ func UpdateTransaction(w http.ResponseWriter, r *http.Request) {
 func DeleteTransaction(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
 
+	vars := mux.Vars(r)
+
 	var toDelete models.Transaction
-	_ = json.NewDecoder(r.Body).Decode(&toDelete)
 
 	// UserID and TransactionID will be in the request. Can setup a check to make sure the
 	// requesting user matches with the UserID
@@ -146,12 +148,15 @@ func DeleteTransaction(w http.ResponseWriter, r *http.Request) {
 	var user models.UserInfo
 
 	// If the user ID's don't match, the intruder shouldn't be in here anyways
+	deletingUser, _ := strconv.Atoi(vars["userId"])
+	deletingUserId := uint(deletingUser)
+	temp, _ := strconv.Atoi(vars["transactionId"])
+	deletingTransactionId := uint(temp)
 	database.DB.First(&user, claims.Issuer)
-	if user.ID != toDelete.UserID {
+	if user.ID != deletingUserId {
 		w.WriteHeader(http.StatusForbidden)
 	}
 
 	// deletes entry based on the userID and the transactionID
- database.DB.Where(map[string]interface{}{"user_id": toDelete.UserID, "transactionId": toDelete.TransactionID}).Delete(toDelete)
-
+ database.DB.Where(map[string]interface{}{"user_id": deletingUserId, "transactionId": deletingTransactionId}).Delete(toDelete)
 }

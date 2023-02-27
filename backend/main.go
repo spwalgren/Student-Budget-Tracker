@@ -14,7 +14,7 @@ func main() {
 
 	corsObj := cors.New(cors.Options{
 		AllowedOrigins:     []string{"http://localhost:4200"},
-		AllowedMethods:     []string{"GET", "OPTIONS", "POST"},
+		AllowedMethods:     []string{"GET", "OPTIONS", "POST", "PUT", "DELETE"},
 		AllowedHeaders:     []string{"Accept", "Content-Type", "Content-Length", "Accept-Encoding", "Authorization", "X-CSRF-Token", "Origin"},
 		OptionsPassthrough: true,
 		AllowCredentials:   true,
@@ -31,7 +31,7 @@ func main() {
 	r.HandleFunc("/api/transaction", controllers.CreateTransaction).Methods(http.MethodPost, http.MethodOptions)
 	r.HandleFunc("/api/transaction", controllers.GetTransactions).Methods(http.MethodGet, http.MethodOptions)
 	r.HandleFunc("/api/transaction", controllers.UpdateTransaction).Methods(http.MethodOptions, http.MethodPut)
-	r.HandleFunc("/api/transaction", controllers.DeleteTransaction).Methods(http.MethodOptions, http.MethodDelete)
+	r.HandleFunc("/api/transaction/{userId}/{transactionId}", controllers.DeleteTransaction).Methods(http.MethodOptions, http.MethodDelete)
 
 	log.Fatal(http.ListenAndServe(":8080", corsObj.Handler(r)))
 }
