@@ -5,17 +5,26 @@ import (
 	"budget-tracker/models"
 	"encoding/json"
 	"net/http"
+	"strconv"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
-	"strconv"
 )
 
 func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
 
-	var newTransaction models.Transaction
-
-	_ = json.NewDecoder(r.Body).Decode(&newTransaction)
+	var newTransactionData models.CreateTransactionRequest
+	_ = json.NewDecoder(r.Body).Decode(&newTransactionData)
+	newTransaction := models.Transaction{
+		UserID:        0,
+		TransactionID: 0,
+		Amount:        newTransactionData.Data.Amount,
+		Name:          newTransactionData.Data.Name,
+		Date:          newTransactionData.Data.Date,
+		Category:      newTransactionData.Data.Category,
+		Description:   newTransactionData.Data.Description,
+	}
 
 	// Retrieve transactions for user. If none exist, create one. Retrieve the current cookie to get the user info
 	cookie, err := r.Cookie("jtw")
@@ -41,7 +50,10 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	database.DB.First(&user, claims.Issuer)
 	newTransaction.UserID = user.ID
 	database.DB.Create(&newTransaction)
-	json.NewEncoder(w).Encode(newTransaction)
+	json.NewEncoder(w).Encode(models.CreateTransactionResponse{
+		UserID:newTransaction.UserID,
+		TransactionID: newTransaction.TransactionID,
+	})
 
 }
 
@@ -78,7 +90,9 @@ func UpdateTransaction(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
 
 	var updateTransaction models.Transaction
-	_ = json.NewDecoder(r.Body).Decode(&updateTransaction)
+	var updateTransactionData models.UpdateTransactionRequest
+	_ = json.NewDecoder(r.Body).Decode(&updateTransactionData)
+	updateTransaction = updateTransactionData.Data
 
 
 	// get userID to get the list of transactions from current user
@@ -111,7 +125,10 @@ func UpdateTransaction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Now using the unique transactionID, get the specific transaction that needs to be updated.
-	database.DB.First(&expenses, updateTransaction.TransactionID)
+	if err := database.DB.First(&expenses, updateTransaction.TransactionID).Error; err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	expenses = updateTransaction
 	database.DB.Save(expenses)
 	w.WriteHeader(http.StatusOK)
