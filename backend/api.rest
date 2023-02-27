@@ -124,3 +124,31 @@ content-type: application/json
 ###
 GET http://{{host}}/api/transaction
 content-type: application/json
+
+###
+PUT http://{{host}}/api/transaction
+content-type: application/json
+
+{
+    "userId": 35,
+    "transactionId": 7,
+    "amount": 1200,
+    "name": "Publix",
+    "date": "12/23/2022",
+    "category": "Groceries",
+    "description": "Bought food for the week"
+}
+
+###
+DELETE http://{{host}}/api/transaction
+content-type: application/json
+
+{
+    "userId": 35,
+    "transactionId": 7,
+    "amount": 1200,
+    "name": "Publix",
+    "date": "12/23/2022",
+    "category": "Groceries",
+    "description": "Bought food for the week"
+}
