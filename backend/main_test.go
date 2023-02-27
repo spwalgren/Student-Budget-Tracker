@@ -33,6 +33,8 @@ func TestMain(m *testing.M) {
 	Router.HandleFunc("/api/logout", controllers.LogoutHandler).Methods(http.MethodPost, http.MethodOptions)
 	Router.HandleFunc("/api/transaction", controllers.CreateTransaction).Methods(http.MethodPost, http.MethodOptions)
 	Router.HandleFunc("/api/transaction", controllers.GetTransactions).Methods(http.MethodGet, http.MethodOptions)
+	Router.HandleFunc("/api/transaction", controllers.UpdateTransaction).Methods(http.MethodOptions, http.MethodPut)
+	Router.HandleFunc("/api/transaction/{userId}/{transactionId}", controllers.DeleteTransaction).Methods(http.MethodOptions, http.MethodDelete)
 
     code := m.Run()
     clearUserTable()
@@ -49,6 +51,7 @@ func clearUserTable() {
 
 func clearTransactionTable() {
     database.DB.Exec("DELETE FROM transactions")
+	database.DB.Exec("ALTER TABLE transactions AUTO_INCREMENT = 1")
 }
 
 func executeRequest(req *http.Request) *httptest.ResponseRecorder {
@@ -316,7 +319,7 @@ func TestCreateTransaction(t *testing.T) {
     req, _ = http.NewRequest("POST", "/api/login", bytes.NewBuffer(payload))
     response := executeRequest(req)
 
-	payload = []byte(`{"amount": 100, "name": "test-name", "date": "test-date", "category": "test-category", "description": "test-description"}`)
+	payload = []byte(`{"data":{"amount": 100, "name": "test-name", "date": "test-date", "category": "test-category", "description": "test-description"}}`)
 
 	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
 	req.AddCookie(response.Result().Cookies()[0])
@@ -331,18 +334,14 @@ func TestCreateTransaction(t *testing.T) {
 	if err != nil {
 		a.Error(err)
 	}
-    actual := models.Transaction{}
+    actual := models.CreateTransactionResponse{}
 	if err := json.Unmarshal(body, &actual); err != nil {
 		a.Error(err)
 	}
 
-	expected := models.Transaction{
+	expected := models.CreateTransactionResponse{
 		UserID:      1,
-		Amount:      100,
-		Name:        "test-name",
-		Date:        "test-date",
-		Category:    "test-category",
-		Description: "test-description",
+		TransactionID: 1,
 	}
 	a.Equal(expected, actual)
 }
@@ -360,19 +359,19 @@ func TestGetTransaction(t *testing.T) {
     req, _ = http.NewRequest("POST", "/api/login", bytes.NewBuffer(payload))
     response := executeRequest(req)
 
-	payload = []byte(`{"amount": 100, "name": "test-name", "date": "test-date", "category": "test-category", "description": "test-description"}`)
+	payload = []byte(`{"data":{"amount": 100, "name": "test-name", "date": "test-date", "category": "test-category", "description": "test-description"}}`)
 
 	cookie := response.Result().Cookies()[0]
 
 	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
 	req.AddCookie(cookie)
-  	response = executeRequest(req)
+  	executeRequest(req)
 
-	payload = []byte(`{"amount": 200, "name": "test-name2", "date": "test-date2", "category": "test-category2", "description": "test-description2"}`)
+	payload = []byte(`{"data":{"amount": 200, "name": "test-name2", "date": "test-date2", "category": "test-category2", "description": "test-description2"}}`)
 
 	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
 	req.AddCookie(cookie)
-    response = executeRequest(req)
+    executeRequest(req)
 
 	req, _ = http.NewRequest("GET", "/api/transaction", nil)
 	req.AddCookie(cookie)
@@ -393,17 +392,265 @@ func TestGetTransaction(t *testing.T) {
 	}
 
 	expected := []models.Transaction{}
-	expected = append(expected, models.Transaction{UserID: 1,
+	expected = append(expected, models.Transaction{
+		UserID: 1, 
+		TransactionID: 1,
 		Amount:      100,
 		Name:        "test-name",
 		Date:        "test-date",
 		Category:    "test-category",
 		Description: "test-description",})
-	expected = append(expected, models.Transaction{UserID: 1,
+	expected = append(expected, models.Transaction{
+		UserID: 1,
+		TransactionID: 2,
 		Amount:      200,
 		Name:        "test-name2",
 		Date:        "test-date2",
 		Category:    "test-category2",
 		Description: "test-description2",})
 	a.Equal(expected, actual)
+}
+func TestUpdateTransaction_OK(t *testing.T) {
+	clearTransactionTable()
+
+	payload := []byte(`{"firstName": "test-firstName",
+    "lastName": "test-lastName",
+    "email": "test-email",
+    "password": "test-password"}`)
+    req, _ := http.NewRequest("POST", "/api/signup", bytes.NewBuffer(payload))
+    executeRequest(req)
+
+    payload = []byte(`{"email": "test-email", "password": "test-password"}`)
+    req, _ = http.NewRequest("POST", "/api/login", bytes.NewBuffer(payload))
+    response := executeRequest(req)
+
+	payload = []byte(`{"data":{"amount": 100, "name": "test-name", "date": "test-date", "category": "test-category", "description": "test-description"}}`)
+
+	cookie := response.Result().Cookies()[0]
+
+	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+  	executeRequest(req)
+
+	payload = []byte(`{"data":{"amount": 200, "name": "test-name2", "date": "test-date2", "category": "test-category2", "description": "test-description2"}}`)
+
+	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    executeRequest(req)
+
+	payload = []byte(`{"data":{"userId":1, "transactionId": 1,"amount": 300, "name": "test-name-updated", "date": "test-date-updated", "category": "test-category-updated", "description": "test-description-updated"}}`)
+
+	req, _ = http.NewRequest("PUT", "/api/transaction", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    response = executeRequest(req)
+
+	a := assert.New(t)
+	a.Equal(http.MethodPut, req.Method, "HTTP request method error")
+	a.Equal(http.StatusOK, response.Code, "HTTP request status code error")
+
+	req, _ = http.NewRequest("GET", "/api/transaction", nil)
+	req.AddCookie(cookie)
+    response = executeRequest(req)
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		a.Error(err)
+	}
+    actual := []models.Transaction{}
+	if err := json.Unmarshal(body, &actual); err != nil {
+		a.Error(err)
+	}
+
+	expected := []models.Transaction{}
+	expected = append(expected, models.Transaction{
+		UserID: 1, 
+		TransactionID: 1,
+		Amount:      300,
+		Name:        "test-name-updated",
+		Date:        "test-date-updated",
+		Category:    "test-category-updated",
+		Description: "test-description-updated",})
+	expected = append(expected, models.Transaction{
+		UserID: 1,
+		TransactionID: 2,
+		Amount:      200,
+		Name:        "test-name2",
+		Date:        "test-date2",
+		Category:    "test-category2",
+		Description: "test-description2",})
+	a.Equal(expected, actual)
+}
+func TestUpdateTransaction_WrongTransactionID(t *testing.T) {
+	clearTransactionTable()
+
+	payload := []byte(`{"firstName": "test-firstName",
+    "lastName": "test-lastName",
+    "email": "test-email",
+    "password": "test-password"}`)
+    req, _ := http.NewRequest("POST", "/api/signup", bytes.NewBuffer(payload))
+    executeRequest(req)
+
+    payload = []byte(`{"email": "test-email", "password": "test-password"}`)
+    req, _ = http.NewRequest("POST", "/api/login", bytes.NewBuffer(payload))
+    response := executeRequest(req)
+
+	payload = []byte(`{"data":{"amount": 100, "name": "test-name", "date": "test-date", "category": "test-category", "description": "test-description"}}`)
+
+	cookie := response.Result().Cookies()[0]
+
+	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+  	executeRequest(req)
+
+	payload = []byte(`{"data":{"amount": 200, "name": "test-name2", "date": "test-date2", "category": "test-category2", "description": "test-description2"}}`)
+
+	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    executeRequest(req)
+
+	payload = []byte(`{"data":{"userId":1, "transactionId": 4,"amount": 300, "name": "test-name-updated", "date": "test-date-updated", "category": "test-category-updated", "description": "test-description-updated"}}`)
+
+	req, _ = http.NewRequest("PUT", "/api/transaction", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    response = executeRequest(req)
+
+	a := assert.New(t)
+	a.Equal(http.MethodPut, req.Method, "HTTP request method error")
+	a.Equal(http.StatusBadRequest, response.Code, "HTTP request status code error")
+}
+
+func TestDeleteTransaction_OK(t *testing.T) {
+	clearTransactionTable()
+
+	payload := []byte(`{"firstName": "test-firstName",
+    "lastName": "test-lastName",
+    "email": "test-email",
+    "password": "test-password"}`)
+    req, _ := http.NewRequest("POST", "/api/signup", bytes.NewBuffer(payload))
+    executeRequest(req)
+
+    payload = []byte(`{"email": "test-email", "password": "test-password"}`)
+    req, _ = http.NewRequest("POST", "/api/login", bytes.NewBuffer(payload))
+    response := executeRequest(req)
+
+	payload = []byte(`{"data":{"amount": 100, "name": "test-name", "date": "test-date", "category": "test-category", "description": "test-description"}}`)
+
+	cookie := response.Result().Cookies()[0]
+
+	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+  	executeRequest(req)
+
+	payload = []byte(`{"data":{"amount": 200, "name": "test-name2", "date": "test-date2", "category": "test-category2", "description": "test-description2"}}`)
+
+	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    executeRequest(req)
+
+	req, _ = http.NewRequest("DELETE", "/api/transaction/1/1", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    response =executeRequest(req)
+
+	a := assert.New(t)
+
+	a.Equal(http.MethodDelete, req.Method, "HTTP request method error")
+	a.Equal(http.StatusOK, response.Code, "HTTP request status code error")
+
+	req, _ = http.NewRequest("GET", "/api/transaction", nil)
+	req.AddCookie(cookie)
+    response = executeRequest(req)
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		a.Error(err)
+	}
+    actual := []models.Transaction{}
+	if err := json.Unmarshal(body, &actual); err != nil {
+		a.Error(err)
+	}
+
+	expected := []models.Transaction{}
+	expected = append(expected, models.Transaction{
+		UserID: 1,
+		TransactionID: 2,
+		Amount:      200,
+		Name:        "test-name2",
+		Date:        "test-date2",
+		Category:    "test-category2",
+		Description: "test-description2",})
+	a.Equal(expected, actual)
+}
+func TestDeleteTransaction_WrongTransactionID(t *testing.T) {
+	clearTransactionTable()
+
+	payload := []byte(`{"firstName": "test-firstName",
+    "lastName": "test-lastName",
+    "email": "test-email",
+    "password": "test-password"}`)
+    req, _ := http.NewRequest("POST", "/api/signup", bytes.NewBuffer(payload))
+    executeRequest(req)
+
+    payload = []byte(`{"email": "test-email", "password": "test-password"}`)
+    req, _ = http.NewRequest("POST", "/api/login", bytes.NewBuffer(payload))
+    response := executeRequest(req)
+
+	payload = []byte(`{"data":{"amount": 100, "name": "test-name", "date": "test-date", "category": "test-category", "description": "test-description"}}`)
+
+	cookie := response.Result().Cookies()[0]
+
+	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+  	executeRequest(req)
+
+	payload = []byte(`{"data":{"amount": 200, "name": "test-name2", "date": "test-date2", "category": "test-category2", "description": "test-description2"}}`)
+
+	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    executeRequest(req)
+
+	req, _ = http.NewRequest("DELETE", "/api/transaction/1/5", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    response =executeRequest(req)
+
+	a := assert.New(t)
+
+	a.Equal(http.MethodDelete, req.Method, "HTTP request method error")
+	a.Equal(http.StatusBadRequest, response.Code, "HTTP request status code error")
+}
+func TestDeleteTransaction_WrongUserID(t *testing.T) {
+	clearTransactionTable()
+
+	payload := []byte(`{"firstName": "test-firstName",
+    "lastName": "test-lastName",
+    "email": "test-email",
+    "password": "test-password"}`)
+    req, _ := http.NewRequest("POST", "/api/signup", bytes.NewBuffer(payload))
+    executeRequest(req)
+
+    payload = []byte(`{"email": "test-email", "password": "test-password"}`)
+    req, _ = http.NewRequest("POST", "/api/login", bytes.NewBuffer(payload))
+    response := executeRequest(req)
+
+	payload = []byte(`{"data":{"amount": 100, "name": "test-name", "date": "test-date", "category": "test-category", "description": "test-description"}}`)
+
+	cookie := response.Result().Cookies()[0]
+
+	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+  	executeRequest(req)
+
+	payload = []byte(`{"data":{"amount": 200, "name": "test-name2", "date": "test-date2", "category": "test-category2", "description": "test-description2"}}`)
+
+	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    executeRequest(req)
+
+	req, _ = http.NewRequest("DELETE", "/api/transaction/3/1", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    response =executeRequest(req)
+
+	a := assert.New(t)
+
+	a.Equal(http.MethodDelete, req.Method, "HTTP request method error")
+	a.Equal(http.StatusForbidden, response.Code, "HTTP request status code error")
 }

@@ -142,7 +142,7 @@ content-type: application/json
 }
 
 ###
-DELETE http://{{host}}/api/transaction/35/34
+DELETE http://{{host}}/api/transaction/35/35
 content-type: application/json
 
 ###
