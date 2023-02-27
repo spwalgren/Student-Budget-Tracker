@@ -1,3 +1,9 @@
+# Work Completed in Sprint 2
+
+# Unit/Cypress Tests for Frontend
+
+# Unit Tests for Backend
+
 # Documentation
 ## controllers/user.go
 ### GetUsers()
