@@ -77,7 +77,7 @@ export class DashTransactionsComponent {
         this.table.renderRows();
       }
       console.log('The dialog was closed');
-      console.log(dialogRes.data);
+      // console.log(dialogRes.data);
     });
   }
 
@@ -118,7 +118,7 @@ export class DashTransactionsComponent {
             })
         }
         console.log('The dialog was closed');
-        console.log(dialogRes.data);
+        // console.log(dialogRes.data);
       });
     }
   }
