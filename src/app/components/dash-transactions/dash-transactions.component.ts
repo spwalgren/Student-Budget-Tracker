@@ -28,7 +28,9 @@ export class DashTransactionsComponent {
   expandedRow: Transaction | null = null;
   isChanging: boolean = false;
 
-  constructor(private transactionService: TransactionService, public dialog: MatDialog) {
+  constructor(
+    public transactionService: TransactionService,
+    public dialog: MatDialog) {
     this.transactionData = new MatTableDataSource<Transaction>([]);
   }
 
