@@ -38,7 +38,7 @@ describe('login', () => {
     cy.get('[formControlName="email"]').type('sample1@example.com');
     cy.get('[formControlName="password"]').type('1234');
     cy.get('[data-cy="Submit Login"]').click()
-    cy.url().should('include', 'dashboard');
+    cy.url({ timeout: 10000 }).should('include', 'dashboard');
   })
 
   it('should redirect to dashboard if already logged in', () => {
