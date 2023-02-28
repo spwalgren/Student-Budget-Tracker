@@ -31,6 +31,7 @@ describe('DashHomeComponent', () => {
       providers: [Router, { provide: LoginService, useValue: mockLoginService }]
     }).then((wrapper) => {
       cy.stub(wrapper.component, 'goLogOut').as('goLogOut');
+      return cy.wrap(wrapper).as('angular');
     })
   });
 
