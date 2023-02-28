@@ -1,8 +1,9 @@
 import { GenericResponse } from "./types/api-system";
-import { CreateTransactionRequest, EditTransactionRequest, GetTransactionsResponse, Transaction } from "./types/transaction-system";
+import { CreateTransactionRequest, UpdateTransactionRequest, GetTransactionsResponse, Transaction, CreateTransactionResponse } from "./types/transaction-system";
 
 const transactions: Transaction[] = [
   {
+    userId: 20,
     transactionId: 0,
     name: "Publix",
     amount: 30,
@@ -10,6 +11,7 @@ const transactions: Transaction[] = [
     category: "Groceries"
   },
   {
+    userId: 20,
     transactionId: 1,
     name: "Starbucks",
     amount: 8,
@@ -18,6 +20,7 @@ const transactions: Transaction[] = [
     description: "Also paid for my friend's drink."
   },
   {
+    userId: 20,
     transactionId: 2,
     name: "Bookstore",
     amount: 25,
@@ -26,6 +29,7 @@ const transactions: Transaction[] = [
     description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non aspernatur voluptatum fugit aut aliquam nam autem impedit facere voluptatem sit!"
   },
   {
+    userId: 20,
     transactionId: 3,
     name: "Bookstore",
     amount: 25,
@@ -34,6 +38,7 @@ const transactions: Transaction[] = [
     description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non aspernatur voluptatum fugit aut aliquam nam autem impedit facere voluptatem sit!"
   },
   {
+    userId: 20,
     transactionId: 4,
     name: "Bookstore",
     amount: 25,
@@ -42,6 +47,7 @@ const transactions: Transaction[] = [
     description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Non aspernatur voluptatum fugit aut aliquam nam autem impedit facere voluptatem sit!"
   },
   {
+    userId: 20,
     transactionId: 5,
     name: "Bookstore",
     amount: 25,
@@ -62,16 +68,24 @@ export async function getTransactions(): Promise<GetTransactionsResponse> {
   return { data: newTransactions };
 }
 
-export async function createTransaction(createTransactionRequest: CreateTransactionRequest): Promise<GenericResponse> {
-  createTransactionRequest.data.transactionId = transactions.length;
-  transactions.push(createTransactionRequest.data);
+export async function createTransaction(createTransactionRequest: CreateTransactionRequest): Promise<CreateTransactionResponse> {
+
+  let newId = transactions.length;
+  transactions.push({
+    userId: 20,
+    transactionId: newId,
+    ...createTransactionRequest.data
+  });
   await pause<void>(1000);
-  return {};
+  return {
+    userId: 20,
+    transactionId: newId
+  };
 }
 
-export async function editTransaction(editTransactionRequest: EditTransactionRequest): Promise<GenericResponse> {
-  const targetIndex = transactions.findIndex((elem) => elem.transactionId == editTransactionRequest.data.transactionId);
-  transactions[targetIndex] = editTransactionRequest.data;
+export async function updateTransaction(updateTransactionRequest: UpdateTransactionRequest): Promise<GenericResponse> {
+  const targetIndex = transactions.findIndex((elem) => elem.transactionId == updateTransactionRequest.data.transactionId);
+  transactions[targetIndex] = updateTransactionRequest.data;
   console.log(transactions);
   await pause<void>(1000);
   return {};

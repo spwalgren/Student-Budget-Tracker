@@ -2,10 +2,10 @@ import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TransactionService } from 'src/app/transaction.service';
-import { Transaction, CreateTransactionRequest } from 'src/types/transaction-system';
+import { CreateTransactionRequest, TransactionContent } from 'src/types/transaction-system';
 
 interface TransactionModalData {
-  data: Transaction,
+  data: TransactionContent,
   mode: "Add" | "Edit"
 }
 
@@ -31,8 +31,6 @@ export class TransactionsModalComponent {
       category: new FormControl(data.data.category),
       description: new FormControl(data.data.description)
     });
-    // If mode is "Add", then transactionId will be undefined; this is intentional
-    this.transactionId = data.data.transactionId;
     this.mode = data.mode;
   } //data b/w data and source
 
@@ -42,7 +40,6 @@ export class TransactionsModalComponent {
 
       const transactionRequest: CreateTransactionRequest = {
         data: {
-          transactionId: this.transactionId,
           name: this.transactionForm.get("name")?.value,
           amount: this.transactionForm.get("amount")?.value,
           date: (this.transactionForm.get("date")?.value as Date).toISOString(),

@@ -4,7 +4,7 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { TransactionService } from 'src/app/transaction.service';
-import { EditTransactionRequest, Transaction } from 'src/types/transaction-system';
+import { UpdateTransactionRequest, Transaction, CreateTransactionRequest } from 'src/types/transaction-system';
 import { MatDialog } from '@angular/material/dialog'
 import { TransactionsModalComponent } from '../transactions-modal/transactions-modal.component';
 
@@ -51,6 +51,13 @@ export class DashTransactionsComponent {
       })
   }
 
+  rerenderTable() {
+    this.transactionData = new MatTableDataSource([...this.transactionData.data]);
+    this.transactionData.sort = this.sort;
+    this.table.renderRows();
+    this.isChanging = false;
+  }
+
   openAddDialog(): void {
     // Open the dialog and pass it blank data
     let dialogRef = this.dialog.open(TransactionsModalComponent, {
@@ -68,15 +75,22 @@ export class DashTransactionsComponent {
 
     // When the dialog closes...
     dialogRef.afterClosed().subscribe(dialogRes => {
+      const dialogOutput = dialogRes as CreateTransactionRequest;
       // If the dialog returned data...
-      if (dialogRes) {
+      if (dialogOutput) {
         // Create the data in the database
-        this.transactionService.createTransaction(dialogRes)
-          .subscribe();
-        // Add the data to the table
-        this.transactionData = new MatTableDataSource([...this.transactionData.data, dialogRes.data]);
-        this.transactionData.sort = this.sort;
-        this.table.renderRows();
+        this.transactionService.createTransaction(dialogOutput)
+          .subscribe(res => {
+            // Add the data to the table
+            const newTransaction: Transaction = {
+              userId: res.userId,
+              transactionId: res.transactionId,
+              ...dialogOutput.data
+            }
+            this.transactionData = new MatTableDataSource([...this.transactionData.data, newTransaction]);
+            this.transactionData.sort = this.sort;
+            this.table.renderRows();
+          });
       }
       console.log('The dialog was closed');
       // console.log(dialogRes.data);
@@ -95,25 +109,26 @@ export class DashTransactionsComponent {
       });
       // When the dialog closes...
       dialogRef.afterClosed().subscribe(dialogRes => {
+        const dialogOutput = dialogRes as CreateTransactionRequest;
         // If the dialog has returned data...
-        if (dialogRes) {
-          const req: EditTransactionRequest = {
-            data: dialogRes.data
+        if (dialogOutput) {
+          const req: UpdateTransactionRequest = {
+            data: {
+              userId: transaction.userId,
+              transactionId: transaction.transactionId,
+              ...dialogOutput.data
+            }
           }
-          this.transactionService.editTransaction(req)
+          this.transactionService.updateTransaction(req)
             .subscribe(res => {
               if (!res.err) {
                 const targetIndex = this.transactionData.data.findIndex((elem) => elem.transactionId == transaction.transactionId);
-                this.transactionData.data.splice(targetIndex, 1, dialogRes.data);
-                this.transactionData = new MatTableDataSource([...this.transactionData.data]);
-                this.transactionData.sort = this.sort;
-                this.table.renderRows();
-                this.isChanging = false;
+                this.transactionData.data.splice(targetIndex, 1, req.data);
+                this.rerenderTable();
               }
             });
         }
         console.log('The dialog was closed');
-        console.log(dialogRes);
       });
     }
   }
@@ -122,15 +137,12 @@ export class DashTransactionsComponent {
 
     if (!this.isChanging) {
       this.isChanging = true;
-      this.transactionService.deleteTransaction(transaction.transactionId!)
+      this.transactionService.deleteTransaction(transaction.transactionId)
         .subscribe(res => {
           if (!res.err) {
             const targetIndex = this.transactionData.data.findIndex((elem) => elem.transactionId == transaction.transactionId);
             this.transactionData.data.splice(targetIndex, 1);
-            this.transactionData = new MatTableDataSource([...this.transactionData.data]);
-            this.transactionData.sort = this.sort;
-            this.table.renderRows();
-            this.isChanging = false;
+            this.rerenderTable();
           }
         });
     }
