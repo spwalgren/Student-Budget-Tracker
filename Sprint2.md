@@ -1,13 +1,60 @@
 # Work Completed in Sprint 2
 Main points
-<ul>
-  <li>Simplified CORS</li>
-  <li>Continued integrating backend with fronted</li>
-  <li>Wrote tests for backend and frontend</li>
-  <li>Created a CRUD system for the transactions input by the user</li>
-</ul>
 
-# Unit/Cypress Tests for Frontend
+- Simplified CORS
+- Continued integrating backend with frontend
+- Wrote tests for backend and frontend
+- Created a CRUD system for the transactions input by the user
+
+# Unit Tests for Frontend
+
+For unit testing, we opted to use Cypress. 
+The code for writing component tests in Cypress is less complex than Jasmine and is easier to understand. 
+Additionally, it offers useful tools such as running the tests in a browser and reviewing how Cypress sees the individual components.
+Seeing that the Cypress component tests accomplish the same tasks as the Jasmine tests, we believed it to be an acceptable substitute.
+
+## Test suites with several tests
+
+**components/alert** - Tests how it displays colors, text, and icons.
+
+**components/dash-transactions** - Tests if it has a table, has a button that opens a modal, can display entries from the mock service, and has a detail row that pops out.
+
+**components/page-not-found** - Tests if it has a button and if that button calls a function when clicked.
+
+**routes/dashboard** - Tests if it has visible buttons, if it calls a function immediately, and if it calls a function upon clicking log out.
+
+**routes/login** - Tests if it automatically attempts to login the user and tests various inputs to see what will permit the user to log in.
+
+**routes/signup** - Tests various inputs to see what will allow the user to login
+
+## Test suites with few tests
+
+The following tests work, but have few assertions. 
+This is because it may have features that haven't been implemented or planned yet.
+
+**components/dash-goals** - Tests if it can mount
+
+**components/dash-home** - Tests if it can mount
+
+**routes/landing** - Tests if it can mount
+
+## Tests that may not work
+
+**components/transactions-modal** - The transactions modal works very closely with the dash-transactions component and depends on the data contained in it.
+Thus, the transactions-modal may need to be tested with the dash-transactions component in order to work properly.
+
+# Cypress Tests for Frontend
+
+**login**
+- Runs several tests to see what permits the user to log in.
+- Logs the user in and tests if the user is directed to the dashboard.
+- Tests if going to the login page when already logged in will redirect the user.
+
+**dashboard**
+- Tests that it opens when the user is logged in.
+- Tests if the buttons link to different parts of the app.
+- Tests if the 404 page works.
+- Tests the logout button and checks that the user cannot easily log back in.
 
 # Unit Tests for Backend
 **TestMain()** - Entry point for main_test.go. Handles API requests made by each test case and initializes the database used for the tests.
