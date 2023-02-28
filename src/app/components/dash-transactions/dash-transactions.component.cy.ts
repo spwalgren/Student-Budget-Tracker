@@ -1,32 +1,29 @@
-import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog'
+import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { DashTransactionsComponent } from './dash-transactions.component'
 import { MatButtonModule } from '@angular/material/button'
 import { MatTableModule } from '@angular/material/table'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
-import { Observable, from, of } from 'rxjs'
+import { Observable, of } from 'rxjs'
 import { TransactionService } from 'src/app/transaction.service'
-import { TestBed } from '@angular/core/testing'
-import { EditTransactionRequest, GetTransactionsResponse } from 'src/types/transaction-system'
-import { GenericResponse } from 'src/types/api-system'
-import { getTransactions } from 'src/sample-transaction-data'
-import { getLocaleExtraDayPeriodRules } from '@angular/common'
+import { GetTransactionsResponse } from 'src/types/transaction-system'
 
 describe('DashTransactionsComponent', () => {
 
-  const service: Partial<TransactionService> = {
+  const mockTransactionService: Partial<TransactionService> = {
     getTransactions(): Observable<GetTransactionsResponse> {
       return of({
         data: [{
+          userId: 20,
           transactionId: 0,
           name: "Publix",
           amount: 30,
           date: new Date("2023-02-18").toISOString(),
-          category: "Groceries",
-          description: "Bought Pop Tarts"
+          category: "Groceries"
         },
         {
+          userId: 20,
           transactionId: 1,
           name: "Starbucks",
           amount: 8,
@@ -49,7 +46,7 @@ describe('DashTransactionsComponent', () => {
         MatIconModule,
         MatInputModule
       ],
-      providers: [MatDialog, { provide: TransactionService, useValue: service }]
+      providers: [MatDialog, { provide: TransactionService, useValue: mockTransactionService }]
     }).then((wrapper) => {
       cy.spy(wrapper.component, 'openAddDialog').as('openAdd');
       cy.spy(wrapper.component, 'openEditDialog').as('openEdit');
@@ -84,7 +81,7 @@ describe('DashTransactionsComponent', () => {
   it('should have a detail row that pops out', () => {
     cy.get('.transaction__detail-contents').should('not.be.visible');
     cy.get('td>button').eq(0).click();
-    cy.get('.transaction__detail-contents').should('be.visible').should('contain', 'Bought Pop Tarts');
+    cy.get('.transaction__detail-contents').should('be.visible').should('contain', '[none]');
     cy.get('td>button').eq(1).click();
     cy.get('.transaction__detail-contents').should('be.visible').should('contain', "Also paid for my friend's drink.");
   })
