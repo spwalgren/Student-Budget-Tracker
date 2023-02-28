@@ -1,8 +1,57 @@
 # Work Completed in Sprint 2
+Main points
+<ul>
+  <li>Simplified CORS</li>
+  <li>Continued integrating backend with fronted</li>
+  <li>Wrote tests for backend and frontend</li>
+  <li>Created a CRUD system for the transactions input by the user</li>
+</ul>
 
 # Unit/Cypress Tests for Frontend
 
 # Unit Tests for Backend
+**TestMain()** - Entry point for main_test.go. Handles API requests made by each test case and initializes the database used for the tests.
+
+**clearUserTable()** - Clears the UserTable in the database so tests can start with an empty database.
+
+**clearTransactionTable()** - Clears the TransactionTable in the database so test can start with an empty database
+
+**executeRequest()** - Handler for API executions in unit tests.
+
+**TestEmptyUsersTable()** 
+
+**TestGetUsers()**
+
+**TestSignup_OK()**
+
+**TestSignup_DuplicateEmail()** 
+
+**TestLogin_OK()**
+
+**TestLogin_EmailError()**
+
+**TestLogin_PasswordError()**
+
+**TestGetUser_LoggedOut()**
+
+**TestGetUser_OK()**
+
+**TestLogout()**
+
+**TestCreateTransaction()**
+
+**TestGetTransaction()**
+
+**TestUpdateTransaction_OK()**
+
+**TestUpdateTransaction_WrongTransactionID()**
+
+**TestDeleteTransaction_OK()**
+
+**TestDeleteTransaction_WrongTransactionID()**
+
+**TestDeleteTransaction_WrongUserID()**
+
 
 # Documentation
 ## controllers/user.go
