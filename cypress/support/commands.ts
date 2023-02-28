@@ -41,3 +41,17 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+declare namespace Cypress {
+  interface Chainable<Subject = any> {
+    logInUser(sampleUserNumber: number): typeof logInUser;
+  }
+}
+
+function logInUser(sampleUserNumber: number): void {
+  cy.visit('/login');
+  cy.get('[formControlName="email"]').type(`sample${sampleUserNumber}@example.com`);
+  cy.get('[formControlName="password"]').type('1234');
+  cy.get('[data-cy="Submit Login"]').click()
+}
+Cypress.Commands.add('logInUser', logInUser);

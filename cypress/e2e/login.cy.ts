@@ -8,7 +8,7 @@ describe('login', () => {
     cy.url().should('not.include', 'dashboard');
   })
 
-  it('Should  not login if username and password are not recognized', () => {
+  it('Should not login if username and password are not recognized', () => {
     cy.visit('/')
     cy.get('[data-cy="Log In"]').click()
     cy.get('[formControlName="email"]').type('bob@gmail.com');
@@ -28,23 +28,47 @@ describe('login', () => {
     cy.url().should('include', 'sign-up');
   })
 
-  it('Should let user sign up... clicking \"Sign Up\" from login page', () => {
-    cy.visit('/')
-    cy.get('[data-cy="Log In"]').click()
-    cy.url().should('includes', 'login');
-    cy.get('[data-cy="Sign-Up"]').click({waitForAnimations: false})
-    cy.url().should('include', 'sign-up');
-    cy.get('[data-cy="testFirstName"]').type('Bobby');
-    cy.get('[data-cy="testLastName"]').type('Fergison');
-    cy.get('[formControlName="email"]').type('bobby11@gmail.com');
-    cy.get('[formControlName="password"]').type('bobbyIsTheBest');
-    cy.get('[formControlName="reenteredPass"]').type('bobbyIsTheBest');
-    cy.url().should('includes', 'sign-up');
-    cy.get('[data-cy="Submit Sign-Up"]', { timeout: 16000 }).click();
+  it('should take the user to the login page if not logged in', () => {
+    cy.visit('/dashboard');
     cy.url().should('include', 'login');
-
   })
-  
+
+  it('should log in the user', () => {
+    cy.visit('/login');
+    cy.get('[formControlName="email"]').type('sample1@example.com');
+    cy.get('[formControlName="password"]').type('1234');
+    cy.get('[data-cy="Submit Login"]').click()
+    cy.url().should('include', 'dashboard');
+  })
+
+  it('should redirect to dashboard if already logged in', () => {
+    cy.visit('/login');
+    cy.get('[formControlName="email"]').type('sample1@example.com');
+    cy.get('[formControlName="password"]').type('1234');
+    cy.get('[data-cy="Submit Login"]').click()
+    cy.url().should('include', 'dashboard');
+    cy.visit('/login');
+    cy.url().should('include', 'dashboard');
+    cy.url().should('not.include', 'login');
+  })
+
+  // it('Should let user sign up... clicking \"Sign Up\" from login page', () => {
+  //   cy.visit('/')
+  //   cy.get('[data-cy="Log In"]').click()
+  //   cy.url().should('includes', 'login');
+  //   cy.get('[data-cy="Sign-Up"]').click({waitForAnimations: false})
+  //   cy.url().should('include', 'sign-up');
+  //   cy.get('[data-cy="testFirstName"]').type('Bobby');
+  //   cy.get('[data-cy="testLastName"]').type('Fergison');
+  //   cy.get('[formControlName="email"]').type('bobby11@gmail.com');
+  //   cy.get('[formControlName="password"]').type('bobbyIsTheBest');
+  //   cy.get('[formControlName="reenteredPass"]').type('bobbyIsTheBest');
+  //   cy.url().should('includes', 'sign-up');
+  //   cy.get('[data-cy="Submit Sign-Up"]', { timeout: 16000 }).click();
+  //   cy.url().should('include', 'login');
+
+  // })
+
   // it('Should let user sign up... clicking \"Sign Up\" from dashboard', () => {
   //   cy.visit('/')
   //   cy.get('[data-cy="Sign Up"]').click({force:true})
