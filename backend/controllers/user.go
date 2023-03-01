@@ -12,6 +12,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Origin", "http://localhost:4200")
 	var users []models.UserInfo
@@ -20,6 +21,12 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(users)
 }
 
+/*
+
+Creates a user by taking json information from the request, going through a duplicate check,
+then creates the user in the database with the given information
+
+*/
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
 
@@ -46,10 +53,14 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
- * Logout user by deleting the corresponding cookie
- */
+
+Logouts the current user by deleting the corresponding cookie
+
+*/
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
+	w.WriteHeader(http.StatusOK)
+
 	http.SetCookie(w, &http.Cookie{
 		Name:     "jtw",
 		Expires:  time.Now().Add(-24),
@@ -63,11 +74,13 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-*  Checks authentication by looking for user in database with matching email.
-*	If no user found, returns message "email not found", otherwise checks if password matches
-*	If password doesn't match, returns message "incorrect password"
-*	If password matches, it creates token, sets cookies to that token, and returns "success"
- */
+
+Checks authentication by looking for user in database with matching email.
+If no user found, returns message "email not found", otherwise checks if password matches
+If password doesn't match, returns message "incorrect password"
+If password matches, it creates token, sets cookies to that token, and returns "success"
+
+*/
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
 
@@ -124,11 +137,13 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-*	Gets jwt token from cookies
-*	Gets claims from token
-*	Claims issuer contains the logged in user ID
-*	Returns user based on user ID
- */
+
+Gets jwt token from cookies
+Gets claims from token
+Claims issuer contains the logged in user ID
+Returns user based on user ID
+
+*/
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
 
