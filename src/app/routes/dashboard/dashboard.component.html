@@ -5,8 +5,21 @@
   </div>
 </mat-toolbar>
 
-<main class="section main">
-  <div class="container main__container">
-    <h1>Welcome to your dashboard, {{ yourName }}</h1>
-  </div>
-</main>
+<mat-sidenav-container>
+  <mat-sidenav #sidenav mode="side" opened>
+    <div *ngFor="let entry of routes">
+      <button
+        [class.sidenav__button--selected]="isCurrentPage(entry[1])"
+        mat-button
+        routerLink="{{ entry[1] }}"
+      >
+        {{ entry[0] }}
+      </button>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <div class="dash-content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

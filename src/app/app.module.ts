@@ -11,13 +11,19 @@ import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { AppRoutingModule } from './app-routing.module';
 
 // Material modules
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 // Route components
 import { LandingComponent } from './routes/landing/landing.component';
@@ -28,6 +34,11 @@ import { SignUpComponent } from './routes/sign-up/sign-up.component';
 import { AppComponent } from './app.component';
 import { AlertComponent } from './components/alert/alert.component';
 import { DashboardComponent } from './routes/dashboard/dashboard.component';
+import { DashHomeComponent } from './components/dash-home/dash-home.component';
+import { DashTransactionsComponent } from './components/dash-transactions/dash-transactions.component';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { TransactionsModalComponent } from './components/transactions-modal/transactions-modal.component';
+import { DashGoalsComponent } from './components/dash-goals/dash-goals.component';
 
 // Services
 
@@ -39,6 +50,12 @@ import { DashboardComponent } from './routes/dashboard/dashboard.component';
     SignUpComponent,
     AlertComponent,
     DashboardComponent,
+    DashHomeComponent,
+    DashTransactionsComponent,
+    PageNotFoundComponent,
+    TransactionsModalComponent,
+    DashGoalsComponent, //added thus
+
   ],
   imports: [
     BrowserModule,
@@ -52,7 +69,14 @@ import { DashboardComponent } from './routes/dashboard/dashboard.component';
     MatCardModule,
     MatInputModule,
     MatButtonModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatSidenavModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatDialogModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   providers: [],
   bootstrap: [AppComponent]

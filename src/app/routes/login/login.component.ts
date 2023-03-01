@@ -22,7 +22,7 @@ export class LoginComponent {
     private router: Router
   ) {
     this.logInForm = new FormGroup({
-      email: new FormControl('', [Validators.required]),
+      email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required])
     });
   }
@@ -30,13 +30,15 @@ export class LoginComponent {
   ngOnInit() {
     this.loginService.getUserData()
       .subscribe(res => {
-        if (res.firstName) {
+        if (!res.err) {
           this.router.navigate(['/dashboard']);
         }
       })
   }
 
   goSubmitForm() {
+    console.log('I was called');
+
     if (!this.logInForm.invalid) {
       const logInRequest: LogInRequest = {
         email: this.logInForm.get('email')?.value.toLowerCase(),
@@ -47,7 +49,7 @@ export class LoginComponent {
       this.showAlert = false;
       this.loginService.logIn(logInRequest)
         .subscribe(res => {
-          if (res.Message == "success") {
+          if (!res.err) {
             this.showAlert = true;
             this.alertType = "success";
             this.alertMessage = "Success! Logging you in..."

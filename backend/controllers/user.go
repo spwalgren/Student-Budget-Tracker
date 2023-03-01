@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"budget-tracker/database"
 	"budget-tracker/models"
 	"encoding/json"
 	"net/http"
@@ -11,21 +12,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-/*
 
-Returns all user data in the database
-
-*/
-
-// func GetUsers(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Access-Control-Origin", "http://localhost:4200")
-// 	var users []models.UserInfo
-// 	models.DB.Find(&users)
-
-// 	w.WriteHeader(http.StatusOK)
-// 	json.NewEncoder(w).Encode(users)
-
-// }
+func GetUsers(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Origin", "http://localhost:4200")
+	var users []models.UserInfo
+	database.DB.Find(&users)
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(users)
+}
 
 /*
 
@@ -35,25 +29,27 @@ then creates the user in the database with the given information
 */
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
-	w.WriteHeader(http.StatusOK)
+
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
 
 	var newUser models.UserInfo
 	var users []models.UserInfo
-	models.DB.Find(&users)
+	database.DB.Find(&users)
 	_ = json.NewDecoder(r.Body).Decode(&newUser)
 
 	for _, entry := range users {
 		if entry.Email == newUser.Email {
 			w.WriteHeader(http.StatusConflict)
-			json.NewEncoder(w).Encode(models.Error{Message: "duplicate email"})
 			return
 		}
 	}
 	password, _ := bcrypt.GenerateFromPassword([]byte(newUser.Password), 14)
 	newUser.Password = string(password)
-	models.DB.Create(&newUser)
+	database.DB.Create(&newUser)
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(models.ReturnInfo{ID: strconv.FormatUint(uint64(newUser.ID), 10)})
 }
 
 /*
@@ -67,14 +63,14 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 
 	http.SetCookie(w, &http.Cookie{
 		Name:     "jtw",
-		Expires:  time.Now().Add(-1),
+		Expires:  time.Now().Add(-24),
 		Domain:   "localhost",
 		Path:     "/",
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
 	})
 
-	json.NewEncoder(w).Encode(models.Error{Message: "Logging Out"})
+	w.WriteHeader(http.StatusOK)
 }
 
 /*
@@ -98,19 +94,17 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	_ = json.NewDecoder(r.Body).Decode(&userLoggingIn)
 
-	searchResult := models.DB.Where("email = ?", userLoggingIn.Email).First(&info)
+	searchResult := database.DB.Where("email = ?", userLoggingIn.Email).First(&info)
 
 	// No user with matching email is not found
 	if searchResult.Error != nil {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(models.Error{Message: "email not found"})
 		return
 	}
 
 	// Password is incorrect
 	if err := bcrypt.CompareHashAndPassword([]byte(info.Password), []byte(userLoggingIn.Password)); err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(models.Error{Message: "incorrect password"})
 		return
 	}
 
@@ -124,7 +118,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// Error creating token
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(models.Error{Message: "could not login"})
 		return
 	}
 
@@ -141,7 +134,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	http.SetCookie(w, &cookie)
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(models.Error{Message: "success"})
 }
 
 /*
@@ -154,11 +146,15 @@ Returns user based on user ID
 */
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
-	w.WriteHeader(http.StatusOK)
+
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
 	cookie, err := r.Cookie("jtw")
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(models.Error{Message: "error getting cookies"})
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 	tempClaims := jwt.StandardClaims{}
@@ -168,7 +164,6 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(models.Error{Message: "unauthenticated"})
 		return
 	}
 
@@ -176,8 +171,8 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	var user models.UserInfo
 
-	models.DB.Where("id = ?", claims.Issuer).First(&user)
+	database.DB.Where("id = ?", claims.Issuer).First(&user)
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]interface{}{"ID": user.ID, "email": user.Email, "firstName": user.FirstName, "lastName": user.LastName})
+	json.NewEncoder(w).Encode(models.UserReturnInfo{ID: user.ID, Email: user.Email, FirstName: user.FirstName, LastName: user.LastName})
 }

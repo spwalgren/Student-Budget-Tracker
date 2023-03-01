@@ -10,6 +10,13 @@ import { LoginService } from 'src/app/login.service';
 export class DashboardComponent {
 
   yourName: string = "";
+  routes = Object.entries({
+    "Home": "/dashboard",
+    "Transactions": "/dashboard/transactions",
+    "Goals": "/dashboard/goals",
+    "Calendar": "/dashboard/calendar",
+    "Settings": "/dashboard/settings",
+  });
 
   constructor(
     private loginService: LoginService,
@@ -19,7 +26,7 @@ export class DashboardComponent {
   ngOnInit() {
     this.loginService.getUserData()
       .subscribe(res => {
-        if (res.firstName) {
+        if (!res.err) {
           this.yourName = res.firstName;
         } else {
           this.yourName = 'ERROR';
@@ -31,9 +38,13 @@ export class DashboardComponent {
   goLogOut() {
     this.loginService.logOut()
       .subscribe(res => {
-        if (res.Message === "Logging Out") {
+        if (!res.err) {
           this.router.navigate(['/login']);
         }
       })
+  }
+
+  isCurrentPage(location: string): boolean {
+    return location == this.router.url;
   }
 }

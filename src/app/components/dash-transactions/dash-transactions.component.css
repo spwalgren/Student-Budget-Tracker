@@ -1,0 +1,45 @@
+.transaction__detail-row {
+  /* self align */
+  height: 0;
+}
+
+tr.transaction__row:hover {
+  /* self style */
+  background: whitesmoke;
+}
+
+.transaction__row td {
+  /* self style */
+  border-bottom-width: 0;
+}
+
+
+.transaction__detail {
+  /* content align */
+  overflow: hidden;
+}
+
+.transaction__detail-contents {
+  /* self style */
+  /* background: blue; */
+  /* content align */
+  padding: 5px 0;
+}
+
+.add-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.transaction__detail-clickable:hover {
+  /* self style */
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.transaction__detail-clickable.transaction__detail-changing {
+  /* self style */
+  color: gray;
+  cursor: default;
+}

@@ -36,6 +36,7 @@
           <div class="login__button-field">
             <button
               mat-flat-button
+              data-cy="Submit Login"
               type="submit"
               [color]="awaitingRes ? 'disabled' : 'primary'"
               [disabled]="awaitingRes"
@@ -48,7 +49,7 @@
 
         <p>Don't have an account? Sign up!</p>
         <a routerLink="/sign-up">
-          <button mat-flat-button type="button" color="primary">Sign Up</button>
+          <button mat-flat-button data-cy="Sign-Up" type="button" color="primary">Sign Up</button>
         </a>
       </mat-card-content>
     </mat-card>
