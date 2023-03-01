@@ -22,7 +22,7 @@ export class LoginComponent {
     private router: Router
   ) {
     this.logInForm = new FormGroup({
-      email: new FormControl('', [Validators.required]),
+      email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required])
     });
   }
@@ -37,6 +37,8 @@ export class LoginComponent {
   }
 
   goSubmitForm() {
+    console.log('I was called');
+
     if (!this.logInForm.invalid) {
       const logInRequest: LogInRequest = {
         email: this.logInForm.get('email')?.value.toLowerCase(),
