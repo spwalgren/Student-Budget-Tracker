@@ -386,13 +386,13 @@ func TestGetTransaction(t *testing.T) {
 	if err != nil {
 		a.Error(err)
 	}
-    actual := []models.Transaction{}
+    actual := models.TransactionsResponse{}
 	if err := json.Unmarshal(body, &actual); err != nil {
 		a.Error(err)
 	}
 
-	expected := []models.Transaction{}
-	expected = append(expected, models.Transaction{
+	expected := models.TransactionsResponse{}
+	expected.Data = append(expected.Data, models.Transaction{
 		UserID: 1, 
 		TransactionID: 1,
 		Amount:      100,
@@ -400,7 +400,7 @@ func TestGetTransaction(t *testing.T) {
 		Date:        "test-date",
 		Category:    "test-category",
 		Description: "test-description",})
-	expected = append(expected, models.Transaction{
+	expected.Data = append(expected.Data, models.Transaction{
 		UserID: 1,
 		TransactionID: 2,
 		Amount:      200,
@@ -456,13 +456,13 @@ func TestUpdateTransaction_OK(t *testing.T) {
 	if err != nil {
 		a.Error(err)
 	}
-    actual := []models.Transaction{}
+    actual := models.TransactionsResponse{}
 	if err := json.Unmarshal(body, &actual); err != nil {
 		a.Error(err)
 	}
 
-	expected := []models.Transaction{}
-	expected = append(expected, models.Transaction{
+	expected := models.TransactionsResponse{}
+	expected.Data = append(expected.Data, models.Transaction{
 		UserID: 1, 
 		TransactionID: 1,
 		Amount:      300,
@@ -470,7 +470,7 @@ func TestUpdateTransaction_OK(t *testing.T) {
 		Date:        "test-date-updated",
 		Category:    "test-category-updated",
 		Description: "test-description-updated",})
-	expected = append(expected, models.Transaction{
+	expected.Data = append(expected.Data, models.Transaction{
 		UserID: 1,
 		TransactionID: 2,
 		Amount:      200,
@@ -564,13 +564,13 @@ func TestDeleteTransaction_OK(t *testing.T) {
 	if err != nil {
 		a.Error(err)
 	}
-    actual := []models.Transaction{}
+    actual := models.TransactionsResponse{}
 	if err := json.Unmarshal(body, &actual); err != nil {
 		a.Error(err)
 	}
 
-	expected := []models.Transaction{}
-	expected = append(expected, models.Transaction{
+	expected := models.TransactionsResponse{}
+	expected.Data = append(expected.Data, models.Transaction{
 		UserID: 1,
 		TransactionID: 2,
 		Amount:      200,

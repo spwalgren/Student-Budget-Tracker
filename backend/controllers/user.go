@@ -50,6 +50,10 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
  */
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
 	http.SetCookie(w, &http.Cookie{
 		Name:     "jtw",
 		Expires:  time.Now().Add(-24),
