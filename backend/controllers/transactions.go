@@ -14,6 +14,11 @@ import (
 func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
 
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
 	var newTransactionData models.CreateTransactionRequest
 	_ = json.NewDecoder(r.Body).Decode(&newTransactionData)
 	newTransaction := models.Transaction{
@@ -59,6 +64,12 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 
 func GetTransactions(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
+
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
 	cookie, err := r.Cookie("jtw")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -81,13 +92,20 @@ func GetTransactions(w http.ResponseWriter, r *http.Request) {
 
 
 	var expenses []models.Transaction
+	var data models.TransactionsResponse
 	database.DB.Where(map[string]interface{}{"user_id": user.ID}).Find(&expenses)
+	data.Data = expenses
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(expenses)
+	json.NewEncoder(w).Encode(data)
 }
 
 func UpdateTransaction(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
+
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
 
 	var updateTransaction models.Transaction
 	var updateTransactionData models.UpdateTransactionRequest
@@ -137,6 +155,11 @@ func UpdateTransaction(w http.ResponseWriter, r *http.Request) {
 func DeleteTransaction(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
 
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
 	vars := mux.Vars(r)
 
 	var toDelete models.Transaction
@@ -180,5 +203,5 @@ func DeleteTransaction(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
- 	database.DB.Delete(&toDelete)
+	database.DB.Delete(&toDelete)
 }

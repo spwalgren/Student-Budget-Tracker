@@ -13,6 +13,7 @@ import (
 )
 
 
+
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Origin", "http://localhost:4200")
 	var users []models.UserInfo
@@ -21,6 +22,12 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(users)
 }
 
+/*
+
+Creates a user by taking json information from the request, going through a duplicate check,
+then creates the user in the database with the given information
+
+*/
 /*
 
 Creates a user by taking json information from the request, going through a duplicate check,
@@ -59,8 +66,10 @@ Logouts the current user by deleting the corresponding cookie
 */
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
-	w.WriteHeader(http.StatusOK)
-
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
 	http.SetCookie(w, &http.Cookie{
 		Name:     "jtw",
 		Expires:  time.Now().Add(-24),
