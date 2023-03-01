@@ -66,6 +66,7 @@ export class TransactionService {
 
     return this.http.put<GenericResponse>(url, body, options)
       .pipe(
+        map((_) => ({})),
         catchError((err) => {
           console.log(err);
           return of({
@@ -83,6 +84,7 @@ export class TransactionService {
     };
     return this.http.delete<GenericResponse>(url, options)
       .pipe(
+        map((_) => ({})),
         catchError((err) => {
           console.log(err);
           return of({
