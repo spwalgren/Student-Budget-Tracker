@@ -137,7 +137,7 @@ export class DashTransactionsComponent {
 
     if (!this.isChanging) {
       this.isChanging = true;
-      this.transactionService.deleteTransaction(transaction.transactionId)
+      this.transactionService.deleteTransaction(transaction)
         .subscribe(res => {
           if (!res.err) {
             const targetIndex = this.transactionData.data.findIndex((elem) => elem.transactionId == transaction.transactionId);
