@@ -45,6 +45,7 @@
 declare namespace Cypress {
   interface Chainable<Subject = any> {
     logInUser(sampleUserNumber: number): typeof logInUser;
+    logOutUser(): typeof logOutUser;
   }
 }
 
@@ -54,4 +55,11 @@ function logInUser(sampleUserNumber: number): void {
   cy.get('[formControlName="password"]').type('1234');
   cy.get('[data-cy="Submit Login"]').click()
 }
+
+function logOutUser(): void {
+  cy.visit('/dashboard');
+  cy.get('[data-cy="log-out-button"]').click();
+}
+
 Cypress.Commands.add('logInUser', logInUser);
+Cypress.Commands.add('logOutUser', logOutUser);
