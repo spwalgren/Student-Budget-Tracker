@@ -54,11 +54,13 @@ function logInUser(sampleUserNumber: number): void {
   cy.get('[formControlName="email"]').type(`sample${sampleUserNumber}@example.com`);
   cy.get('[formControlName="password"]').type('1234');
   cy.get('[data-cy="Submit Login"]').click()
+  cy.url({ timeout: 10000 }).should('include', 'dashboard');
 }
 
 function logOutUser(): void {
   cy.visit('/dashboard');
   cy.get('[data-cy="log-out-button"]').click();
+  cy.url({ timeout: 10000 }).should('include', 'login');
 }
 
 Cypress.Commands.add('logInUser', logInUser);

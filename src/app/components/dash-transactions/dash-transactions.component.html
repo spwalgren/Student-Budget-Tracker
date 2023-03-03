@@ -96,14 +96,14 @@
             <div class="transaction__detail-contents">
               <p>Description: {{ elem.description || "[none]" }}</p>
               <p
-                class="transaction__detail-clickable"
+                class="transaction__detail-clickable transaction__detail-edit"
                 [class.transaction__detail-changing]="isChanging"
                 (click)="openEditDialog(elem)"
               >
                 Edit this transaction
               </p>
               <p
-                class="transaction__detail-clickable"
+                class="transaction__detail-clickable transaction__detail-delete"
                 [class.transaction__detail-changing]="isChanging"
                 (click)="goDeleteTransaction(elem)"
               >
