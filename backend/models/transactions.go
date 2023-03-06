@@ -22,3 +22,7 @@ type UpdateTransactionRequest struct {
 type CreateTransactionRequest struct {
 	Data Transaction `json:"data"`
 }
+
+type TransactionsResponse struct {
+	Data []Transaction `json:"data"`
+}
