@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
 )
 
@@ -32,27 +31,16 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Retrieve transactions for user. If none exist, create one. Retrieve the current cookie to get the user info
-	cookie, err := r.Cookie("jtw")
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode("oops")
-		return
-	}
-	tempClaims := jwt.StandardClaims{}
-	token, err := jwt.ParseWithClaims(cookie.Value, &tempClaims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(models.SecretKey), nil
-	})
 
-	if err != nil {
+	userID := ReturnUserID(w,r)
+	if userID == "-1" {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
-	claims := token.Claims.(*jwt.StandardClaims)
-
 	// Transactions do not exist. Create one before moving forward
 	var user models.UserInfo
-	database.DB.First(&user, claims.Issuer)
+	database.DB.First(&user, userID)
 	newTransaction.UserID = user.ID
 	database.DB.Create(&newTransaction)
 	json.NewEncoder(w).Encode(models.CreateTransactionResponse{
@@ -70,25 +58,15 @@ func GetTransactions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie, err := r.Cookie("jtw")
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode("oops")
-		return
-	}
-	tempClaims := jwt.StandardClaims{}
-	token, err := jwt.ParseWithClaims(cookie.Value, &tempClaims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(models.SecretKey), nil
-	})
+	var user models.UserInfo
+	userID := ReturnUserID(w,r)
 
-	if err != nil {
+	if userID == "-1" {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
-	claims := token.Claims.(*jwt.StandardClaims)
-	var user models.UserInfo
-	database.DB.First(&user, claims.Issuer)
+	database.DB.First(&user, userID)
 
 
 	var expenses []models.Transaction
@@ -114,30 +92,18 @@ func UpdateTransaction(w http.ResponseWriter, r *http.Request) {
 
 
 	// get userID to get the list of transactions from current user
-	cookie, err := r.Cookie("jtw")
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode("oops")
-		return
-	}
-	tempClaims := jwt.StandardClaims{}
-	token, err := jwt.ParseWithClaims(cookie.Value, &tempClaims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(models.SecretKey), nil
-	})
 
-	if err != nil {
+	var expenses models.Transaction
+	var user models.UserInfo
+	userID := ReturnUserID(w,r)
+
+	if userID == "-1" {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
-	claims := token.Claims.(*jwt.StandardClaims)
-
-
-	var expenses models.Transaction
-	var user models.UserInfo
-
 	// If the user ID's don't match, the intruder shouldn't be in here anyways
-	database.DB.First(&user, claims.Issuer)
+	database.DB.First(&user, userID)
 	if user.ID != updateTransaction.UserID {
 		w.WriteHeader(http.StatusForbidden)
 	}
@@ -167,38 +133,27 @@ func DeleteTransaction(w http.ResponseWriter, r *http.Request) {
 	// UserID and TransactionID will be in the request. Can setup a check to make sure the
 	// requesting user matches with the UserID
 
-	cookie, err := r.Cookie("jtw")
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode("oops")
-		return
-	}
-	tempClaims := jwt.StandardClaims{}
-	token, err := jwt.ParseWithClaims(cookie.Value, &tempClaims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(models.SecretKey), nil
-	})
 
-	if err != nil {
+	var user models.UserInfo
+	userID := ReturnUserID(w,r)
+
+	if userID == "-1" {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-
-	claims := token.Claims.(*jwt.StandardClaims)
-
-	var user models.UserInfo
 
 	// If the user ID's don't match, the intruder shouldn't be in here anyways
 	deletingUser, _ := strconv.Atoi(vars["userId"])
 	deletingUserId := uint(deletingUser)
 	temp, _ := strconv.Atoi(vars["transactionId"])
 	deletingTransactionId := uint(temp)
-	database.DB.First(&user, claims.Issuer)
+	database.DB.First(&user, userID)
 	if user.ID != deletingUserId {
 		w.WriteHeader(http.StatusForbidden)
 	}
 
 	// deletes entry based on the userID and the transactionID
-	err = database.DB.Where(map[string]interface{}{"user_id": deletingUserId, "transactionId": deletingTransactionId}).First(&toDelete).Error
+	err := database.DB.Where(map[string]interface{}{"user_id": deletingUserId, "transactionId": deletingTransactionId}).First(&toDelete).Error
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return

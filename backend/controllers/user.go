@@ -12,8 +12,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-
-
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Origin", "http://localhost:4200")
 	var users []models.UserInfo
@@ -23,16 +21,12 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-
 Creates a user by taking json information from the request, going through a duplicate check,
 then creates the user in the database with the given information
-
 */
 /*
-
 Creates a user by taking json information from the request, going through a duplicate check,
 then creates the user in the database with the given information
-
 */
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
@@ -60,9 +54,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-
 Logouts the current user by deleting the corresponding cookie
-
 */
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
@@ -83,12 +75,10 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-
 Checks authentication by looking for user in database with matching email.
 If no user found, returns message "email not found", otherwise checks if password matches
 If password doesn't match, returns message "incorrect password"
 If password matches, it creates token, sets cookies to that token, and returns "success"
-
 */
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
@@ -146,12 +136,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-
 Gets jwt token from cookies
 Gets claims from token
 Claims issuer contains the logged in user ID
 Returns user based on user ID
-
 */
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
@@ -161,10 +149,25 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var user models.UserInfo
+	userID := ReturnUserID(w,r)
+
+	if userID == "-1" {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	database.DB.Where("id = ?", userID).First(&user)
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(models.UserReturnInfo{ID: user.ID, Email: user.Email, FirstName: user.FirstName, LastName: user.LastName})
+}
+
+func ReturnUserID(w http.ResponseWriter, r* http.Request) string {
 	cookie, err := r.Cookie("jtw")
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		return
+		return "-1"
 	}
 	tempClaims := jwt.StandardClaims{}
 	token, err := jwt.ParseWithClaims(cookie.Value, &tempClaims, func(token *jwt.Token) (interface{}, error) {
@@ -173,15 +176,10 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		return
+		return "-1"
 	}
 
 	claims := token.Claims.(*jwt.StandardClaims)
 
-	var user models.UserInfo
-
-	database.DB.Where("id = ?", claims.Issuer).First(&user)
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(models.UserReturnInfo{ID: user.ID, Email: user.Email, FirstName: user.FirstName, LastName: user.LastName})
+	return claims.Issuer
 }
