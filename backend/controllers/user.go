@@ -12,8 +12,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-
-
 func GetUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Origin", "http://localhost:4200")
 	var users []models.UserInfo
@@ -161,10 +159,25 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var user models.UserInfo
+	userID := ReturnUserID(w,r)
+
+	if userID == "-1" {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	database.DB.Where("id = ?", userID).First(&user)
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(models.UserReturnInfo{ID: user.ID, Email: user.Email, FirstName: user.FirstName, LastName: user.LastName})
+}
+
+func ReturnUserID(w http.ResponseWriter, r* http.Request) string {
 	cookie, err := r.Cookie("jtw")
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		return
+		return "-1"
 	}
 	tempClaims := jwt.StandardClaims{}
 	token, err := jwt.ParseWithClaims(cookie.Value, &tempClaims, func(token *jwt.Token) (interface{}, error) {
@@ -173,15 +186,10 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		return
+		return "-1"
 	}
 
 	claims := token.Claims.(*jwt.StandardClaims)
 
-	var user models.UserInfo
-
-	database.DB.Where("id = ?", claims.Issuer).First(&user)
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(models.UserReturnInfo{ID: user.ID, Email: user.Email, FirstName: user.FirstName, LastName: user.LastName})
+	return claims.Issuer
 }
