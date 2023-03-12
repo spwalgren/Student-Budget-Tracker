@@ -142,7 +142,7 @@ content-type: application/json
 }
 
 ###
-DELETE http://{{host}}/api/transaction/35/35
+DELETE http://{{host}}/api/transaction/1
 content-type: application/json
 
 ###
@@ -158,3 +158,42 @@ content-type: application/json
             "description": "Textbook"
     }
 }
+
+###
+POST http://{{host}}/api/budget
+content-type: application/json
+
+{
+    "category": "food",
+    "amountLimit": 50.5,
+    "frequency": "Weekly",
+    "duration": 2,
+    "count":1
+}
+
+###
+GET http://{{host}}/api/budget
+content-type: application/json
+
+###
+
+PUT http://{{host}}/api/budget
+content-type: application/json
+
+ {
+    "userId": 35,
+    "budgetId": 1,
+    "data": {
+        "category": "fast food",
+        "amountLimit": 50.5,
+        "frequency": "Weekly",
+        "duration": 2,
+        "count":1
+    }
+ }
+
+###
+
+DELETE http://{{host}}/api/budget/3
+content-type: application/json
+

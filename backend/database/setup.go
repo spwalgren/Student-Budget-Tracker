@@ -17,7 +17,7 @@ func Initialize(dbname string) {
 		panic("Cannot connect to DB")
 	}
 	log.Println("Connected to Database...")
-	err = database.AutoMigrate(&models.UserInfo{}, &models.Transaction{})
+	err = database.AutoMigrate(&models.UserInfo{}, &models.Transaction{}, &models.Budget{})
         if err != nil {
                 return
         }

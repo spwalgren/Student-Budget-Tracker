@@ -31,7 +31,11 @@ func main() {
 	r.HandleFunc("/api/transaction", controllers.CreateTransaction).Methods(http.MethodPost, http.MethodOptions)
 	r.HandleFunc("/api/transaction", controllers.GetTransactions).Methods(http.MethodGet, http.MethodOptions)
 	r.HandleFunc("/api/transaction", controllers.UpdateTransaction).Methods(http.MethodOptions, http.MethodPut)
-	r.HandleFunc("/api/transaction/{userId}/{transactionId}", controllers.DeleteTransaction).Methods(http.MethodOptions, http.MethodDelete)
+	r.HandleFunc("/api/transaction/{transactionId}", controllers.DeleteTransaction).Methods(http.MethodOptions, http.MethodDelete)
+	r.HandleFunc("/api/budget", controllers.CreateBudget).Methods(http.MethodOptions, http.MethodPost)
+	r.HandleFunc("/api/budget", controllers.GetBudgets).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/api/budget", controllers.UpdateBudget).Methods(http.MethodOptions, http.MethodPut)
+	r.HandleFunc("/api/budget/{budgetId}", controllers.DeleteBudget).Methods(http.MethodOptions, http.MethodDelete)
 
 	log.Fatal(http.ListenAndServe(":8080", corsObj.Handler(r)))
 }

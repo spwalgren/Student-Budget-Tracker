@@ -68,7 +68,6 @@ func GetTransactions(w http.ResponseWriter, r *http.Request) {
 
 	database.DB.First(&user, userID)
 
-
 	var expenses []models.Transaction
 	var data models.TransactionsResponse
 	database.DB.Where(map[string]interface{}{"user_id": user.ID}).Find(&expenses)
@@ -143,7 +142,7 @@ func DeleteTransaction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// If the user ID's don't match, the intruder shouldn't be in here anyways
-	deletingUser, _ := strconv.Atoi(vars["userId"])
+	deletingUser, _ := strconv.Atoi(userID)
 	deletingUserId := uint(deletingUser)
 	temp, _ := strconv.Atoi(vars["transactionId"])
 	deletingTransactionId := uint(temp)
