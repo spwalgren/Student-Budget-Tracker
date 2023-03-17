@@ -7,7 +7,16 @@
     >
       <ng-container matColumnDef="amountLimit">
         <th mat-header-cell *matHeaderCellDef>Amount</th>
-        <td mat-cell *matCellDef="let element">{{element.data.amountLimit}}</td>
+        <td mat-cell *matCellDef="let element">
+          {{numberFormatter.format(element.data.amountLimit)}}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="period">
+        <th mat-header-cell *matHeaderCellDef>Period</th>
+        <td mat-cell *matCellDef="let element">
+          {{getPeriodString(element.data)}}
+        </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
