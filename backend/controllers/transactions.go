@@ -34,12 +34,15 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 
 	userID := ReturnUserID(w,r)
 	if userID == "-1" {
+	userID := ReturnUserID(w,r)
+	if userID == "-1" {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
 	// Transactions do not exist. Create one before moving forward
 	var user models.UserInfo
+	database.DB.First(&user, userID)
 	database.DB.First(&user, userID)
 	newTransaction.UserID = user.ID
 	database.DB.Create(&newTransaction)
@@ -60,7 +63,10 @@ func GetTransactions(w http.ResponseWriter, r *http.Request) {
 
 	var user models.UserInfo
 	userID := ReturnUserID(w,r)
+	var user models.UserInfo
+	userID := ReturnUserID(w,r)
 
+	if userID == "-1" {
 	if userID == "-1" {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
@@ -96,12 +102,18 @@ func UpdateTransaction(w http.ResponseWriter, r *http.Request) {
 	var user models.UserInfo
 	userID := ReturnUserID(w,r)
 
+	var expenses models.Transaction
+	var user models.UserInfo
+	userID := ReturnUserID(w,r)
+
+	if userID == "-1" {
 	if userID == "-1" {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
 	// If the user ID's don't match, the intruder shouldn't be in here anyways
+	database.DB.First(&user, userID)
 	database.DB.First(&user, userID)
 	if user.ID != updateTransaction.UserID {
 		w.WriteHeader(http.StatusForbidden)
@@ -136,6 +148,10 @@ func DeleteTransaction(w http.ResponseWriter, r *http.Request) {
 	var user models.UserInfo
 	userID := ReturnUserID(w,r)
 
+	var user models.UserInfo
+	userID := ReturnUserID(w,r)
+
+	if userID == "-1" {
 	if userID == "-1" {
 		w.WriteHeader(http.StatusUnauthorized)
 		return

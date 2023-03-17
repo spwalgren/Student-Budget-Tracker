@@ -38,7 +38,8 @@ import { DashHomeComponent } from './components/dash-home/dash-home.component';
 import { DashTransactionsComponent } from './components/dash-transactions/dash-transactions.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { TransactionsModalComponent } from './components/transactions-modal/transactions-modal.component';
-import { DashGoalsComponent } from './components/dash-goals/dash-goals.component';
+import { DashBudgetsComponent } from './components/dash-budgets/dash-budgets.component';
+import { BudgetGroupComponent } from './components/budget-group/budget-group.component';
 
 // Services
 
@@ -54,7 +55,8 @@ import { DashGoalsComponent } from './components/dash-goals/dash-goals.component
     DashTransactionsComponent,
     PageNotFoundComponent,
     TransactionsModalComponent,
-    DashGoalsComponent, //added thus
+    DashBudgetsComponent,
+    BudgetGroupComponent, //added thus
 
   ],
   imports: [
