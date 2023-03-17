@@ -10,8 +10,8 @@ export interface BudgetContent {
   category: string,
   amountLimit: number,
   frequency: Period,
-  duration: number,
-  count: number,
+  duration: number, // If budget repeats every 2 weeks, then duration is 2 and frequency is weekly
+  count?: number,
 }
 
 export interface Budget {
