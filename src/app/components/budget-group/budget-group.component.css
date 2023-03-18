@@ -7,3 +7,19 @@ table {
   /* self align */
   margin-bottom: 20px;
 }
+
+.mat-column-amountLimit {
+  width: 10%;
+}
+
+.mat-column-period {
+  width: 20%;
+}
+
+.mat-column-startDate {
+  width: 20%;
+}
+
+.mat-column-currentPeriod {
+  width: 30%;
+}
