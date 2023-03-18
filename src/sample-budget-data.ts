@@ -37,7 +37,7 @@ const budgets: Budget[] = [
   },
   {
     userId: 20,
-    budgetId: 2,
+    budgetId: 3,
     data: {
       category: "Food",
       amountLimit: 80,
@@ -46,7 +46,18 @@ const budgets: Budget[] = [
       startDate: new Date("2023-02-18").toISOString(),
     }
   },
-
+  {
+    userId: 20,
+    budgetId: 4,
+    data: {
+      category: "Books",
+      amountLimit: 400,
+      frequency: Period.weekly,
+      duration: 1,
+      count: 1,
+      startDate: new Date("2023-01-06").toISOString(),
+    }
+  }
 ]
 
 async function pause<T>(ms: number): Promise<T> {

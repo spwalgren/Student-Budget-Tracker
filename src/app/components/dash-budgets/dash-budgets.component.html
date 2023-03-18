@@ -1,4 +1,6 @@
-<p>dash-budgets works!</p>
+<h2>Budgets</h2>
 <section>
-  <app-budget-group groupName="Groceries"></app-budget-group>
+  <div *ngFor="let category of existingCategories">
+    <app-budget-group [groupName]="category" [budgetData]="getFilteredData(category, budgetData)"></app-budget-group>
+  </div>
 </section>

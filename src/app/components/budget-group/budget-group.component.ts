@@ -10,7 +10,7 @@ import { Budget, BudgetContent, Period } from 'src/types/budget-system';
 export class BudgetGroupComponent {
   @Input()
   groupName: string = '';
-
+  @Input()
   budgetData: Budget[] = []
   displayedColumns = [
     "amountLimit",
@@ -23,17 +23,6 @@ export class BudgetGroupComponent {
     style: 'currency',
     currency: 'USD'
   })
-
-  constructor(private budgetService: BudgetService) { }
-
-  ngOnInit() {
-    this.budgetService.getBudgets()
-      .subscribe((res) => {
-        if (!res.err) {
-          this.budgetData = [...res.budgets];
-        }
-      })
-  }
 
   getPeriodDef(budgetContent: BudgetContent) {
     const frequency = budgetContent.frequency;
@@ -103,12 +92,13 @@ export class BudgetGroupComponent {
 
     let periodsPassed = 0;
 
-    while (periodEnd < today || (budgetContent.count && periodsPassed >= budgetContent.count)) {
+    while (periodEnd < today || (budgetContent.count && periodsPassed < budgetContent.count)) {
       for (let i = 0; i < budgetContent.duration; i++) {
         periodStart = addOne(periodStart);
         periodEnd = addOne(periodEnd);
       }
       periodsPassed++;
+
     }
 
     if (budgetContent.count && periodsPassed >= budgetContent.count) {
