@@ -9,6 +9,7 @@ const budgets: Budget[] = [
       amountLimit: 100,
       frequency: Period.weekly,
       duration: 1,
+      startDate: new Date("2023-02-18").toISOString(),
     }
   },
   {
@@ -19,6 +20,7 @@ const budgets: Budget[] = [
       amountLimit: 500,
       frequency: Period.monthly,
       duration: 1,
+      startDate: new Date("2023-02-18").toISOString(),
     }
   },
   {
@@ -29,7 +31,8 @@ const budgets: Budget[] = [
       amountLimit: 500,
       frequency: Period.monthly,
       duration: 1,
-      count: 6
+      count: 6,
+      startDate: new Date("2023-02-18").toISOString(),
     }
   },
   {
@@ -40,6 +43,7 @@ const budgets: Budget[] = [
       amountLimit: 80,
       frequency: Period.weekly,
       duration: 2,
+      startDate: new Date("2023-02-18").toISOString(),
     }
   },
 
