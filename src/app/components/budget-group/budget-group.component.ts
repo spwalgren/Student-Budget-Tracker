@@ -92,7 +92,7 @@ export class BudgetGroupComponent {
 
     let periodsPassed = 0;
 
-    while (periodEnd < today || (budgetContent.count && periodsPassed < budgetContent.count)) {
+    while (periodEnd < today && (!budgetContent.count || periodsPassed < budgetContent.count)) {
       for (let i = 0; i < budgetContent.duration; i++) {
         periodStart = addOne(periodStart);
         periodEnd = addOne(periodEnd);
