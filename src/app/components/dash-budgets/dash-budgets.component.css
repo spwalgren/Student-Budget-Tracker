@@ -1,0 +1,6 @@
+.budgets__heading-row {
+  /* content align */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}

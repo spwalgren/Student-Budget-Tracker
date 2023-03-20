@@ -1,4 +1,9 @@
-<h2>Budgets</h2>
+<div class="budgets__heading-row">
+  <h2>Budgets</h2>
+  <button mat-fab color="primary">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>
 <section>
   <div *ngFor="let category of existingCategories">
     <app-budget-group [groupName]="category" [budgetData]="getFilteredData(category, budgetData)"></app-budget-group>
