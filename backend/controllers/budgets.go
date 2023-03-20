@@ -30,9 +30,10 @@ func CreateBudget(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewDecoder(r.Body).Decode(&budgetData)
 
 	newBudget := models.Budget{
-		UserID:   uint(userID),
-		BudgetID: 0,
-		Data:     budgetData,
+		UserID:    uint(userID),
+		BudgetID:  0,
+		IsDeleted: false,
+		Data:      budgetData,
 	}
 
 	database.DB.Create(&newBudget)
@@ -42,7 +43,6 @@ func CreateBudget(w http.ResponseWriter, r *http.Request) {
 		BudgetID: newBudget.BudgetID,
 	})
 
-	fmt.Println(newBudget)
 }
 
 func GetBudgets(w http.ResponseWriter, r *http.Request) {
@@ -61,10 +61,30 @@ func GetBudgets(w http.ResponseWriter, r *http.Request) {
 
 	var budgets models.BudgetsResponse
 	database.DB.Where(map[string]interface{}{"user_id": userID}).Find(&budgets.Budgets)
+	fmt.Println(budgets)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(budgets)
 }
 
+func GetDeletedBudgets(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "*")
+
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	userID, _ := strconv.ParseInt(ReturnUserID(w, r), 10, 32)
+	if userID == -1 {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	var budgets models.BudgetsResponse
+	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": true}).Find(&budgets.Budgets)
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(budgets)
+}
 
 func UpdateBudget(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
@@ -100,7 +120,6 @@ func UpdateBudget(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-
 func DeleteBudget(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
 
@@ -128,5 +147,12 @@ func DeleteBudget(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	database.DB.Delete(&toDelete)
+	if !toDelete.IsDeleted {
+		fmt.Println("Moving to deleted")
+		toDelete.IsDeleted = true
+		database.DB.Save(toDelete)
+	} else {
+		fmt.Println("Deleting")
+		database.DB.Delete(&toDelete)
+	}
 }
