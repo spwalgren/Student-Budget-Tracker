@@ -16,7 +16,8 @@ export class BudgetGroupComponent {
     "amountLimit",
     "period",
     "startDate",
-    "currentPeriod"
+    "currentPeriod",
+    "editAndDelete"
   ]
 
   numberFormatter = new Intl.NumberFormat('en-US', {
