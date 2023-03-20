@@ -1,4 +1,5 @@
-import { Budget, GetBudgetsResponse, Period } from "./types/budget-system";
+import { GenericResponse } from "./types/api-system";
+import { Budget, CreateBudgetRequest, CreateBudgetResponse, GetBudgetsResponse, Period, UpdateBudgetRequest } from "./types/budget-system";
 
 const budgets: Budget[] = [
   {
@@ -64,9 +65,35 @@ async function pause<T>(ms: number): Promise<T> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+export async function createBudget(requestData: CreateBudgetRequest): Promise<CreateBudgetResponse> {
+  await pause<void>(1000);
+  budgets.push(
+    {
+      userId: 20,
+      budgetId: budgets.length,
+      data: requestData
+    }
+  );
+  return ({ userId: 20, budgetId: budgets.length - 1 });
+}
+
 export async function getBudgets(): Promise<GetBudgetsResponse> {
   let newBudgets: Budget[] = [];
   await pause<void>(1000);
   newBudgets = [...budgets];
   return { budgets: newBudgets };
+}
+
+export async function updateBudget(requestData: UpdateBudgetRequest): Promise<GenericResponse> {
+  await pause<void>(1000);
+  const targetIndex = budgets.findIndex((elem) => elem.budgetId === requestData.newBudget.budgetId);
+  budgets[targetIndex] = { ...requestData.newBudget };
+  return ({});
+}
+
+export async function deleteBudget(budgetId: number): Promise<GenericResponse> {
+  await pause<void>(1000);
+  const targetIndex = budgets.findIndex((elem) => elem.budgetId === budgetId);
+  budgets.splice(targetIndex, 1);
+  return ({});
 }

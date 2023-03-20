@@ -21,6 +21,8 @@ export interface Budget {
   data: BudgetContent
 }
 
+export interface CreateBudgetRequest extends BudgetContent { }
+
 export interface UpdateBudgetRequest {
   newBudget: Budget
 }
