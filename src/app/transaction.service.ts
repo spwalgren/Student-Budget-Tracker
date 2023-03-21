@@ -77,7 +77,7 @@ export class TransactionService {
   }
 
   deleteTransaction(transaction: Transaction): Observable<GenericResponse> {
-    const url = `${this.requestBase}/transaction/${transaction.userId}/${transaction.transactionId}`;
+    const url = `${this.requestBase}/transaction/${transaction.transactionId}`;
     const options = {
       headers: this.httpOptions.headers,
       withCredentials: true,
