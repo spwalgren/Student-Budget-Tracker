@@ -59,6 +59,9 @@ export class DashBudgetsComponent {
   styleUrls: ['./dash-budgets.component.css']
 })
 export class BudgetsDialogComponent {
+  frequency = new FormControl('');
+  frequencyOptions = ['Weekly', 'Monthly', 'Yearly'];
+  
   constructor(
     public dialogRef: MatDialogRef<BudgetsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: BudgetsDialogData
@@ -66,5 +69,9 @@ export class BudgetsDialogComponent {
 
   onNoClick(): void {
     this.dialogRef.close();
+  }
+
+  onFrequencyChange(event: any) {
+    console.log(event.target.value);
   }
 }
