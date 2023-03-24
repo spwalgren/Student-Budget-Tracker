@@ -28,6 +28,11 @@
       <span *ngIf="frequency.value === 'Yearly'" class="duration-unit">years</span>
       <span *ngIf="frequency.value === 'Monthly'" class="duration-unit">months</span>
     </div>
+
+    <mat-form-field>
+      <mat-label>Repeat</mat-label>
+      <input matInput formControlName="count" type="number" step="1" />
+    </mat-form-field>
     
   </form>
 </div>
