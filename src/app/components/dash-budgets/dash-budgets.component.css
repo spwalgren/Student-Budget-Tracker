@@ -4,3 +4,16 @@
   flex-direction: row;
   justify-content: space-between;
 }
+
+.budgets-dialog {
+  /* content align */
+  padding: 20px;
+}
+
+.budgets-dialog__form {
+  /* self align */
+  min-width: 500px;
+  /* content align */
+  display: flex;
+  flex-direction: column;
+}

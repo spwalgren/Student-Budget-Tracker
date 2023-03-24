@@ -24,6 +24,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 
 // Route components
 import { LandingComponent } from './routes/landing/landing.component';
@@ -38,7 +39,7 @@ import { DashHomeComponent } from './components/dash-home/dash-home.component';
 import { DashTransactionsComponent } from './components/dash-transactions/dash-transactions.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { TransactionsModalComponent } from './components/transactions-modal/transactions-modal.component';
-import { DashBudgetsComponent } from './components/dash-budgets/dash-budgets.component';
+import { BudgetsDialogComponent, DashBudgetsComponent } from './components/dash-budgets/dash-budgets.component';
 import { BudgetGroupComponent } from './components/budget-group/budget-group.component';
 
 // Services
@@ -57,7 +58,7 @@ import { BudgetGroupComponent } from './components/budget-group/budget-group.com
     TransactionsModalComponent,
     DashBudgetsComponent,
     BudgetGroupComponent, //added thus
-
+    BudgetsDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -78,7 +79,8 @@ import { BudgetGroupComponent } from './components/budget-group/budget-group.com
     MatSortModule,
     MatDialogModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatSelectModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,1 +1,26 @@
-<div>Hello, World!</div>
+<div class="budgets-dialog">
+  <h2>Add Budget</h2>
+  <form 
+    class="budgets-dialog__form"
+  >
+    <mat-form-field>
+      <mat-label>Amount</mat-label>
+      <input matInput formControlName="amount" type="number" step="0.01" required />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Frequency</mat-label>
+      <mat-select formControlName="frequency" required>
+        <mat-option>
+          Weekly
+        </mat-option>
+        <mat-option>
+          Monthly
+        </mat-option>
+        <mat-option>
+          Yearly
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</div>

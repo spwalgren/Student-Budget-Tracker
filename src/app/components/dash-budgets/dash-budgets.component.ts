@@ -1,4 +1,5 @@
 import { Component, Inject } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Budget } from 'src/types/budget-system';
 import { BudgetService } from 'src/app/budget.service';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -42,7 +43,7 @@ export class DashBudgetsComponent {
   }
 
   openDialog(): void {
-    const dialogRef = this.dialog.open(BudgetsDialog, {
+    const dialogRef = this.dialog.open(BudgetsDialogComponent, {
       data: { mode: "add", data: null }
     });
 
@@ -54,11 +55,12 @@ export class DashBudgetsComponent {
 
 @Component({
   selector: 'budgets-dialog',
-  templateUrl: 'budgets-dialog.html'
+  templateUrl: 'budgets-dialog.html',
+  styleUrls: ['./dash-budgets.component.css']
 })
-export class BudgetsDialog {
+export class BudgetsDialogComponent {
   constructor(
-    public dialogRef: MatDialogRef<BudgetsDialog>,
+    public dialogRef: MatDialogRef<BudgetsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: BudgetsDialogData
   ) { }
 
