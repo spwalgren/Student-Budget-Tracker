@@ -16,11 +16,22 @@ Members:
 - Spencer Walgren (Back-end)
 
 
+## Running the app
 
+To run the app, make sure Go and Node.js are both installed.
 
+Install all necessary npm packages
+```
+npm install
+```
 
+Install necessary Go modules
+```
+cd backend
+go mod tidy
+```
 
-
-
-
-
+Start the app (cd back to the root if you haven't already)
+```
+npm start
+```
