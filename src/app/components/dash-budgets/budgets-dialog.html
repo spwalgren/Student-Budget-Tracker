@@ -16,10 +16,19 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Duration</mat-label>
-      <input matInput formControlName="duration" type="number" step="0.01" required />
-    </mat-form-field>
+    <div class="duration-container">
+      <span>Every </span>
+      <mat-form-field>
+        <mat-label>Duration</mat-label>
+        <div class="duration-input">
+          <input matInput formControlName="duration" type="number" step="0.01" required />
+        </div>
+      </mat-form-field>
+      <span *ngIf="frequency.value === 'Weekly'" class="duration-unit">weeks</span>
+      <span *ngIf="frequency.value === 'Yearly'" class="duration-unit">years</span>
+      <span *ngIf="frequency.value === 'Monthly'" class="duration-unit">months</span>
+    </div>
+    
   </form>
 </div>
 

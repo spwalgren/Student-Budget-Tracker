@@ -56,12 +56,12 @@ export class DashBudgetsComponent {
 @Component({
   selector: 'budgets-dialog',
   templateUrl: 'budgets-dialog.html',
-  styleUrls: ['./dash-budgets.component.css']
+  styleUrls: ['./budgets-dialog.css']
 })
 export class BudgetsDialogComponent {
   frequency = new FormControl('');
   frequencyOptions = ['Weekly', 'Monthly', 'Yearly'];
-  
+
   constructor(
     public dialogRef: MatDialogRef<BudgetsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: BudgetsDialogData
