@@ -1,5 +1,5 @@
 <div class="budgets-dialog">
-  <h2>Add Budget</h2>
+  <h2 mat-dialog-title> Transaction</h2>
   <form class="budgets-dialog__form">
     <mat-form-field>
       <mat-label>Amount</mat-label>
@@ -41,6 +41,11 @@
       <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #startDatePicker></mat-datepicker>
     </mat-form-field>
+
+    <div mat-dialog-actions>
+      <button mat-button type="submit">Add</button>
+      <button mat-button type="button" mat-dialog-close>Cancel</button>
+    </div>
     
   </form>
 </div>

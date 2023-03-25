@@ -18,6 +18,9 @@ export class DashBudgetsComponent {
 
   budgetData: Budget[] = []
   existingCategories: string[] = []
+  budgetForm!: FormGroup;
+  budgetId?: number;
+  mode!: "Add" | "Edit";
 
   constructor(
     private budgetService: BudgetService,
@@ -61,6 +64,9 @@ export class DashBudgetsComponent {
 export class BudgetsDialogComponent {
   frequency = new FormControl('');
   frequencyOptions = ['Weekly', 'Monthly', 'Yearly'];
+  budgetName = new FormControl('');
+  budgetCategory = new FormControl('');
+  budgetAmount = new FormControl('');
 
   constructor(
     public dialogRef: MatDialogRef<BudgetsDialogComponent>,
@@ -68,6 +74,10 @@ export class BudgetsDialogComponent {
   ) { }
 
   onNoClick(): void {
+    console.log('Budget Name:', this.budgetName.value);
+    console.log('Budget Category:', this.budgetCategory.value);
+    console.log('Budget Amount:', this.budgetAmount.value);
+    console.log('Frequency:', this.frequency.value);
     this.dialogRef.close();
   }
 
