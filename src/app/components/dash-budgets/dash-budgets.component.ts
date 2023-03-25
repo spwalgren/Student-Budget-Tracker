@@ -59,29 +59,49 @@ export class DashBudgetsComponent {
 @Component({
   selector: 'budgets-dialog',
   templateUrl: 'budgets-dialog.html',
-  styleUrls: ['./budgets-dialog.css']
+  styleUrls: ['./dash-budgets.component.css']
 })
 export class BudgetsDialogComponent {
-  frequency = new FormControl('');
+
+  budgetForm: FormGroup;
   frequencyOptions = ['Weekly', 'Monthly', 'Yearly'];
-  budgetName = new FormControl('');
-  budgetCategory = new FormControl('');
-  budgetAmount = new FormControl('');
+  mode: "Add" | "Edit";
+
 
   constructor(
     public dialogRef: MatDialogRef<BudgetsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: BudgetsDialogData
-  ) { }
+  ) {
+    this.budgetForm = new FormGroup({
+      category: new FormControl('General'),
+      amount: new FormControl('', [Validators.required]),
+      frequency: new FormControl('Weekly', [Validators.required]),
+      duration: new FormControl(1),
+      repeats: new FormControl(true, [Validators.required]),
+      count: new FormControl(null),
+      startDate: new FormControl(new Date().toISOString())
+    });
+
+    this.mode = "Add"
+  }
 
   onNoClick(): void {
-    console.log('Budget Name:', this.budgetName.value);
-    console.log('Budget Category:', this.budgetCategory.value);
-    console.log('Budget Amount:', this.budgetAmount.value);
-    console.log('Frequency:', this.frequency.value);
+    // console.log('Budget Name:', this.budgetName.value);
+    // console.log('Budget Category:', this.budgetCategory.value);
+    // console.log('Budget Amount:', this.budgetAmount.value);
+    // console.log('Frequency:', this.frequency.value);
     this.dialogRef.close();
   }
 
-  onFrequencyChange(event: any) {
-    console.log(event.target.value);
+  // onFrequencyChange(event: any) {
+  //   console.log(event.target.value);
+  // }
+
+  getDurationFrequency() {
+    return this.budgetForm.get('frequency')?.value;
+  }
+
+  isRepeating() {
+    return this.budgetForm.get('repeats')?.value;
   }
 }

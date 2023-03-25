@@ -1,6 +1,11 @@
 <div class="budgets-dialog">
-  <h2 mat-dialog-title> Transaction</h2>
-  <form class="budgets-dialog__form">
+  <h2 mat-dialog-title>Add Budget</h2>
+  <form class="budgets-dialog__form" [formGroup]="budgetForm">
+    <mat-form-field>
+      <mat-label>Category</mat-label>
+      <input matInput formControlName="category" type="text" required />
+    </mat-form-field>
+
     <mat-form-field>
       <mat-label>Amount</mat-label>
       <input matInput formControlName="amount" type="number" step="0.01" required />
@@ -8,32 +13,33 @@
 
     <mat-form-field>
       <mat-label>Frequency</mat-label>
-      <mat-select #frequencySelect [formControl]="frequency" required>
-        <mat-select-trigger>
-          {{frequency.value || ''}}
-        </mat-select-trigger>
+      <mat-select #frequencySelect formControlName="frequency" required>
         <mat-option *ngFor="let option of frequencyOptions" [value]="option">{{option}}</mat-option>
       </mat-select>
     </mat-form-field>
 
-    <div class="duration-container">
+    <div class="budgets-dialog__duration">
       <span>Every </span>
       <mat-form-field>
         <mat-label>Duration</mat-label>
-        <div class="duration-input">
           <input matInput formControlName="duration" type="number" step="1" required />
-        </div>
       </mat-form-field>
-      <span *ngIf="frequency.value === 'Weekly'" class="duration-unit">weeks</span>
-      <span *ngIf="frequency.value === 'Yearly'" class="duration-unit">years</span>
-      <span *ngIf="frequency.value === 'Monthly'" class="duration-unit">months</span>
+      <span *ngIf="getDurationFrequency() === 'Weekly'" class="duration-unit">weeks</span>
+      <span *ngIf="getDurationFrequency() === 'Yearly'" class="duration-unit">years</span>
+      <span *ngIf="getDurationFrequency() === 'Monthly'" class="duration-unit">months</span>
     </div>
 
-    <mat-form-field>
-      <mat-label>Repeat</mat-label>
-      <input matInput formControlName="count" type="number" step="1" />
+
+    <mat-checkbox formControlName="repeats" color="primary">Repeats?</mat-checkbox>
+
+    <div class="budgets-dialog__count" *ngIf="isRepeating()">
+      <span>Repeat</span>
+      <mat-form-field>
+        <mat-label>Count</mat-label>
+        <input matInput formControlName="count" type="number" step="1" />
+      </mat-form-field>
       <span>times</span>
-    </mat-form-field>
+    </div>
     
     <mat-form-field>
       <mat-label>Start Date</mat-label>

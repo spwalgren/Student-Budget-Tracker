@@ -17,3 +17,17 @@
   display: flex;
   flex-direction: column;
 }
+
+
+.budgets-dialog__form mat-form-field {
+  width: 100%;
+}
+
+.budgets-dialog__duration,
+.budgets-dialog__count {
+  /* content align */
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  align-items: center;
+}
