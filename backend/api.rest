@@ -203,3 +203,8 @@ content-type: application/json
 
 DELETE http://{{host}}/api/budget/13
 content-type: application/json
+
+###
+
+DELETE http://{{host}}/api/delete-user
+content-type: application/json
