@@ -19,7 +19,6 @@ mat-toolbar {
 
 mat-sidenav-container {
   /* self align */
-  min-height: 600px;
   height: calc(100vh - 64px);
 }
 
@@ -42,6 +41,8 @@ button {
 }
 
 .dash-content {
+  /* self align */
+  height: min-content;
   /* content align */
   padding: 20px;
 }
