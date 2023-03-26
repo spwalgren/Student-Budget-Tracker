@@ -1,6 +1,10 @@
 <div class="budgets-dialog">
-  <h2 mat-dialog-title>Add Budget</h2>
-  <form class="budgets-dialog__form" [formGroup]="budgetForm">
+  <h2 mat-dialog-title>{{ mode }} Budget</h2>
+  <form
+    class="budgets-dialog__form"
+    [formGroup]="budgetForm"
+    (ngSubmit)="goSubmitBudget()"
+  >
     <mat-dialog-content>
       <mat-form-field>
         <mat-label>Category</mat-label>
@@ -39,13 +43,13 @@
             required
           />
         </mat-form-field>
-        <span *ngIf="getDurationFrequency() === 'Weekly'" class="duration-unit"
+        <span *ngIf="getDurationFrequency() === 'weekly'" class="duration-unit"
           >weeks</span
         >
-        <span *ngIf="getDurationFrequency() === 'Yearly'" class="duration-unit"
+        <span *ngIf="getDurationFrequency() === 'yearly'" class="duration-unit"
           >years</span
         >
-        <span *ngIf="getDurationFrequency() === 'Monthly'" class="duration-unit"
+        <span *ngIf="getDurationFrequency() === 'monthly'" class="duration-unit"
           >months</span
         >
       </div>

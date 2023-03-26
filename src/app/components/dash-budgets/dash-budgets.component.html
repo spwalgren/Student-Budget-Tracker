@@ -1,11 +1,16 @@
 <div class="budgets__heading-row">
   <h2>Budgets</h2>
-  <button mat-fab color="primary" (click)='openDialog()'>
+  <button mat-fab color="primary" (click)="openAddDialog()">
     <mat-icon>add</mat-icon>
   </button>
 </div>
 <section>
   <div *ngFor="let category of existingCategories">
-    <app-budget-group [groupName]="category" [budgetData]="getFilteredData(category, budgetData)"></app-budget-group>
+    <app-budget-group
+      [groupName]="category"
+      [budgetData]="getFilteredData(category, budgetData)"
+      [openEditDialog]="openEditDialog"
+      [dialog]="dialog"
+    ></app-budget-group>
   </div>
 </section>

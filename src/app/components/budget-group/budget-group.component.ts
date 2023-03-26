@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { BudgetService } from 'src/app/budget.service';
 import { Budget, BudgetContent, Period } from 'src/types/budget-system';
 
@@ -12,6 +13,11 @@ export class BudgetGroupComponent {
   groupName: string = '';
   @Input()
   budgetData: Budget[] = []
+  @Input()
+  dialog!: MatDialog
+  @Input()
+  openEditDialog: (budget: Budget) => void = (_) => { }
+
   displayedColumns = [
     "amountLimit",
     "period",

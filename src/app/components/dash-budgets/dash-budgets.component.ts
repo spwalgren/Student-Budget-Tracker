@@ -1,11 +1,11 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Budget } from 'src/types/budget-system';
+import { Budget, BudgetContent, Period } from 'src/types/budget-system';
 import { BudgetService } from 'src/app/budget.service';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 export interface BudgetsDialogData {
-  mode: "add" | "edit",
+  mode: "Add" | "Edit",
   data: Budget
 }
 
@@ -45,9 +45,35 @@ export class DashBudgetsComponent {
     return budgetData.filter((elem) => elem.data.category === category);
   }
 
-  openDialog(): void {
+  openAddDialog(): void {
     const dialogRef = this.dialog.open(BudgetsDialogComponent, {
-      data: { mode: "add", data: null }
+      data: {
+        mode: "Add", data: {
+          userId: 0,
+          budgetId: 0,
+          data: {
+            category: "General",
+            amountLimit: 100,
+            frequency: Period.weekly,
+            duration: 1,
+            startDate: new Date().toISOString()
+          }
+        }
+      } as BudgetsDialogData
+    });
+
+    dialogRef.afterClosed().subscribe((res) => {
+      console.log(res);
+    });
+  }
+
+  openEditDialog(budget: Budget): void {
+    const dialogRef = this.dialog.open(BudgetsDialogComponent, {
+      data: {
+        mode: "Edit", data: {
+          ...budget
+        }
+      } as BudgetsDialogData
     });
 
     dialogRef.afterClosed().subscribe((res) => {
@@ -64,7 +90,7 @@ export class DashBudgetsComponent {
 export class BudgetsDialogComponent {
 
   budgetForm: FormGroup;
-  frequencyOptions = ['Weekly', 'Monthly', 'Yearly'];
+  frequencyOptions = ['weekly', 'monthly', 'yearly'];
   mode: "Add" | "Edit";
 
 
@@ -73,16 +99,15 @@ export class BudgetsDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: BudgetsDialogData
   ) {
     this.budgetForm = new FormGroup({
-      category: new FormControl('General'),
-      amount: new FormControl('', [Validators.required]),
-      frequency: new FormControl('Weekly', [Validators.required]),
-      duration: new FormControl(1),
-      repeats: new FormControl(true, [Validators.required]),
-      count: new FormControl(null),
-      startDate: new FormControl(new Date().toISOString())
+      category: new FormControl(data.data.data.category),
+      amount: new FormControl(data.data.data.amountLimit, [Validators.required]),
+      frequency: new FormControl(data.data.data.frequency, [Validators.required]),
+      duration: new FormControl(data.data.data.duration),
+      repeats: new FormControl(data.data.data.count ? true : false, [Validators.required]),
+      count: new FormControl(data.data.data.count),
+      startDate: new FormControl(data.data.data.startDate)
     });
-
-    this.mode = "Add"
+    this.mode = data.mode
   }
 
   onNoClick(): void {
@@ -96,6 +121,22 @@ export class BudgetsDialogComponent {
   // onFrequencyChange(event: any) {
   //   console.log(event.target.value);
   // }
+
+  goSubmitBudget() {
+    if (!this.budgetForm.invalid) {
+
+      const repeats: boolean = this.budgetForm.get('repeats')?.value as boolean
+      const budgetContent: BudgetContent = {
+        category: this.budgetForm.get('category')?.value as string,
+        amountLimit: this.budgetForm.get('amount')?.value as number,
+        frequency: this.budgetForm.get('frequency')?.value as Period,
+        duration: this.budgetForm.get('duration')?.value as number,
+        count: repeats ? this.budgetForm.get('count')?.value as number : undefined,
+        startDate: this.budgetForm.get('startDate')?.value as string,
+      }
+      console.log(budgetContent);
+    }
+  }
 
   getDurationFrequency() {
     return this.budgetForm.get('frequency')?.value;

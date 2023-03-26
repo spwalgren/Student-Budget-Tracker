@@ -1,50 +1,52 @@
 <section>
-  <h3>{{groupName}}</h3>
-  <table 
-      mat-table 
-      class="mat-elevation-z8"
-      [dataSource]="budgetData"
+  <h3>{{ groupName }}</h3>
+  <table mat-table class="mat-elevation-z8" [dataSource]="budgetData">
+    <ng-container matColumnDef="amountLimit">
+      <th mat-header-cell *matHeaderCellDef>Amount</th>
+      <td mat-cell *matCellDef="let element">
+        {{ numberFormatter.format(element.data.amountLimit) }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="period">
+      <th mat-header-cell *matHeaderCellDef>Period Definition</th>
+      <td mat-cell *matCellDef="let element">
+        {{ getPeriodDef(element.data) }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="startDate">
+      <th mat-header-cell *matHeaderCellDef>Start Date</th>
+      <td mat-cell *matCellDef="let element">
+        Starting
+        {{ parseDate(element.data.startDate) }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="currentPeriod">
+      <th mat-header-cell *matHeaderCellDef>Current Period</th>
+      <td mat-cell *matCellDef="let element">
+        {{ getPeriodString(element.data) }}
+      </td></ng-container
     >
-      <ng-container matColumnDef="amountLimit">
-        <th mat-header-cell *matHeaderCellDef>Amount</th>
-        <td mat-cell *matCellDef="let element">
-          {{numberFormatter.format(element.data.amountLimit)}}
-        </td>
-      </ng-container>
 
-      <ng-container matColumnDef="period">
-        <th mat-header-cell *matHeaderCellDef>Period Definition</th>
-        <td mat-cell *matCellDef="let element">
-          {{getPeriodDef(element.data)}}
-        </td>
-      </ng-container>
+    <ng-container matColumnDef="editAndDelete">
+      <th mat-header-cell *matHeaderCellDef>Edit/Delete</th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          mat-icon-button
+          color="primary"
+          (click)="openEditDialog(element)"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td></ng-container
+    >
 
-      <ng-container matColumnDef="startDate">
-        <th mat-header-cell *matHeaderCellDef>Start Date</th>
-        <td mat-cell *matCellDef="let element">
-          Starting
-          {{parseDate(element.data.startDate)}}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="currentPeriod">
-        <th mat-header-cell *matHeaderCellDef>Current Period</th>
-        <td mat-cell *matCellDef="let element">
-          {{getPeriodString(element.data)}}
-      </ng-container>
-
-      <ng-container matColumnDef="editAndDelete">
-        <th mat-header-cell *matHeaderCellDef>Edit/Delete</th>
-        <td mat-cell *matCellDef="let element">
-          <button mat-icon-button color="primary">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button color="warn">
-            <mat-icon>delete</mat-icon>
-          </button>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    </table>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
 </section>
