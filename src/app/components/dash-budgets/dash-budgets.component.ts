@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Budget, BudgetContent, Period } from 'src/types/budget-system';
+import { Budget, BudgetContent, CreateBudgetRequest, Period, UpdateBudgetRequest } from 'src/types/budget-system';
 import { BudgetService } from 'src/app/budget.service';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
@@ -28,6 +28,10 @@ export class DashBudgetsComponent {
   ) { }
 
   ngOnInit() {
+    this.rerenderBudgets()
+  }
+
+  rerenderBudgets() {
     this.budgetService.getBudgets()
       .subscribe((res) => {
         if (!res.err) {
@@ -62,8 +66,15 @@ export class DashBudgetsComponent {
       } as BudgetsDialogData
     });
 
-    dialogRef.afterClosed().subscribe((res) => {
-      console.log(res);
+    dialogRef.afterClosed().subscribe((res?: BudgetsDialogData) => {
+      if (res) {
+        const budgetRequest: CreateBudgetRequest = {
+          ...res.data.data
+        }
+        this.budgetService.createBudget(budgetRequest).subscribe(_ => {
+          this.rerenderBudgets();
+        })
+      }
     });
   }
 
@@ -76,8 +87,15 @@ export class DashBudgetsComponent {
       } as BudgetsDialogData
     });
 
-    dialogRef.afterClosed().subscribe((res) => {
-      console.log(res);
+    dialogRef.afterClosed().subscribe((res?: BudgetsDialogData) => {
+      if (res) {
+        const budgetRequest: UpdateBudgetRequest = {
+          newBudget: res.data,
+        }
+        this.budgetService.updateBudget(budgetRequest).subscribe(_ => {
+          this.rerenderBudgets();
+        })
+      }
     });
   }
 }
@@ -134,7 +152,7 @@ export class BudgetsDialogComponent {
         count: repeats ? this.budgetForm.get('count')?.value as number : undefined,
         startDate: this.budgetForm.get('startDate')?.value as string,
       }
-      console.log(budgetContent);
+      this.dialogRef.close(budgetContent);
     }
   }
 
