@@ -1,6 +1,6 @@
 <div class="budgets__heading-row">
   <h2>Budgets</h2>
-  <button mat-fab color="primary" (click)="openAddDialog()">
+  <button mat-fab color="primary" (click)="openAddDialog()" data-cy="add-btn">
     <mat-icon>add</mat-icon>
   </button>
 </div>
@@ -12,6 +12,7 @@
         mat-table
         class="mat-elevation-z8"
         [dataSource]="getFilteredData(category, budgetData)"
+        [className]="'mat-elevation-z8 ' + category"
       >
         <ng-container matColumnDef="amountLimit">
           <th mat-header-cell *matHeaderCellDef>Amount</th>
@@ -49,6 +50,7 @@
               mat-icon-button
               color="primary"
               (click)="openEditDialog(element)"
+              data-cy="edit-btn"
             >
               <mat-icon>edit</mat-icon>
             </button>
@@ -57,6 +59,7 @@
               color="warn"
               (click)="deleteBudget(element)"
               [disabled]="isDeleting"
+              data-cy="delete-btn"
             >
               <mat-icon>delete</mat-icon>
             </button>
