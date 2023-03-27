@@ -122,3 +122,19 @@ The function retrieves the budget ID from the URL parameters.
 The function retrieves the budget from the database that matches the user ID and budget ID.  
 If the budget does not exist, the function sets the HTTP status code of the response to 400 (Bad Request) and returns.  
 If the budget is not already deleted, the function sets the isDeleted flag to true and saves the changes to the database. Otherwise, the function deletes the budget from the database.
+
+### GetBudgetCategories()
+
+Gets a list of all of the budget categories of the logged in user.
+
+**Parameters**
+w http.ResponseWriter - an interface that allows the handler to construct an HTTP response.
+r \*http.Request - a pointer to a data structure that represents the client HTTP request.
+
+**Function Behavior**
+The function sets the Content-Type header to "\*".  
+If the HTTP request method is OPTIONS, the function sets the HTTP status code of the response to 200 (OK) and returns.  
+The function retrieves the user ID from the HTTP request header and sets the HTTP status code of the response to 401 (Unauthorized) if the user ID is not valid.  
+The function retrieves the budget ID from the URL parameters.  
+The function retrieves all budgets from the database that matches the user ID.  
+The function returns a list of all of the categories from each retrieved budget.
