@@ -1,7 +1,15 @@
 <section>
   <h2>Delete User</h2>
-  <button mat-flat-button color="warn" type="button" (click)="deleteUser()">
+  <button
+    mat-flat-button
+    color="warn"
+    type="button"
+    (click)="deleteUser()"
+    data-cy="delete-user-btn"
+  >
     Delete
   </button>
-  <p *ngIf="isDeleting">Click the button again to delete your account</p>
+  <p *ngIf="isDeleting" data-cy="delete-warning">
+    Click the button again to delete your account
+  </p>
 </section>

@@ -11,12 +11,14 @@ export class DashSettingsComponent {
 
   isDeleting = false;
 
-  constructor(private loginService: LoginService, private router: Router) { }
+  constructor(public loginService: LoginService, private router: Router) { }
 
   deleteUser() {
     if (this.isDeleting) {
-      this.loginService.deleteUser().subscribe(() => {
-        this.router.navigate(['/login']);
+      this.loginService.deleteUser().subscribe((res) => {
+        if (!res.err) {
+          this.router.navigate(['/login']);
+        }
       });
     } else {
       this.isDeleting = true;
