@@ -40,3 +40,7 @@ type DeletedBudgetsResponse struct {
 type UpdateBudgetRequest struct {
 	NewBudget Budget `json:"newBudget"`
 }
+
+type BudgetCategoriesResponse struct {
+	Category []string `json:"categories"`
+}

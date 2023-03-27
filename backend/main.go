@@ -42,6 +42,7 @@ func main() {
 
 
 	r.HandleFunc("/api/budget", controllers.UpdateBudget).Methods(http.MethodOptions, http.MethodPut)
+	r.HandleFunc("/api/budget/categories", controllers.GetBudgetCategories).Methods(http.MethodOptions, http.MethodGet)
 	r.HandleFunc("/api/budget/{budgetId}", controllers.DeleteBudget).Methods(http.MethodOptions, http.MethodDelete)
 
 	log.Fatal(http.ListenAndServe(":8080", corsObj.Handler(r)))

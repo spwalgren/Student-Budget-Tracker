@@ -150,3 +150,27 @@ func DeleteBudget(w http.ResponseWriter, r *http.Request) {
 		database.DB.Delete(&toDelete)
 	}
 }
+
+func GetBudgetCategories(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "*")
+
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	userID, _ := strconv.ParseInt(ReturnUserID(w, r), 10, 32)
+	if userID == -1 {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	var budgets models.BudgetsResponse
+	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false}).Find(&budgets.Budgets)
+	var categories models.BudgetCategoriesResponse
+	for i := range budgets.Budgets {
+		categories.Category = append(categories.Category, budgets.Budgets[i].Data.Category)
+	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(categories)
+}
