@@ -32,3 +32,29 @@
   gap: 15px;
   align-items: center;
 }
+
+h3 {
+  /* self style */
+  font-weight: 500;
+}
+
+table {
+  /* self align */
+  margin-bottom: 20px;
+}
+
+.mat-column-amountLimit {
+  width: 10%;
+}
+
+.mat-column-period {
+  width: 20%;
+}
+
+.mat-column-startDate {
+  width: 20%;
+}
+
+.mat-column-currentPeriod {
+  width: 30%;
+}
