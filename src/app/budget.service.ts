@@ -18,18 +18,81 @@ export class BudgetService {
   constructor(private http: HttpClient) { }
 
   createBudget(requestData: CreateBudgetRequest): Observable<CreateBudgetResponse> {
-    return from(createBudget(requestData));
+    const url = `${this.requestBase}/budget`;
+    const body = { ...requestData };
+    const options = {
+      headers: this.httpOptions.headers,
+      withCredentials: true,
+    };
+
+    return this.http.post<CreateBudgetResponse>(url, body, options)
+      .pipe(
+        catchError((err) => {
+          console.log(err);
+          return of({
+            err: "Could not create budget",
+            userId: 0,
+            budgetId: 0
+          })
+        })
+      )
   }
 
   getBudgets(): Observable<GetBudgetsResponse> {
-    return from(getBudgets());
+    const url = `${this.requestBase}/budget`;
+    const options = {
+      headers: this.httpOptions.headers,
+      withCredentials: true,
+    };
+
+    return this.http.get<GetBudgetsResponse>(url, options)
+      .pipe(
+        catchError((err) => {
+          console.log(err);
+          return of({
+            err: "Could not get budgets",
+            budgets: []
+          })
+        })
+      )
   }
 
   updateBudget(requestData: UpdateBudgetRequest): Observable<GenericResponse> {
-    return from(updateBudget(requestData));
+    const url = `${this.requestBase}/budget`;
+    const body = { ...requestData };
+    const options = {
+      headers: this.httpOptions.headers,
+      withCredentials: true,
+    };
+
+    return this.http.put<GenericResponse>(url, body, options)
+      .pipe(
+        map((_) => ({})),
+        catchError((err) => {
+          console.log(err);
+          return of({
+            err: "Could not update budget",
+          })
+        })
+      )
   }
 
   deleteBudget(budgetId: number): Observable<GenericResponse> {
-    return from(deleteBudget(budgetId));
+    const url = `${this.requestBase}/budget/${budgetId}`;
+    const options = {
+      headers: this.httpOptions.headers,
+      withCredentials: true,
+    };
+
+    return this.http.delete<GenericResponse>(url, options)
+      .pipe(
+        map((_) => ({})),
+        catchError((err) => {
+          console.log(err);
+          return of({
+            err: "Could not delete budget",
+          })
+        })
+      )
   }
 }
