@@ -84,6 +84,22 @@ export class LoginService {
     );
   }
 
+  deleteUser(): Observable<GenericResponse> {
+    const url = `${this.requestBase}/delete-user`;
+    const options = {
+      headers: this.httpOptions.headers,
+      withCredentials: true,
+    };
+
+    return this.http.delete<GenericResponse>(url, options).pipe(
+      map((_) => ({})),
+      catchError((err) => {
+        console.log(err);
+        return of({ err: "Unknown Error" });
+      })
+    );
+  }
+
   // getUserData(token: string): Observable<UserData> {
   //   return of({ customString: '' });
   // }
