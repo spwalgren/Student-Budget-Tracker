@@ -37,8 +37,10 @@
     </mat-form-field>
 
     <div mat-dialog-actions>
-      <button mat-button type="submit">{{ mode }}</button>
-      <button mat-button type="button" mat-dialog-close>Cancel</button>
+      <button mat-button type="submit" data-cy="submit-btn">{{ mode }}</button>
+      <button mat-button type="button" mat-dialog-close data-cy="cancel-btn">
+        Cancel
+      </button>
     </div>
   </form>
 </div>
