@@ -18,7 +18,7 @@ describe('login', () => {
     cy.url().should('not.include', 'dashboard');
   })
 
-  it('Should take the user to Sign up page upon clicking \"Sign Up\" Button', () => {
+  it('Should take the user to Sign up page upon clicking "Sign Up" Button', () => {
     cy.visit('/')
     cy.get('[data-cy="Log In"]').click()
     cy.get('[formControlName="email"]').type('bob@gmail.com');
@@ -28,38 +28,13 @@ describe('login', () => {
     cy.url().should('include', 'sign-up');
   })
 
-  it('Should let user sign up... clicking \"Sign Up\" from login page', () => {
-    cy.visit('/')
-    cy.get('[data-cy="Log In"]').click()
-    cy.url().should('includes', 'login');
-    cy.get('[data-cy="Sign-Up"]').click({waitForAnimations: false})
-    cy.url().should('include', 'sign-up');
-    cy.get('[data-cy="testFirstName"]').type('Bobby');
-    cy.get('[data-cy="testLastName"]').type('Fergison');
-    cy.get('[formControlName="email"]').type('bobby11@gmail.com');
-    cy.get('[formControlName="password"]').type('bobbyIsTheBest');
-    cy.get('[formControlName="reenteredPass"]').type('bobbyIsTheBest');
-    cy.url().should('includes', 'sign-up');
-    cy.get('[data-cy="Submit Sign-Up"]', { timeout: 16000 }).click();
-    cy.url().should('include', 'login');
-
+  it('Should let user sign up and delete their user', () => {
+    cy.logInUser(101, false);
+    cy.get('[data-cy="alert-component"]').should('exist').should('contain.text', 'Could not verify credentials');
+    cy.registerUser(101, true);
+    cy.logInUser(101, true);
+    cy.deleteUser(true);
+    cy.logInUser(101, false);
+    cy.get('[data-cy="alert-component"]').should('exist').should('contain.text', 'Could not verify credentials');
   })
-  
-  // it('Should let user sign up... clicking \"Sign Up\" from dashboard', () => {
-  //   cy.visit('/')
-  //   cy.get('[data-cy="Sign Up"]').click({force:true})
-  //   cy.url().should('include', 'sign-up');
-  //   cy.get('[formControlName="firstName"]').type('Bobby', timeout: 20);
-  //   cy.get('[formControlName="lastName"]').type('Fergison');
-  //   cy.get('[formControlName="email"]').type('bobby@gmail.com');
-  //   cy.get('[formControlName="password"]').type('bobbyIsTheBest');
-  //   cy.get('[formControlName="reenteredPass"]').type('bobbyIsTheBest');
-  //   cy.url().should('includes', 'sign-up');
-  //   cy.get('[data-cy="Submit Sign-Up"]').click({force:true});
-  //   cy.url().should('include', 'dashboard');
-  // })
-
-  //test uncompleted sign up
-
-
 })
