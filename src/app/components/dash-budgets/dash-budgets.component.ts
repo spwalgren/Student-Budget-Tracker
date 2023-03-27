@@ -32,6 +32,7 @@ export class DashBudgetsComponent {
     "currentPeriod",
     "editAndDelete"
   ]
+  isDeleting: boolean = false
 
   constructor(
     private budgetService: BudgetService,
@@ -47,6 +48,7 @@ export class DashBudgetsComponent {
       .subscribe((res) => {
         if (!res.err) {
           this.budgetData = [...res.budgets];
+          this.existingCategories = []
           this.budgetData.forEach((elem) => {
             if (!this.existingCategories.find((str) => str === elem.data.category)) {
               this.existingCategories.push(elem.data.category);
@@ -54,7 +56,7 @@ export class DashBudgetsComponent {
           })
           this.existingCategories.sort();
         }
-        console.log(this.budgetData);
+        this.isDeleting = false;
       })
   }
 
@@ -209,6 +211,13 @@ export class DashBudgetsComponent {
         })
       }
     });
+  }
+
+  deleteBudget(budget: Budget) {
+    this.isDeleting = true;
+    this.budgetService.deleteBudget(budget.budgetId).subscribe(_ => {
+      this.rerenderBudgets();
+    })
   }
 }
 
