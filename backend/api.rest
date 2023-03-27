@@ -186,7 +186,7 @@ PUT http://{{host}}/api/budget
 content-type: application/json
 
  {
-    "userId": 35,
+    "userId": 68,
     "budgetId": 1,
     "isDeleted": false,
     "data": {
@@ -201,10 +201,19 @@ content-type: application/json
 
 ###
 
-DELETE http://{{host}}/api/budget/13
+DELETE http://{{host}}/api/budget/22
 content-type: application/json
 
 ###
 
 DELETE http://{{host}}/api/delete-user
 content-type: application/json
+
+###
+POST http://{{host}}/api/login
+content-type: application/json
+
+{
+    "email": "joe@joe.com",
+    "password": "qwert"
+}

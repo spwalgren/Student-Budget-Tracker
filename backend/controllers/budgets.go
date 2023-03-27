@@ -6,9 +6,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
-
-	"fmt"
-
 	"github.com/gorilla/mux"
 )
 
@@ -60,8 +57,7 @@ func GetBudgets(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var budgets models.BudgetsResponse
-	database.DB.Where(map[string]interface{}{"user_id": userID}).Find(&budgets.Budgets)
-	fmt.Println(budgets)
+	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false}).Find(&budgets.Budgets)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(budgets)
 }
@@ -103,7 +99,6 @@ func UpdateBudget(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(updateBudget.NewBudget.UserID)
 	if userID != int64(updateBudget.NewBudget.UserID) {
 		w.WriteHeader(http.StatusForbidden)
 		return
@@ -148,11 +143,9 @@ func DeleteBudget(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !toDelete.IsDeleted {
-		fmt.Println("Moving to deleted")
 		toDelete.IsDeleted = true
 		database.DB.Save(toDelete)
 	} else {
-		fmt.Println("Deleting")
 		database.DB.Delete(&toDelete)
 	}
 }
