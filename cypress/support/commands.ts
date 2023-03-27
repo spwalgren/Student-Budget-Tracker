@@ -45,7 +45,9 @@
 declare namespace Cypress {
   interface Chainable<Subject = any> {
     logInUser(sampleUserNumber: number): typeof logInUser;
+    registerUser(sampleUserNumber: number): typeof registerUser;
     logOutUser(): typeof logOutUser;
+    deleteUser(): typeof deleteUser;
   }
 }
 
@@ -57,11 +59,30 @@ function logInUser(sampleUserNumber: number): void {
   cy.url({ timeout: 10000 }).should('include', 'dashboard');
 }
 
+function registerUser(sampleUserNumber: number): void {
+  cy.visit('/sign-up');
+  cy.get('[formControlName="firstName"]').type(`firstName`);
+  cy.get('[formControlName="lastName"]').type(`lastName`);
+  cy.get('[formControlName="email"]').type(`sample${sampleUserNumber}@example.com`);
+  cy.get('[formControlName="password"]').type('1234');
+  cy.get('[formControlName="reenteredPass"]').type('1234');
+  cy.get('[type="submit"]').click()
+  cy.url({ timeout: 10000 }).should('include', 'login');
+}
+
 function logOutUser(): void {
   cy.visit('/dashboard');
   cy.get('[data-cy="log-out-button"]').click();
   cy.url({ timeout: 10000 }).should('include', 'login');
 }
 
+function deleteUser(): void {
+  cy.visit('/dashboard/settings');
+  cy.get('[data-cy="delete-user-button"]').click();
+  cy.get('[data-cy="delete-user-button"]').click();
+}
+
 Cypress.Commands.add('logInUser', logInUser);
 Cypress.Commands.add('logOutUser', logOutUser);
+Cypress.Commands.add('registerUser', registerUser);
+Cypress.Commands.add('deleteUser', deleteUser);
