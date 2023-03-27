@@ -41,6 +41,7 @@ import { DashTransactionsComponent } from './components/dash-transactions/dash-t
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { TransactionsModalComponent } from './components/transactions-modal/transactions-modal.component';
 import { BudgetsDialogComponent, DashBudgetsComponent } from './components/dash-budgets/dash-budgets.component';
+import { DashSettingsComponent } from './components/dash-settings/dash-settings.component';
 
 // Services
 
@@ -57,7 +58,8 @@ import { BudgetsDialogComponent, DashBudgetsComponent } from './components/dash-
     PageNotFoundComponent,
     TransactionsModalComponent,
     DashBudgetsComponent,
-    BudgetsDialogComponent
+    BudgetsDialogComponent,
+    DashSettingsComponent
   ],
   imports: [
     BrowserModule,
