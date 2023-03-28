@@ -9,6 +9,14 @@
 
 # Backend Unit Tests On Functions added in Sprint 3
 
+**TestCreateBudget()    
+TestGetBudget()     
+TestUpdateBudget_OK()    
+TestUpdateBudget_WrongBudgetID()    
+TestDeleteBudget_OK()    
+TestDeleteBudget_WrongBudgetID()**    
+
+
 # Documentation On Functions added in Sprint 3
 
 ## controllers/user.go
