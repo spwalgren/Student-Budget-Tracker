@@ -3,11 +3,80 @@
 **Main Points:**
 
 - Added Budget Tracking functionality for users
-  - Enabled user to track expired/deleted budgets
+  - Users can add, view, edit, and delete their budgets
+  - Budget tables show detailed information about...
+    - How they are defined
+    - Whether or not they repeat a finite number of times
+    - What the timespan is for the current period
+    - How much time is left in the current period
+  - Enabled user to track expired budgets
+- Added Button to allow user to delete their user information on the database
 
 # Frontend Unit Tests
 
+## New/Changed for Sprint 3
+
+**components/dash-budgets** - Tests if it can add tables, add to existing tables, delete data from tables, delete tables, and edit table entries.
+
+**components/dash-settings** - Tests if the delete user button behaves as it should and calls a function.
+
+## Unchanged from Sprint 2
+
+**components/alert** - Tests how it displays colors, text, and icons.
+
+**components/dash-transactions** - Tests if it has a table, has a button that opens a modal, can display entries from the mock service, and has a detail row that pops out.
+
+**components/page-not-found** - Tests if it has a button and if that button calls a function when clicked.
+
+**components/dash-home** - Tests if it can mount
+
+**routes/landing** - Tests if it can mount
+
+**routes/dashboard** - Tests if it has visible buttons, if it calls a function immediately, and if it calls a function upon clicking log out.
+
+**routes/login** - Tests if it automatically attempts to login the user and tests various inputs to see what will permit the user to log in.
+
+**routes/signup** - Tests various inputs to see what will allow the user to login
+
+# Frontend Cypress E2E Tests
+
+## New/Changed for Sprint 3
+
+**budgets**
+- Tests if the user can access the budget page and budget modal.
+- Tests if the user can add data to the table.
+- Tests if the user will still have their data after logging out and logging back in.
+- Tests if old data does not appear when the user recreates their account after deletion.
+  
+**transactions**
+- Tests if the user can access the transaction page and transaction modal.
+- Tests if the user can add data to the table.
+- Tests if the user will still have their data after logging out and logging back in.
+- Tests if old data does not appear when the user recreates their account after deletion.
+
+**login**
+- Runs several tests to see what permits the user to log in.
+- Logs the user in and tests if the user is directed to the dashboard.
+- Tests if going to the login page when already logged in will redirect the user.
+- Tests user registration and user deletion.
+
+## Unchanged from Sprint 2
+
+**dashboard**
+- Tests that it opens when the user is logged in.
+- Tests if the buttons link to different parts of the app.
+- Tests if the 404 page works.
+- Tests the logout button and checks that the user cannot easily log back in.
+
 # Backend Unit Tests On Functions added in Sprint 3
+
+**TestCreateBudget()    
+TestGetBudget()     
+TestUpdateBudget_OK()    
+TestUpdateBudget_WrongBudgetID()    
+TestDeleteBudget_OK()    
+TestDeleteBudget_WrongBudgetID()**    
+
 
 # Documentation On Functions added in Sprint 3
 
