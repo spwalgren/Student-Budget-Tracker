@@ -85,7 +85,7 @@ TestGetBudget()
 TestUpdateBudget_OK()  
 TestUpdateBudget_WrongBudgetID()  
 TestDeleteBudget_OK()  
-TestDeleteBudget_WrongBudgetID()
+TestDeleteBudget_WrongBudgetID()  
 TestGetBudgetCategories()**
 
 # Documentation On Functions added in Sprint 3
