@@ -568,7 +568,7 @@ func TestDeleteTransaction_OK(t *testing.T) {
 	req.AddCookie(cookie)
     executeRequest(req)
 
-	req, _ = http.NewRequest("DELETE", "/api/transaction/1/1", bytes.NewBuffer(payload))
+	req, _ = http.NewRequest("DELETE", "/api/transaction/1", bytes.NewBuffer(payload))
 	req.AddCookie(cookie)
     response =executeRequest(req)
 
@@ -629,7 +629,7 @@ func TestDeleteTransaction_WrongTransactionID(t *testing.T) {
 	req.AddCookie(cookie)
     executeRequest(req)
 
-	req, _ = http.NewRequest("DELETE", "/api/transaction/1/5", bytes.NewBuffer(payload))
+	req, _ = http.NewRequest("DELETE", "/api/transaction/5", bytes.NewBuffer(payload))
 	req.AddCookie(cookie)
     response =executeRequest(req)
 
@@ -637,43 +637,6 @@ func TestDeleteTransaction_WrongTransactionID(t *testing.T) {
 
 	a.Equal(http.MethodDelete, req.Method, "HTTP request method error")
 	a.Equal(http.StatusBadRequest, response.Code, "HTTP request status code error")
-}
-func TestDeleteTransaction_WrongUserID(t *testing.T) {
-	clearTransactionTable()
-
-	payload := []byte(`{"firstName": "test-firstName",
-    "lastName": "test-lastName",
-    "email": "test-email",
-    "password": "test-password"}`)
-    req, _ := http.NewRequest("POST", "/api/signup", bytes.NewBuffer(payload))
-    executeRequest(req)
-
-    payload = []byte(`{"email": "test-email", "password": "test-password"}`)
-    req, _ = http.NewRequest("POST", "/api/login", bytes.NewBuffer(payload))
-    response := executeRequest(req)
-
-	payload = []byte(`{"data":{"amount": 100, "name": "test-name", "date": "test-date", "category": "test-category", "description": "test-description"}}`)
-
-	cookie := response.Result().Cookies()[0]
-
-	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
-	req.AddCookie(cookie)
-  	executeRequest(req)
-
-	payload = []byte(`{"data":{"amount": 200, "name": "test-name2", "date": "test-date2", "category": "test-category2", "description": "test-description2"}}`)
-
-	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
-	req.AddCookie(cookie)
-    executeRequest(req)
-
-	req, _ = http.NewRequest("DELETE", "/api/transaction/3/1", bytes.NewBuffer(payload))
-	req.AddCookie(cookie)
-    response =executeRequest(req)
-
-	a := assert.New(t)
-
-	a.Equal(http.MethodDelete, req.Method, "HTTP request method error")
-	a.Equal(http.StatusForbidden, response.Code, "HTTP request status code error")
 }
 
 func TestCreateBudget(t *testing.T) {
