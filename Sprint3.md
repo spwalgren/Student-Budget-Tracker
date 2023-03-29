@@ -14,8 +14,8 @@
 
 # Frontend Unit Tests
 
-For unit testing, we opted to use Cypress. 
-The code for writing component tests in Cypress is less complex than Jasmine and is easier to understand. 
+For unit testing, we opted to use Cypress.
+The code for writing component tests in Cypress is less complex than Jasmine and is easier to understand.
 Additionally, it offers useful tools such as running the tests in a browser and reviewing how Cypress sees the individual components.
 Seeing that the Cypress component tests accomplish the same tasks as the Jasmine tests, we believed it to be an acceptable substitute.
 
@@ -49,18 +49,21 @@ Note: This test seemingly passes in the Cypress GUI but fails in the Cypress CLI
 ## New/Changed for Sprint 3
 
 **budgets**
+
 - Tests if the user can access the budget page and budget modal.
 - Tests if the user can add data to the table.
 - Tests if the user will still have their data after logging out and logging back in.
 - Tests if old data does not appear when the user recreates their account after deletion.
-  
+
 **transactions**
+
 - Tests if the user can access the transaction page and transaction modal.
 - Tests if the user can add data to the table.
 - Tests if the user will still have their data after logging out and logging back in.
 - Tests if old data does not appear when the user recreates their account after deletion.
 
 **login**
+
 - Runs several tests to see what permits the user to log in.
 - Logs the user in and tests if the user is directed to the dashboard.
 - Tests if going to the login page when already logged in will redirect the user.
@@ -69,6 +72,7 @@ Note: This test seemingly passes in the Cypress GUI but fails in the Cypress CLI
 ## Unchanged from Sprint 2
 
 **dashboard**
+
 - Tests that it opens when the user is logged in.
 - Tests if the buttons link to different parts of the app.
 - Tests if the 404 page works.
@@ -76,13 +80,13 @@ Note: This test seemingly passes in the Cypress GUI but fails in the Cypress CLI
 
 # Backend Unit Tests On Functions added in Sprint 3
 
-**TestCreateBudget()    
-TestGetBudget()     
-TestUpdateBudget_OK()    
-TestUpdateBudget_WrongBudgetID()    
-TestDeleteBudget_OK()    
-TestDeleteBudget_WrongBudgetID()**    
-
+**TestCreateBudget()  
+TestGetBudget()  
+TestUpdateBudget_OK()  
+TestUpdateBudget_WrongBudgetID()  
+TestDeleteBudget_OK()  
+TestDeleteBudget_WrongBudgetID()
+TestGetBudgetCategories()**
 
 # Documentation On Functions added in Sprint 3
 
