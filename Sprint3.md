@@ -14,9 +14,15 @@
 
 # Frontend Unit Tests
 
+For unit testing, we opted to use Cypress. 
+The code for writing component tests in Cypress is less complex than Jasmine and is easier to understand. 
+Additionally, it offers useful tools such as running the tests in a browser and reviewing how Cypress sees the individual components.
+Seeing that the Cypress component tests accomplish the same tasks as the Jasmine tests, we believed it to be an acceptable substitute.
+
 ## New/Changed for Sprint 3
 
 **components/dash-budgets** - Tests if it can add tables, add to existing tables, delete data from tables, delete tables, and edit table entries.
+Note: This test seemingly passes in the Cypress GUI but fails in the Cypress CLI. This issue is planned to be addressed in a future sprint.
 
 **components/dash-settings** - Tests if the delete user button behaves as it should and calls a function.
 
