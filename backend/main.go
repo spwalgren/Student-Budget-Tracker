@@ -27,6 +27,7 @@ func main() {
 	r.HandleFunc("/api/users", controllers.GetUsers).Methods(http.MethodGet, http.MethodOptions)
 	r.HandleFunc("/api/signup", controllers.CreateUser).Methods(http.MethodOptions, http.MethodPost)
 	r.HandleFunc("/api/user", controllers.GetUser).Methods(http.MethodGet, http.MethodOptions)
+	r.HandleFunc("/api/delete-user", controllers.DeleteUser).Methods(http.MethodDelete, http.MethodOptions)
 	r.HandleFunc("/api/logout", controllers.LogoutHandler).Methods(http.MethodPost, http.MethodOptions)
 	r.HandleFunc("/api/transaction", controllers.CreateTransaction).Methods(http.MethodPost, http.MethodOptions)
 	r.HandleFunc("/api/transaction", controllers.GetTransactions).Methods(http.MethodGet, http.MethodOptions)
@@ -34,7 +35,14 @@ func main() {
 	r.HandleFunc("/api/transaction/{transactionId}", controllers.DeleteTransaction).Methods(http.MethodOptions, http.MethodDelete)
 	r.HandleFunc("/api/budget", controllers.CreateBudget).Methods(http.MethodOptions, http.MethodPost)
 	r.HandleFunc("/api/budget", controllers.GetBudgets).Methods(http.MethodGet, http.MethodOptions)
+
+
+	r.HandleFunc("/api/deleted_budgets", controllers.GetDeletedBudgets).Methods(http.MethodGet, http.MethodOptions)
+
+
+
 	r.HandleFunc("/api/budget", controllers.UpdateBudget).Methods(http.MethodOptions, http.MethodPut)
+	r.HandleFunc("/api/budget/categories", controllers.GetBudgetCategories).Methods(http.MethodOptions, http.MethodGet)
 	r.HandleFunc("/api/budget/{budgetId}", controllers.DeleteBudget).Methods(http.MethodOptions, http.MethodDelete)
 
 	log.Fatal(http.ListenAndServe(":8080", corsObj.Handler(r)))

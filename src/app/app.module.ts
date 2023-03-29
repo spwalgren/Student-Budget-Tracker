@@ -24,6 +24,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 // Route components
 import { LandingComponent } from './routes/landing/landing.component';
@@ -38,7 +40,8 @@ import { DashHomeComponent } from './components/dash-home/dash-home.component';
 import { DashTransactionsComponent } from './components/dash-transactions/dash-transactions.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { TransactionsModalComponent } from './components/transactions-modal/transactions-modal.component';
-import { DashGoalsComponent } from './components/dash-goals/dash-goals.component';
+import { BudgetsDialogComponent, DashBudgetsComponent } from './components/dash-budgets/dash-budgets.component';
+import { DashSettingsComponent } from './components/dash-settings/dash-settings.component';
 
 // Services
 
@@ -54,8 +57,9 @@ import { DashGoalsComponent } from './components/dash-goals/dash-goals.component
     DashTransactionsComponent,
     PageNotFoundComponent,
     TransactionsModalComponent,
-    DashGoalsComponent, //added thus
-
+    DashBudgetsComponent,
+    BudgetsDialogComponent,
+    DashSettingsComponent
   ],
   imports: [
     BrowserModule,
@@ -76,7 +80,9 @@ import { DashGoalsComponent } from './components/dash-goals/dash-goals.component
     MatSortModule,
     MatDialogModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatSelectModule,
+    MatCheckboxModule
   ],
   providers: [],
   bootstrap: [AppComponent]

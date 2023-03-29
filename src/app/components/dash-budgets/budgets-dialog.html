@@ -1,0 +1,92 @@
+<div class="budgets-dialog">
+  <h2 mat-dialog-title>{{ mode }} Budget</h2>
+  <form
+    class="budgets-dialog__form"
+    [formGroup]="budgetForm"
+    (ngSubmit)="goSubmitBudget()"
+  >
+    <mat-dialog-content>
+      <mat-form-field>
+        <mat-label>Category</mat-label>
+        <input matInput formControlName="category" type="text" required />
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Amount</mat-label>
+        <input
+          matInput
+          formControlName="amount"
+          type="number"
+          step="0.01"
+          required
+        />
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Frequency</mat-label>
+        <mat-select #frequencySelect formControlName="frequency" required>
+          <mat-option *ngFor="let option of frequencyOptions" [value]="option"
+            >{{option}}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+
+      <div class="budgets-dialog__duration">
+        <span>Every </span>
+        <mat-form-field>
+          <mat-label>Duration</mat-label>
+          <input
+            matInput
+            formControlName="duration"
+            type="number"
+            step="1"
+            required
+          />
+        </mat-form-field>
+        <span *ngIf="getDurationFrequency() === 'weekly'" class="duration-unit"
+          >weeks</span
+        >
+        <span *ngIf="getDurationFrequency() === 'yearly'" class="duration-unit"
+          >years</span
+        >
+        <span *ngIf="getDurationFrequency() === 'monthly'" class="duration-unit"
+          >months</span
+        >
+      </div>
+
+      <mat-checkbox formControlName="repeats" color="primary"
+        >Is Finite?</mat-checkbox
+      >
+
+      <div class="budgets-dialog__count" *ngIf="isRepeating()">
+        <span>Repeat</span>
+        <mat-form-field>
+          <mat-label>Count</mat-label>
+          <input matInput formControlName="count" type="number" step="1" />
+        </mat-form-field>
+        <span>times</span>
+      </div>
+
+      <mat-form-field>
+        <mat-label>Start Date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="startDatePicker"
+          formControlName="startDate"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="startDatePicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #startDatePicker></mat-datepicker>
+      </mat-form-field>
+    </mat-dialog-content>
+
+    <div mat-dialog-actions>
+      <button mat-button type="submit" data-cy="submit-btn">{{ mode }}</button>
+      <button mat-button type="button" data-cy="cancel-btn" mat-dialog-close>
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>

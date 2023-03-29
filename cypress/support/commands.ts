@@ -44,24 +44,51 @@
 
 declare namespace Cypress {
   interface Chainable<Subject = any> {
-    logInUser(sampleUserNumber: number): typeof logInUser;
-    logOutUser(): typeof logOutUser;
+    logInUser(sampleUserNumber: number, waitForRedirect: boolean): typeof logInUser;
+    registerUser(sampleUserNumber: number, waitForRedirect: boolean): typeof registerUser;
+    logOutUser(waitForRedirect: boolean): typeof logOutUser;
+    deleteUser(waitForRedirect: boolean): typeof deleteUser;
   }
 }
 
-function logInUser(sampleUserNumber: number): void {
+function logInUser(sampleUserNumber: number, waitForRedirect = true): void {
   cy.visit('/login');
   cy.get('[formControlName="email"]').type(`sample${sampleUserNumber}@example.com`);
   cy.get('[formControlName="password"]').type('1234');
   cy.get('[data-cy="Submit Login"]').click()
-  cy.url({ timeout: 10000 }).should('include', 'dashboard');
+  if (waitForRedirect)
+    cy.url({ timeout: 10000 }).should('include', 'dashboard');
 }
 
-function logOutUser(): void {
+function registerUser(sampleUserNumber: number, waitForRedirect = true): void {
+  cy.visit('/sign-up');
+  cy.get('[data-cy="testFirstName"]').type(`firstName`);
+  cy.get('[data-cy="testLastName"]').type(`lastName`);
+  cy.get('[formControlName="email"]').type(`sample${sampleUserNumber}@example.com`);
+  cy.get('[formControlName="password"]').type('1234');
+  cy.get('[formControlName="reenteredPass"]').type('1234');
+  cy.get('[type="submit"]').click()
+  if (waitForRedirect) {
+    cy.url({ timeout: 10000 }).should('include', 'login');
+  }
+}
+
+function logOutUser(waitForRedirect = true): void {
   cy.visit('/dashboard');
   cy.get('[data-cy="log-out-button"]').click();
-  cy.url({ timeout: 10000 }).should('include', 'login');
+  if (waitForRedirect)
+    cy.url({ timeout: 10000 }).should('include', 'login');
+}
+
+function deleteUser(waitForRedirect = true): void {
+  cy.visit('/dashboard/settings');
+  cy.get('[data-cy="delete-user-btn"]').click();
+  cy.get('[data-cy="delete-user-btn"]').click();
+  if (waitForRedirect)
+    cy.url({ timeout: 10000 }).should('include', 'login');
 }
 
 Cypress.Commands.add('logInUser', logInUser);
 Cypress.Commands.add('logOutUser', logOutUser);
+Cypress.Commands.add('registerUser', registerUser);
+Cypress.Commands.add('deleteUser', deleteUser);

@@ -1,14 +1,15 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, of, map, from } from 'rxjs';
-import { createTransaction, getTransactions, updateTransaction, deleteTransaction } from 'src/sample-transaction-data';
+import { createBudget, deleteBudget, getBudgets, updateBudget } from 'src/sample-budget-data';
 import { GenericResponse } from 'src/types/api-system';
-import { CreateTransactionRequest, UpdateTransactionRequest, GetTransactionsResponse, CreateTransactionResponse, Transaction } from 'src/types/transaction-system';
+import { CreateBudgetRequest, CreateBudgetResponse, GetBudgetsResponse, UpdateBudgetRequest } from 'src/types/budget-system';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TransactionService {
+export class BudgetService {
+
   private requestBase = 'http://localhost:8080/api';
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
@@ -16,49 +17,49 @@ export class TransactionService {
 
   constructor(private http: HttpClient) { }
 
-  createTransaction(transactionRequest: CreateTransactionRequest): Observable<CreateTransactionResponse> {
-    const url = `${this.requestBase}/transaction`
-    const body = { ...transactionRequest };
+  createBudget(requestData: CreateBudgetRequest): Observable<CreateBudgetResponse> {
+    const url = `${this.requestBase}/budget`;
+    const body = { ...requestData };
     const options = {
       headers: this.httpOptions.headers,
       withCredentials: true,
     };
 
-    return this.http.post<CreateTransactionResponse>(url, body, options)
+    return this.http.post<CreateBudgetResponse>(url, body, options)
       .pipe(
         catchError((err) => {
           console.log(err);
           return of({
-            err: "Could not create transaction",
+            err: "Could not create budget",
             userId: 0,
-            transactionId: 0
+            budgetId: 0
           })
         })
-      );
+      )
   }
 
-  getTransactions(): Observable<GetTransactionsResponse> {
-    const url = `${this.requestBase}/transaction`
+  getBudgets(): Observable<GetBudgetsResponse> {
+    const url = `${this.requestBase}/budget`;
     const options = {
       headers: this.httpOptions.headers,
       withCredentials: true,
     };
 
-    return this.http.get<GetTransactionsResponse>(url, options)
+    return this.http.get<GetBudgetsResponse>(url, options)
       .pipe(
         catchError((err) => {
           console.log(err);
           return of({
-            err: "Could not retrieve transactions",
-            data: []
+            err: "Could not get budgets",
+            budgets: []
           })
         })
-      );
+      )
   }
 
-  updateTransaction(transactionRequest: UpdateTransactionRequest): Observable<GenericResponse> {
-    const url = `${this.requestBase}/transaction`
-    const body = { ...transactionRequest };
+  updateBudget(requestData: UpdateBudgetRequest): Observable<GenericResponse> {
+    const url = `${this.requestBase}/budget`;
+    const body = { ...requestData };
     const options = {
       headers: this.httpOptions.headers,
       withCredentials: true,
@@ -70,25 +71,26 @@ export class TransactionService {
         catchError((err) => {
           console.log(err);
           return of({
-            err: "Could not update transaction"
+            err: "Could not update budget",
           })
         })
       )
   }
 
-  deleteTransaction(transaction: Transaction): Observable<GenericResponse> {
-    const url = `${this.requestBase}/transaction/${transaction.transactionId}`;
+  deleteBudget(budgetId: number): Observable<GenericResponse> {
+    const url = `${this.requestBase}/budget/${budgetId}`;
     const options = {
       headers: this.httpOptions.headers,
       withCredentials: true,
     };
+
     return this.http.delete<GenericResponse>(url, options)
       .pipe(
         map((_) => ({})),
         catchError((err) => {
           console.log(err);
           return of({
-            err: "Could not delete transaction"
+            err: "Could not delete budget",
           })
         })
       )

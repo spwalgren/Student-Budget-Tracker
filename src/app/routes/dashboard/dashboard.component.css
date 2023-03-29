@@ -5,6 +5,11 @@ mat-toolbar {
   justify-content: space-between;
 }
 
+.mat-toolbar-row,
+.mat-toolbar-single-row {
+  height: 64px;
+}
+
 .toolbar__buttons {
   /* content align */
   display: flex;
@@ -14,8 +19,7 @@ mat-toolbar {
 
 mat-sidenav-container {
   /* self align */
-  min-height: 600px;
-  height: 100%;
+  height: calc(100vh - 64px);
 }
 
 mat-sidenav {
@@ -37,6 +41,8 @@ button {
 }
 
 .dash-content {
+  /* self align */
+  height: min-content;
   /* content align */
   padding: 20px;
 }

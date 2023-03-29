@@ -1,35 +1,39 @@
-describe('template spec', () => {
+describe('transactions', () => {
 
-  beforeEach(() => {
+  it('should be accessible', () => {
+    cy.registerUser(101, true);
+    cy.logInUser(101, true);
 
-    cy.logInUser(1);
     cy.visit('/dashboard/transactions');
-    cy.get('tbody').then(($tbody) => {
-      if ($tbody.children('.transaction__row').length > 0) {
-        cy.get('.transaction__row').each(($elem) => {
-          cy.wrap($elem).click();
-          cy.get('.transaction__detail-delete').eq(0).click();
-          cy.wrap($elem).should('not.exist');
-        });
-      }
-    })
-    cy.logOutUser();
+    cy.get('[data-cy="add-btn"]').click();
+    cy.get('[data-cy="cancel-btn"]').click();
 
-    cy.logInUser(2);
-    cy.visit('/dashboard/transactions');
-    cy.get('tbody').then(($tbody) => {
-      if ($tbody.children('.transaction__row').length > 0) {
-        cy.get('.transaction__row').each(($elem) => {
-          cy.wrap($elem).click();
-          cy.get('.transaction__detail-delete').eq(0).click();
-          cy.wrap($elem).should('not.exist');
-        });
-      }
-    })
-    cy.logOutUser();
+    cy.deleteUser(true);
   })
 
-  it('passes', () => {
-    cy.visit('https://example.cypress.io');
+  it('should be able to store data', () => {
+    cy.registerUser(101, true);
+    cy.logInUser(101, true);
+
+    cy.visit('/dashboard/transactions');
+    cy.get('table tr').should('have.length', 1);
+    cy.get('[data-cy="add-btn"]').click();
+    cy.get('[formControlName="name"]').type('Basics');
+    cy.get('[formControlName="amount"]').type('10');
+    cy.get('[formControlName="category"]').type('General');
+    cy.get('[data-cy="submit-btn"]').click();
+    cy.get('table tr').should('have.length', 3);
+    cy.get('[data-cy="add-btn"]').click();
+    cy.get('[formControlName="name"]').type('Basics');
+    cy.get('[formControlName="amount"]').type('10');
+    cy.get('[formControlName="category"]').type('General');
+    cy.get('[data-cy="submit-btn"]').click();
+    cy.get('table tr').should('have.length', 5);
+    cy.logOutUser(true);
+    cy.logInUser(101, true);
+    cy.visit('/dashboard/transactions');
+    cy.get('table tr').should('have.length', 5);
+
+    cy.deleteUser(true);
   })
 })

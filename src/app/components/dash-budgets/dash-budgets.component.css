@@ -1,0 +1,60 @@
+.budgets__heading-row {
+  /* content align */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.budgets-dialog {
+  /* content align */
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.budgets-dialog__form {
+  /* self align */
+  min-width: 500px;
+  /* content align */
+  display: flex;
+  flex-direction: column;
+}
+
+
+.budgets-dialog__form mat-form-field {
+  width: 100%;
+}
+
+.budgets-dialog__duration,
+.budgets-dialog__count {
+  /* content align */
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  align-items: center;
+}
+
+h3 {
+  /* self style */
+  font-weight: 500;
+}
+
+table {
+  /* self align */
+  margin-bottom: 20px;
+}
+
+.mat-column-amountLimit {
+  width: 10%;
+}
+
+.mat-column-period {
+  width: 20%;
+}
+
+.mat-column-startDate {
+  width: 20%;
+}
+
+.mat-column-currentPeriod {
+  width: 30%;
+}

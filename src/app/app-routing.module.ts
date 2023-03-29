@@ -9,7 +9,9 @@ import { DashboardComponent } from './routes/dashboard/dashboard.component';
 import { DashHomeComponent } from './components/dash-home/dash-home.component';
 import { DashTransactionsComponent } from './components/dash-transactions/dash-transactions.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
-import { DashGoalsComponent } from './components/dash-goals/dash-goals.component';
+import { DashBudgetsComponent } from './components/dash-budgets/dash-budgets.component';
+import { DashSettingsComponent } from './components/dash-settings/dash-settings.component';
+
 
 
 const routes: Routes = [
@@ -43,8 +45,12 @@ const routes: Routes = [
         component: DashTransactionsComponent
       },
       {
-        path: 'goals',
-        component: DashGoalsComponent
+        path: 'budgets',
+        component: DashBudgetsComponent
+      },
+      {
+        path: 'settings',
+        component: DashSettingsComponent
       },
       {
         path: '**',

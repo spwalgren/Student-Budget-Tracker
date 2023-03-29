@@ -168,7 +168,8 @@ content-type: application/json
     "amountLimit": 50.5,
     "frequency": "Weekly",
     "duration": 2,
-    "count":1
+    "count":1,
+    "startDate": "12/23/2022"
 }
 
 ###
@@ -176,24 +177,43 @@ GET http://{{host}}/api/budget
 content-type: application/json
 
 ###
+GET http://{{host}}/api/deleted_budgets
+content_type: application/json
+
+###
 
 PUT http://{{host}}/api/budget
 content-type: application/json
 
  {
-    "userId": 35,
+    "userId": 68,
     "budgetId": 1,
+    "isDeleted": false,
     "data": {
         "category": "fast food",
         "amountLimit": 50.5,
         "frequency": "Weekly",
         "duration": 2,
-        "count":1
+        "count":1,
+        "startDate:": "12/23/2022"
     }
  }
 
 ###
 
-DELETE http://{{host}}/api/budget/3
+DELETE http://{{host}}/api/budget/22
 content-type: application/json
 
+###
+
+DELETE http://{{host}}/api/delete-user
+content-type: application/json
+
+###
+POST http://{{host}}/api/login
+content-type: application/json
+
+{
+    "email": "joe@joe.com",
+    "password": "qwert"
+}

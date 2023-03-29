@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"fmt"
-
 	"github.com/gorilla/mux"
 )
 
@@ -30,9 +28,10 @@ func CreateBudget(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewDecoder(r.Body).Decode(&budgetData)
 
 	newBudget := models.Budget{
-		UserID:   uint(userID),
-		BudgetID: 0,
-		Data:     budgetData,
+		UserID:    uint(userID),
+		BudgetID:  0,
+		IsDeleted: false,
+		Data:      budgetData,
 	}
 
 	database.DB.Create(&newBudget)
@@ -42,7 +41,6 @@ func CreateBudget(w http.ResponseWriter, r *http.Request) {
 		BudgetID: newBudget.BudgetID,
 	})
 
-	fmt.Println(newBudget)
 }
 
 func GetBudgets(w http.ResponseWriter, r *http.Request) {
@@ -60,11 +58,30 @@ func GetBudgets(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var budgets models.BudgetsResponse
-	database.DB.Where(map[string]interface{}{"user_id": userID}).Find(&budgets.Budgets)
+	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false}).Find(&budgets.Budgets)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(budgets)
 }
 
+func GetDeletedBudgets(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "*")
+
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	userID, _ := strconv.ParseInt(ReturnUserID(w, r), 10, 32)
+	if userID == -1 {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	var budgets models.BudgetsResponse
+	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": true}).Find(&budgets.Budgets)
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(budgets)
+}
 
 func UpdateBudget(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
@@ -75,7 +92,7 @@ func UpdateBudget(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var updateBudget models.UpdateBudgetRequest
-	_ = json.NewDecoder(r.Body).Decode(&updateBudget.NewBudget)
+	_ = json.NewDecoder(r.Body).Decode(&updateBudget)
 
 	userID, _ := strconv.ParseInt(ReturnUserID(w, r), 10, 32)
 	if userID == -1 {
@@ -83,7 +100,6 @@ func UpdateBudget(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(updateBudget.NewBudget.UserID)
 	if userID != int64(updateBudget.NewBudget.UserID) {
 		w.WriteHeader(http.StatusForbidden)
 		return
@@ -99,7 +115,6 @@ func UpdateBudget(w http.ResponseWriter, r *http.Request) {
 	database.DB.Save(oldBudget)
 	w.WriteHeader(http.StatusOK)
 }
-
 
 func DeleteBudget(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
@@ -128,5 +143,34 @@ func DeleteBudget(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	database.DB.Delete(&toDelete)
+	if !toDelete.IsDeleted {
+		toDelete.IsDeleted = true
+		database.DB.Save(toDelete)
+	} else {
+		database.DB.Delete(&toDelete)
+	}
+}
+
+func GetBudgetCategories(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "*")
+
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	userID, _ := strconv.ParseInt(ReturnUserID(w, r), 10, 32)
+	if userID == -1 {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	var budgets models.BudgetsResponse
+	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false}).Find(&budgets.Budgets)
+	var categories models.BudgetCategoriesResponse
+	for i := range budgets.Budgets {
+		categories.Category = append(categories.Category, budgets.Budgets[i].Data.Category)
+	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(categories)
 }

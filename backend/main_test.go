@@ -12,6 +12,8 @@ import (
 	"testing"
 	"time"
 
+	// "time"
+
 	"budget-tracker/controllers"
 	"budget-tracker/database"
 	"budget-tracker/models"
@@ -19,6 +21,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/crypto/bcrypt"
+	// "golang.org/x/crypto/bcrypt"
 )
 
 var Router = mux.NewRouter()
@@ -30,15 +33,28 @@ func TestMain(m *testing.M) {
 	Router.HandleFunc("/api/users", controllers.GetUsers).Methods(http.MethodGet, http.MethodOptions)
 	Router.HandleFunc("/api/signup", controllers.CreateUser).Methods(http.MethodOptions, http.MethodPost)
 	Router.HandleFunc("/api/user", controllers.GetUser).Methods(http.MethodGet, http.MethodOptions)
+	Router.HandleFunc("/api/delete-user", controllers.DeleteUser).Methods(http.MethodDelete, http.MethodOptions)
 	Router.HandleFunc("/api/logout", controllers.LogoutHandler).Methods(http.MethodPost, http.MethodOptions)
 	Router.HandleFunc("/api/transaction", controllers.CreateTransaction).Methods(http.MethodPost, http.MethodOptions)
 	Router.HandleFunc("/api/transaction", controllers.GetTransactions).Methods(http.MethodGet, http.MethodOptions)
 	Router.HandleFunc("/api/transaction", controllers.UpdateTransaction).Methods(http.MethodOptions, http.MethodPut)
-	Router.HandleFunc("/api/transaction/{userId}/{transactionId}", controllers.DeleteTransaction).Methods(http.MethodOptions, http.MethodDelete)
+	Router.HandleFunc("/api/transaction/{transactionId}", controllers.DeleteTransaction).Methods(http.MethodOptions, http.MethodDelete)
+	Router.HandleFunc("/api/budget", controllers.CreateBudget).Methods(http.MethodOptions, http.MethodPost)
+	Router.HandleFunc("/api/budget", controllers.GetBudgets).Methods(http.MethodGet, http.MethodOptions)
+
+
+	Router.HandleFunc("/api/deleted_budgets", controllers.GetDeletedBudgets).Methods(http.MethodGet, http.MethodOptions)
+
+
+
+	Router.HandleFunc("/api/budget", controllers.UpdateBudget).Methods(http.MethodOptions, http.MethodPut)
+	Router.HandleFunc("/api/budget/categories", controllers.GetBudgetCategories).Methods(http.MethodOptions, http.MethodGet)
+	Router.HandleFunc("/api/budget/{budgetId}", controllers.DeleteBudget).Methods(http.MethodOptions, http.MethodDelete)
 
     code := m.Run()
     clearUserTable()
 	clearTransactionTable()
+	clearBudgetTable()
     os.Exit(code)
 }
 
@@ -52,6 +68,11 @@ func clearUserTable() {
 func clearTransactionTable() {
     database.DB.Exec("DELETE FROM transactions")
 	database.DB.Exec("ALTER TABLE transactions AUTO_INCREMENT = 1")
+}
+
+func clearBudgetTable() {
+    database.DB.Exec("DELETE FROM budgets")
+	database.DB.Exec("ALTER TABLE budgets AUTO_INCREMENT = 1")
 }
 
 func executeRequest(req *http.Request) *httptest.ResponseRecorder {
@@ -547,7 +568,7 @@ func TestDeleteTransaction_OK(t *testing.T) {
 	req.AddCookie(cookie)
     executeRequest(req)
 
-	req, _ = http.NewRequest("DELETE", "/api/transaction/1/1", bytes.NewBuffer(payload))
+	req, _ = http.NewRequest("DELETE", "/api/transaction/1", bytes.NewBuffer(payload))
 	req.AddCookie(cookie)
     response =executeRequest(req)
 
@@ -608,7 +629,7 @@ func TestDeleteTransaction_WrongTransactionID(t *testing.T) {
 	req.AddCookie(cookie)
     executeRequest(req)
 
-	req, _ = http.NewRequest("DELETE", "/api/transaction/1/5", bytes.NewBuffer(payload))
+	req, _ = http.NewRequest("DELETE", "/api/transaction/5", bytes.NewBuffer(payload))
 	req.AddCookie(cookie)
     response =executeRequest(req)
 
@@ -617,8 +638,9 @@ func TestDeleteTransaction_WrongTransactionID(t *testing.T) {
 	a.Equal(http.MethodDelete, req.Method, "HTTP request method error")
 	a.Equal(http.StatusBadRequest, response.Code, "HTTP request status code error")
 }
-func TestDeleteTransaction_WrongUserID(t *testing.T) {
-	clearTransactionTable()
+
+func TestCreateBudget(t *testing.T) {
+	clearBudgetTable()
 
 	payload := []byte(`{"firstName": "test-firstName",
     "lastName": "test-lastName",
@@ -631,26 +653,403 @@ func TestDeleteTransaction_WrongUserID(t *testing.T) {
     req, _ = http.NewRequest("POST", "/api/login", bytes.NewBuffer(payload))
     response := executeRequest(req)
 
-	payload = []byte(`{"data":{"amount": 100, "name": "test-name", "date": "test-date", "category": "test-category", "description": "test-description"}}`)
+	payload = []byte(`{"category": "test-category", "amountLimit": 100, "frequency": "Weekly", "duration": 2, "count": 1, "startDate": "3/27/2023"}`)
+
+	req, _ = http.NewRequest("POST", "/api/budget", bytes.NewBuffer(payload))
+	req.AddCookie(response.Result().Cookies()[0])
+    response = executeRequest(req)
+
+	a := assert.New(t)
+
+	a.Equal(http.MethodPost, req.Method, "HTTP request method error")
+	a.Equal(http.StatusOK, response.Code, "HTTP request status code error")
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		a.Error(err)
+	}
+    actual := models.CreateBudgetResponse{}
+	if err := json.Unmarshal(body, &actual); err != nil {
+		a.Error(err)
+	}
+
+	expected := models.CreateBudgetResponse{
+		UserID:      1,
+		BudgetID: 1,
+	}
+	a.Equal(expected, actual)
+}
+func TestGetBudget(t *testing.T) {
+	clearBudgetTable()
+
+	payload := []byte(`{"firstName": "test-firstName",
+    "lastName": "test-lastName",
+    "email": "test-email",
+    "password": "test-password"}`)
+    req, _ := http.NewRequest("POST", "/api/signup", bytes.NewBuffer(payload))
+    executeRequest(req)
+
+    payload = []byte(`{"email": "test-email", "password": "test-password"}`)
+    req, _ = http.NewRequest("POST", "/api/login", bytes.NewBuffer(payload))
+    response := executeRequest(req)
+
+	payload = []byte(`{"category": "test-category", "amountLimit": 100, "frequency": "Weekly", "duration": 2, "count": 1, "startDate": "3/27/2023"}`)
 
 	cookie := response.Result().Cookies()[0]
 
-	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
+	req, _ = http.NewRequest("POST", "/api/budget", bytes.NewBuffer(payload))
 	req.AddCookie(cookie)
   	executeRequest(req)
 
-	payload = []byte(`{"data":{"amount": 200, "name": "test-name2", "date": "test-date2", "category": "test-category2", "description": "test-description2"}}`)
+	payload = []byte(`{"category": "test-category2", "amountLimit": 100, "frequency": "Weekly", "duration": 1, "count": 2, "startDate": "3/27/2023"}`)
 
-	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
+	req, _ = http.NewRequest("POST", "/api/budget", bytes.NewBuffer(payload))
 	req.AddCookie(cookie)
     executeRequest(req)
 
-	req, _ = http.NewRequest("DELETE", "/api/transaction/3/1", bytes.NewBuffer(payload))
+	req, _ = http.NewRequest("GET", "/api/budget", nil)
 	req.AddCookie(cookie)
-    response =executeRequest(req)
+    response = executeRequest(req)
+
+	a := assert.New(t)
+
+	a.Equal(http.MethodGet, req.Method, "HTTP request method error")
+	a.Equal(http.StatusOK, response.Code, "HTTP request status code error")
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		a.Error(err)
+	}
+    actual := models.BudgetsResponse{}
+	if err := json.Unmarshal(body, &actual); err != nil {
+		a.Error(err)
+	}
+
+	expected := models.BudgetsResponse{}
+	expected.Budgets = append(expected.Budgets, models.Budget{
+		Data:      models.BudgetContent{
+			Category:      "test-category",
+			AmountLimit:   100,
+			Frequency:     "Weekly",
+			CycleDuration: 2,
+			CycleCount:    1,
+			StartDate:     "3/27/2023",
+		},
+		UserID:    1,
+		BudgetID:  1,
+		IsDeleted: false,
+	})
+	expected.Budgets = append(expected.Budgets, models.Budget{
+		Data:      models.BudgetContent{
+			Category:      "test-category2",
+			AmountLimit:   100,
+			Frequency:     "Weekly",
+			CycleDuration: 1,
+			CycleCount:    2,
+			StartDate:     "3/27/2023",
+		},
+		UserID:    1,
+		BudgetID:  2,
+		IsDeleted: false,
+	})
+	a.Equal(expected, actual)
+}
+func TestUpdateBudget_OK(t *testing.T) {
+	clearBudgetTable()
+
+	payload := []byte(`{"firstName": "test-firstName",
+    "lastName": "test-lastName",
+    "email": "test-email",
+    "password": "test-password"}`)
+    req, _ := http.NewRequest("POST", "/api/signup", bytes.NewBuffer(payload))
+    executeRequest(req)
+
+    payload = []byte(`{"email": "test-email", "password": "test-password"}`)
+    req, _ = http.NewRequest("POST", "/api/login", bytes.NewBuffer(payload))
+    response := executeRequest(req)
+
+	payload = []byte(`{"category": "test-category", "amountLimit": 100, "frequency": "Weekly", "duration": 2, "count": 1, "startDate": "3/27/2023"}`)
+
+	cookie := response.Result().Cookies()[0]
+
+	req, _ = http.NewRequest("POST", "/api/budget", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+  	executeRequest(req)
+
+	payload = []byte(`{"category": "test-category2", "amountLimit": 100, "frequency": "Weekly", "duration": 1, "count": 2, "startDate": "3/27/2023"}`)
+
+	req, _ = http.NewRequest("POST", "/api/budget", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    executeRequest(req)
+
+	payload = []byte(`{
+    "userId": 1,
+    "budgetId": 1,
+    "isDeleted": false,
+    "data": {
+        "category": "test-category-updated",
+        "amountLimit": 50.5,
+        "frequency": "Weekly",
+        "duration": 2,
+        "count":1,
+        "startDate": "3/28/2023"
+    }
+ }`)
+
+	req, _ = http.NewRequest("PUT", "/api/budget", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    response = executeRequest(req)
+
+	a := assert.New(t)
+	a.Equal(http.MethodPut, req.Method, "HTTP request method error")
+	a.Equal(http.StatusOK, response.Code, "HTTP request status code error")
+
+	req, _ = http.NewRequest("GET", "/api/budget", nil)
+	req.AddCookie(cookie)
+    response = executeRequest(req)
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		a.Error(err)
+	}
+    actual := models.BudgetsResponse{}
+	if err := json.Unmarshal(body, &actual); err != nil {
+		a.Error(err)
+	}
+
+	expected := models.BudgetsResponse{}
+	expected.Budgets = append(expected.Budgets, models.Budget{
+		Data:      models.BudgetContent{
+			Category:      "test-category-updated",
+			AmountLimit:   50.5,
+			Frequency:     "Weekly",
+			CycleDuration: 2,
+			CycleCount:    1,
+			StartDate:     "3/28/2023",
+		},
+		UserID:    1,
+		BudgetID:  1,
+		IsDeleted: false,
+	})
+	expected.Budgets = append(expected.Budgets, models.Budget{
+		Data:      models.BudgetContent{
+			Category:      "test-category2",
+			AmountLimit:   100,
+			Frequency:     "Weekly",
+			CycleDuration: 1,
+			CycleCount:    2,
+			StartDate:     "3/27/2023",
+		},
+		UserID:    1,
+		BudgetID:  2,
+		IsDeleted: false,
+	})
+	a.Equal(expected, actual)
+}
+
+func TestUpdateBudget_WrongBudgetID(t *testing.T) {
+	clearBudgetTable()
+
+	payload := []byte(`{"firstName": "test-firstName",
+    "lastName": "test-lastName",
+    "email": "test-email",
+    "password": "test-password"}`)
+    req, _ := http.NewRequest("POST", "/api/signup", bytes.NewBuffer(payload))
+    executeRequest(req)
+
+    payload = []byte(`{"email": "test-email", "password": "test-password"}`)
+    req, _ = http.NewRequest("POST", "/api/login", bytes.NewBuffer(payload))
+    response := executeRequest(req)
+
+	payload = []byte(`{"category": "test-category", "amountLimit": 100, "frequency": "Weekly", "duration": 2, "count": 1, "startDate": "3/27/2023"}`)
+
+	cookie := response.Result().Cookies()[0]
+
+	req, _ = http.NewRequest("POST", "/api/budget", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+  	executeRequest(req)
+
+	payload = []byte(`{"category": "test-category2", "amountLimit": 100, "frequency": "Weekly", "duration": 1, "count": 2, "startDate": "3/27/2023"}`)
+
+	req, _ = http.NewRequest("POST", "/api/budget", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    executeRequest(req)
+
+	payload = []byte(`{
+    "userId": 1,
+    "budgetId": 12,
+    "isDeleted": false,
+    "data": {
+        "category": "test-category-updated",
+        "amountLimit": 50.5,
+        "frequency": "Weekly",
+        "duration": 2,
+        "count":1,
+        "startDate:": "3/28/2023"
+    }
+ }`)
+
+	req, _ = http.NewRequest("PUT", "/api/budget", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    response = executeRequest(req)
+
+	a := assert.New(t)
+	a.Equal(http.MethodPut, req.Method, "HTTP request method error")
+	a.Equal(http.StatusBadRequest, response.Code, "HTTP request status code error")
+}
+
+func TestDeleteBudget_OK(t *testing.T) {
+	clearBudgetTable()
+
+	payload := []byte(`{"firstName": "test-firstName",
+    "lastName": "test-lastName",
+    "email": "test-email",
+    "password": "test-password"}`)
+    req, _ := http.NewRequest("POST", "/api/signup", bytes.NewBuffer(payload))
+    executeRequest(req)
+
+    payload = []byte(`{"email": "test-email", "password": "test-password"}`)
+    req, _ = http.NewRequest("POST", "/api/login", bytes.NewBuffer(payload))
+    response := executeRequest(req)
+
+	payload = []byte(`{"category": "test-category", "amountLimit": 100, "frequency": "Weekly", "duration": 2, "count": 1, "startDate": "3/27/2023"}`)
+
+	cookie := response.Result().Cookies()[0]
+
+	req, _ = http.NewRequest("POST", "/api/budget", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+  	executeRequest(req)
+
+	payload = []byte(`{"category": "test-category2", "amountLimit": 100, "frequency": "Weekly", "duration": 1, "count": 2, "startDate": "3/27/2023"}`)
+
+	req, _ = http.NewRequest("POST", "/api/budget", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    executeRequest(req)
+
+	req, _ = http.NewRequest("DELETE", "/api/budget/1", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    response = executeRequest(req)
 
 	a := assert.New(t)
 
 	a.Equal(http.MethodDelete, req.Method, "HTTP request method error")
-	a.Equal(http.StatusForbidden, response.Code, "HTTP request status code error")
+	a.Equal(http.StatusOK, response.Code, "HTTP request status code error")
+
+	req, _ = http.NewRequest("GET", "/api/budget", nil)
+	req.AddCookie(cookie)
+    response = executeRequest(req)
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		a.Error(err)
+	}
+    actual := models.BudgetsResponse{}
+	if err := json.Unmarshal(body, &actual); err != nil {
+		a.Error(err)
+	}
+
+	expected := models.BudgetsResponse{}
+	expected.Budgets = append(expected.Budgets, models.Budget{
+		Data:      models.BudgetContent{
+			Category:      "test-category2",
+			AmountLimit:   100,
+			Frequency:     "Weekly",
+			CycleDuration: 1,
+			CycleCount:    2,
+			StartDate:     "3/27/2023",
+		},
+		UserID:    1,
+		BudgetID:  2,
+		IsDeleted: false,
+	})
+	a.Equal(expected, actual)
+}
+func TestDeleteBudget_WrongBudgetID(t *testing.T) {
+	clearBudgetTable()
+
+	payload := []byte(`{"firstName": "test-firstName",
+    "lastName": "test-lastName",
+    "email": "test-email",
+    "password": "test-password"}`)
+    req, _ := http.NewRequest("POST", "/api/signup", bytes.NewBuffer(payload))
+    executeRequest(req)
+
+    payload = []byte(`{"email": "test-email", "password": "test-password"}`)
+    req, _ = http.NewRequest("POST", "/api/login", bytes.NewBuffer(payload))
+    response := executeRequest(req)
+
+	payload = []byte(`{"category": "test-category", "amountLimit": 100, "frequency": "Weekly", "duration": 2, "count": 1, "startDate": "3/27/2023"}`)
+
+	cookie := response.Result().Cookies()[0]
+
+	req, _ = http.NewRequest("POST", "/api/budget", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+  	executeRequest(req)
+
+	payload = []byte(`{"category": "test-category2", "amountLimit": 100, "frequency": "Weekly", "duration": 1, "count": 2, "startDate": "3/27/2023"}`)
+
+	req, _ = http.NewRequest("POST", "/api/budget", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    executeRequest(req)
+
+	req, _ = http.NewRequest("DELETE", "/api/budget/5", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    response = executeRequest(req)
+
+	a := assert.New(t)
+
+	a.Equal(http.MethodDelete, req.Method, "HTTP request method error")
+	a.Equal(http.StatusBadRequest, response.Code, "HTTP request status code error")
+}
+
+func TestGetBudgetCategories (t *testing.T) {
+	clearBudgetTable()
+
+	payload := []byte(`{"firstName": "test-firstName",
+    "lastName": "test-lastName",
+    "email": "test-email",
+    "password": "test-password"}`)
+    req, _ := http.NewRequest("POST", "/api/signup", bytes.NewBuffer(payload))
+    executeRequest(req)
+
+    payload = []byte(`{"email": "test-email", "password": "test-password"}`)
+    req, _ = http.NewRequest("POST", "/api/login", bytes.NewBuffer(payload))
+    response := executeRequest(req)
+
+	payload = []byte(`{"category": "test-category", "amountLimit": 100, "frequency": "Weekly", "duration": 2, "count": 1, "startDate": "3/27/2023"}`)
+
+	cookie := response.Result().Cookies()[0]
+
+	req, _ = http.NewRequest("POST", "/api/budget", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+  	executeRequest(req)
+
+	payload = []byte(`{"category": "test-category2", "amountLimit": 100, "frequency": "Weekly", "duration": 1, "count": 2, "startDate": "3/27/2023"}`)
+
+	req, _ = http.NewRequest("POST", "/api/budget", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    executeRequest(req)
+
+	req, _ = http.NewRequest("GET", "/api/budget/categories", nil)
+	req.AddCookie(cookie)
+    response = executeRequest(req)
+
+	a := assert.New(t)
+
+	a.Equal(http.MethodGet, req.Method, "HTTP request method error")
+	a.Equal(http.StatusOK, response.Code, "HTTP request status code error")
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		a.Error(err)
+	}
+    actual := models.BudgetCategoriesResponse{}
+	if err := json.Unmarshal(body, &actual); err != nil {
+		a.Error(err)
+	}
+
+	expected := models.BudgetCategoriesResponse{}
+	expected.Category = append(expected.Category, "test-category")
+	expected.Category = append(expected.Category, "test-category2")
+	a.Equal(expected, actual)
 }

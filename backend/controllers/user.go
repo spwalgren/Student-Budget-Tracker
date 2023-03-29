@@ -183,3 +183,37 @@ func ReturnUserID(w http.ResponseWriter, r* http.Request) string {
 
 	return claims.Issuer
 }
+
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "*")
+
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	var user models.UserInfo
+	userID := ReturnUserID(w,r)
+
+	if userID == "-1" {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	database.DB.Where("id = ?", userID).First(&user)
+
+	database.DB.Delete(&user)
+	database.DB.Where("user_id = ?", userID).Delete(&models.Transaction{})
+	database.DB.Where("user_id = ?", userID).Delete(&models.Budget{})
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "jtw",
+		Expires:  time.Now().Add(-24),
+		Domain:   "localhost",
+		Path:     "/",
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	})
+
+	w.WriteHeader(http.StatusOK)
+}

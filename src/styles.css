@@ -24,6 +24,7 @@ a {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  align-items: center;
   overflow-y: auto;
 }
 
@@ -31,7 +32,7 @@ a {
   /* self align */
   width: 100%;
   max-width: 1000px;
-  height: 100%;
+  height: min-content;
   /* content align */
   padding: 0 50px;
   display: flex;
