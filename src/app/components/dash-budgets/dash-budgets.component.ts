@@ -80,7 +80,7 @@ export class DashBudgetsComponent {
     }
 
     if (count) {
-      result += ` for ${count} ${frequencyString}`;
+      result += ` for ${count * duration} ${frequencyString}`;
       if (count > 1) {
         result += 's';
       }
