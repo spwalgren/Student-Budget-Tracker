@@ -92,7 +92,7 @@ func UpdateBudget(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var updateBudget models.UpdateBudgetRequest
-	_ = json.NewDecoder(r.Body).Decode(&updateBudget.NewBudget)
+	_ = json.NewDecoder(r.Body).Decode(&updateBudget)
 
 	userID, _ := strconv.ParseInt(ReturnUserID(w, r), 10, 32)
 	if userID == -1 {
