@@ -48,6 +48,7 @@ func TestMain(m *testing.M) {
 
 
 	Router.HandleFunc("/api/budget", controllers.UpdateBudget).Methods(http.MethodOptions, http.MethodPut)
+	Router.HandleFunc("/api/budget/categories", controllers.GetBudgetCategories).Methods(http.MethodOptions, http.MethodGet)
 	Router.HandleFunc("/api/budget/{budgetId}", controllers.DeleteBudget).Methods(http.MethodOptions, http.MethodDelete)
 
     code := m.Run()
@@ -1036,4 +1037,56 @@ func TestDeleteBudget_WrongBudgetID(t *testing.T) {
 
 	a.Equal(http.MethodDelete, req.Method, "HTTP request method error")
 	a.Equal(http.StatusBadRequest, response.Code, "HTTP request status code error")
+}
+
+func TestGetBudgetCategories (t *testing.T) {
+	clearBudgetTable()
+
+	payload := []byte(`{"firstName": "test-firstName",
+    "lastName": "test-lastName",
+    "email": "test-email",
+    "password": "test-password"}`)
+    req, _ := http.NewRequest("POST", "/api/signup", bytes.NewBuffer(payload))
+    executeRequest(req)
+
+    payload = []byte(`{"email": "test-email", "password": "test-password"}`)
+    req, _ = http.NewRequest("POST", "/api/login", bytes.NewBuffer(payload))
+    response := executeRequest(req)
+
+	payload = []byte(`{"category": "test-category", "amountLimit": 100, "frequency": "Weekly", "duration": 2, "count": 1, "startDate": "3/27/2023"}`)
+
+	cookie := response.Result().Cookies()[0]
+
+	req, _ = http.NewRequest("POST", "/api/budget", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+  	executeRequest(req)
+
+	payload = []byte(`{"category": "test-category2", "amountLimit": 100, "frequency": "Weekly", "duration": 1, "count": 2, "startDate": "3/27/2023"}`)
+
+	req, _ = http.NewRequest("POST", "/api/budget", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    executeRequest(req)
+
+	req, _ = http.NewRequest("GET", "/api/budget/categories", nil)
+	req.AddCookie(cookie)
+    response = executeRequest(req)
+
+	a := assert.New(t)
+
+	a.Equal(http.MethodGet, req.Method, "HTTP request method error")
+	a.Equal(http.StatusOK, response.Code, "HTTP request status code error")
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		a.Error(err)
+	}
+    actual := models.BudgetCategoriesResponse{}
+	if err := json.Unmarshal(body, &actual); err != nil {
+		a.Error(err)
+	}
+
+	expected := models.BudgetCategoriesResponse{}
+	expected.Category = append(expected.Category, "test-category")
+	expected.Category = append(expected.Category, "test-category2")
+	a.Equal(expected, actual)
 }
