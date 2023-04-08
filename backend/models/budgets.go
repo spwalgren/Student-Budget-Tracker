@@ -12,8 +12,8 @@ type BudgetContent struct {
 	Category      string  `json:"category"`
 	AmountLimit   float32 `json:"amountLimit"`
 	Frequency     Period  `json:"frequency"`
-	CycleDuration uint    `json:"duration"`
-	CycleCount    uint    `json:"count"`
+	CycleDuration uint    `json:"duration"` /* How many repeats of selected duration */
+	CycleCount    uint    `json:"count"`		/* How many repeats of created cycle */
 	StartDate     string  `json:"startDate"`
 }
 
