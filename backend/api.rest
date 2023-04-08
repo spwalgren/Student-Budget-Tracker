@@ -217,3 +217,26 @@ content-type: application/json
     "email": "joe@joe.com",
     "password": "qwert"
 }
+
+###
+POST http://{{host}}/api/progress
+content-type: application/json
+
+{
+    "totalSpent": 50,
+    "transactionIdList": "[]",
+    "budgetIdList": "[]",
+    "data": {
+        "category": "fast food",
+        "amountLimit": 50.5,
+        "frequency": "Weekly",
+        "duration": 2,
+        "count":1,
+        "startDate:": "12/23/2022"
+    }
+}
+
+###
+Get http://{{host}}/api/progress
+content-type: application/json
+
