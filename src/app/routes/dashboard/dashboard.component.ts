@@ -14,6 +14,7 @@ export class DashboardComponent {
     "Home": "/dashboard",
     "Transactions": "/dashboard/transactions",
     "Budgets": "/dashboard/budgets",
+    "Progress": "/dashboard/progress",
     "Calendar": "/dashboard/calendar",
     "Settings": "/dashboard/settings",
   });
