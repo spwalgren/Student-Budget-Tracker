@@ -1,0 +1,24 @@
+h3 {
+  /* self style */
+  font-size: 1.5em;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+.dash-calendar {
+  /* content align */
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.dash-calendar__main {
+  /* self align */
+  width: 80%;
+}
+
+.dash-calendar__header {
+  /* content align */
+  display: flex;
+  justify-content: center;
+}
