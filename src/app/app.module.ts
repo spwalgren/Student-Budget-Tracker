@@ -42,6 +42,9 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
 import { TransactionsModalComponent } from './components/transactions-modal/transactions-modal.component';
 import { BudgetsDialogComponent, DashBudgetsComponent } from './components/dash-budgets/dash-budgets.component';
 import { DashSettingsComponent } from './components/dash-settings/dash-settings.component';
+import { DashCalendarComponent } from './components/dash-calendar/dash-calendar.component';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 
 // Services
 
@@ -59,7 +62,8 @@ import { DashSettingsComponent } from './components/dash-settings/dash-settings.
     TransactionsModalComponent,
     DashBudgetsComponent,
     BudgetsDialogComponent,
-    DashSettingsComponent
+    DashSettingsComponent,
+    DashCalendarComponent
   ],
   imports: [
     BrowserModule,
@@ -82,7 +86,8 @@ import { DashSettingsComponent } from './components/dash-settings/dash-settings.
     MatDatepickerModule,
     MatNativeDateModule,
     MatSelectModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory })
   ],
   providers: [],
   bootstrap: [AppComponent]
