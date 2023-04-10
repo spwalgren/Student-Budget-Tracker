@@ -28,6 +28,15 @@ func CreateBudget(w http.ResponseWriter, r *http.Request) {
 	var budgetData models.BudgetContent
 	_ = json.NewDecoder(r.Body).Decode(&budgetData)
 
+	var budgets models.BudgetsResponse
+	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false, "category": budgetData.Category}).Find(&budgets.Budgets)
+	
+	// If the transaction category is a duplicate
+	if (len(budgets.Budgets) != 0) {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	newBudget := models.Budget{
 		UserID:    uint(userID),
 		BudgetID:  0,
@@ -112,7 +121,17 @@ func UpdateBudget(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	
 	oldBudget = updateBudget.NewBudget
+	var budgets models.BudgetsResponse
+
+	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false, "category": oldBudget.Data.Category}).Find(&budgets.Budgets)
+	// If the transaction category is a duplicate
+	if (len(budgets.Budgets) != 1) {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	database.DB.Save(oldBudget)
 	w.WriteHeader(http.StatusOK)
 }
@@ -237,16 +256,24 @@ func GetCyclePeriod(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Getting budgetId and date params
 	vars := mux.Vars(r)
 	dateTemp := vars["date"]
 	tempBudgetId, _ := strconv.Atoi(vars["budgetId"])
 	budgetId := uint(tempBudgetId)
 	date, _ := time.Parse("2006-01-02", dateTemp)
-
+	
+	// Gets budget and checks if budgetId is valid
 	var budgets models.BudgetsResponse
-	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false, "budgetId":budgetId}).Find(&budgets.Budgets)
+	err := database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false, "budgetId":budgetId}).Find(&budgets.Budgets)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	var budget = budgets.Budgets[0]
 	budgetStartDate, _ := time.Parse(time.RFC3339, budget.Data.StartDate)
+
+	// Gets cycle index and start/end
 	var cycleIndex = 0
 	var cycleRangeStart = time.Now()
 	var cycleRangeEnd = time.Now()
@@ -265,10 +292,12 @@ func GetCyclePeriod(w http.ResponseWriter, r *http.Request) {
 		cycleRangeStart = budgetStartDate.AddDate(cycleIndex,0,0)
 		cycleRangeEnd = cycleRangeStart.AddDate(int(budget.Data.CycleDuration),0,0).Add(-1 * time.Second)
 	}
+
 	var cycleResponse models.CyclePeriodResponse
 	cycleResponse.Index = cycleIndex
 	cycleResponse.Start = cycleRangeStart.Format(time.RFC3339)
 	cycleResponse.End = cycleRangeEnd.Format(time.RFC3339)
+
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(cycleResponse)
 }

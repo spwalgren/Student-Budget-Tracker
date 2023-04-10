@@ -239,7 +239,7 @@ content-type: application/json
 }
 
 ###
-GET http://{{host}}/api/calendar/35
+GET http://{{host}}/api/calendar/0
 content-type: application/json
 
 ###

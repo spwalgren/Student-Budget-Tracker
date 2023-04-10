@@ -29,8 +29,18 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 
 	var newTransactionData models.CreateTransactionRequest
 	_ = json.NewDecoder(r.Body).Decode(&newTransactionData)
+
+
 	var budgets models.BudgetsResponse
 	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false, "category": newTransactionData.Data.Category}).Find(&budgets.Budgets)
+
+	// If the transaction category doesn't match a budget category
+	if (len(budgets.Budgets) == 0) {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// Getting cycle index for current transaction based on matching transaction category with budget category
 	var budget = budgets.Budgets[0]
 	transactionDate, _ := time.Parse(time.RFC3339, newTransactionData.Data.Date)
 	budgetStartDate, _ := time.Parse(time.RFC3339, budget.Data.StartDate)
@@ -44,6 +54,8 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		year, _, _, _, _, _ := diff(transactionDate, budgetStartDate)
 		cycleIndex = int(float64(year) / float64(budget.Data.CycleDuration))
 	}
+
+
 	newTransaction := models.Transaction{
 		UserID:        0,
 		TransactionID: 0,
@@ -130,9 +142,16 @@ func UpdateTransaction(w http.ResponseWriter, r *http.Request) {
 	}
 	expenses = updateTransaction
 
-	// Gather new cycle index if date change
 	var budgets models.BudgetsResponse
 	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false, "category": expenses.Category}).Find(&budgets.Budgets)
+	
+	// If the transaction category doesn't match a budget category
+	if (len(budgets.Budgets) == 0) {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	
+	// Gets cycle index for current transaction based on matching transaction category with budget category
 	var budget = budgets.Budgets[0]
 	transactionDate, _ := time.Parse(time.RFC3339, expenses.Date)
 	budgetStartDate, _ := time.Parse(time.RFC3339, budget.Data.StartDate)
@@ -146,6 +165,8 @@ func UpdateTransaction(w http.ResponseWriter, r *http.Request) {
 		year, _, _, _, _, _ := diff(transactionDate, budgetStartDate)
 		cycleIndex = int(float64(year) / float64(budget.Data.CycleDuration))
 	}
+
+
 	expenses.CycleIndex = cycleIndex
 	database.DB.Save(expenses)
 	w.WriteHeader(http.StatusOK)
