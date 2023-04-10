@@ -8,6 +8,7 @@ type Transaction struct {
 	Date          string  `json:"date"`
 	Category      string  `json:"category"`
 	Description   string  `json:"description"`
+	CycleIndex    int     `json:"cycleIndex"`
 }
 
 type CreateTransactionResponse struct {

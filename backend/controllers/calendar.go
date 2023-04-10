@@ -4,7 +4,6 @@ import (
 	"budget-tracker/database"
 	"budget-tracker/models"
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -22,13 +21,10 @@ func GetEvents(w http.ResponseWriter, r* http.Request) {
 	var eventIdCount = 0
 	vars := mux.Vars(r)
 	tempMonth, _ := strconv.Atoi(vars["month"])
-	log.Println("month: ", tempMonth)
 	currentTime := time.Now().AddDate(0,tempMonth,0)
 	firstOfMonth := time.Date(currentTime.Year(), currentTime.Month(), 1, 0, 0, 0, 0, currentTime.Location())
-	lastOfMonth := firstOfMonth.AddDate(0,1,-1)
-	log.Println("currentDate: ", currentTime.Format("01/02/2006"))
-	log.Println("firstOfMonth: ", firstOfMonth.Format("01/02/2006"))
-	log.Println("lastOfMonth: ", lastOfMonth.Format("01/02/2006"))
+	lastOfMonth := firstOfMonth.AddDate(0,1,0)
+	lastOfMonth = lastOfMonth.Add(-1 * time.Second)
 
 	userID, _ := strconv.ParseInt(ReturnUserID(w, r), 10, 32)
 	if userID == -1 {
@@ -42,8 +38,6 @@ func GetEvents(w http.ResponseWriter, r* http.Request) {
 	for i := 0; i < len(budgets.Budgets); i++ {
 		var currBudget = budgets.Budgets[i]
 		budgetStartTime, _ := time.Parse(time.RFC3339, currBudget.Data.StartDate)
-		log.Println("budget category: ", currBudget.Data.Category)
-		log.Println("budget start time: ", budgetStartTime.Format("01/02/2006"))
 		// First check if budget ends before the month selected
 		if (currBudget.Data.CycleCount != 0) {
 			budgetEndTime := time.Now()
@@ -66,17 +60,28 @@ func GetEvents(w http.ResponseWriter, r* http.Request) {
 		var cycleRangeEnd = 0
 		// Getting number of cycles since budget created
 		if (currBudget.Data.Frequency == "weekly") {
-			cycleRangeStart = (int(firstOfMonth.Sub(budgetStartTime).Hours() / 24 / float64(currBudget.Data.CycleDuration) / 7) - 1)
-			cycleRangeEnd = (int(lastOfMonth.Sub(budgetStartTime).Hours() / 24 / float64(currBudget.Data.CycleDuration) / 7) + 1)
+			cycleRangeStart = (int(firstOfMonth.Sub(budgetStartTime).Hours() / 24 / float64(currBudget.Data.CycleDuration) / 7))
+			if (cycleRangeStart < 0) {
+				cycleRangeStart = 0
+			}
+			cycleRangeEnd = (int(lastOfMonth.Sub(budgetStartTime).Hours() / 24 / float64(currBudget.Data.CycleDuration) / 7))
 		} else if (currBudget.Data.Frequency == "monthly") {
-			cycleRangeStart = (int(firstOfMonth.Sub(budgetStartTime).Hours() / 24 / float64(currBudget.Data.CycleDuration) / 31) - 1)
-			cycleRangeEnd = (int(lastOfMonth.Sub(budgetStartTime).Hours() / 24 / float64(currBudget.Data.CycleDuration) / 28) + 1)
+			year, month, _, _, _, _ := diff(firstOfMonth, budgetStartTime)
+			cycleRangeStart = int(float64(year*12.0 + month) / float64(currBudget.Data.CycleDuration))
+			if (cycleRangeStart < 0) {
+				cycleRangeStart = 0
+			}
+			year, month, _, _, _, _ = diff(lastOfMonth, budgetStartTime)
+			cycleRangeEnd = int(float64(year*12.0 + month) / float64(currBudget.Data.CycleDuration))
 		} else {
-			cycleRangeStart = (int(firstOfMonth.Sub(budgetStartTime).Hours() / 24 / float64(currBudget.Data.CycleDuration) / 366) - 1)
-			cycleRangeEnd = (int(lastOfMonth.Sub(budgetStartTime).Hours() / 24 / float64(currBudget.Data.CycleDuration) / 365) + 1)
+			year, _, _, _, _, _ := diff(firstOfMonth, budgetStartTime)
+			cycleRangeStart = int(float64(year) / float64(currBudget.Data.CycleDuration))
+			if (cycleRangeStart < 0) {
+				cycleRangeStart = 0
+			}
+			year, _, _, _, _, _ = diff(lastOfMonth, budgetStartTime)
+			cycleRangeEnd = int(float64(year) / float64(currBudget.Data.CycleDuration))
 		}
-		log.Println("cycle start range: ", cycleRangeStart)
-		log.Println("cycle end range: ", cycleRangeEnd)
 		for j := cycleRangeStart; j <= cycleRangeEnd; j++ {
 			if (currBudget.Data.Frequency == "weekly") {
 				var eventDate = budgetStartTime.AddDate(0,0,7*j*int(currBudget.Data.CycleDuration))
@@ -89,8 +94,8 @@ func GetEvents(w http.ResponseWriter, r* http.Request) {
 					tempEventContent.Frequency = currBudget.Data.Frequency
 					tempEventContent.AmountLimit = currBudget.Data.AmountLimit
 					tempEventContent.Category = currBudget.Data.Category
-					tempEventContent.StartDate = eventDate.Format("01/02/2006")
-					tempEventContent.EndDate = eventDate.AddDate(0,0,7*int(currBudget.Data.CycleDuration)).Format("01/02/2006")
+					tempEventContent.StartDate = eventDate.Format(time.RFC3339)
+					tempEventContent.EndDate = eventDate.AddDate(0,0,7*int(currBudget.Data.CycleDuration)).Add(-1 * time.Second).Format(time.RFC3339)
 					tempEventContent.TotalSpent = 0
 					tempEvent.Data = tempEventContent
 					eventsResponse.Events = append(eventsResponse.Events, tempEvent)
@@ -107,8 +112,8 @@ func GetEvents(w http.ResponseWriter, r* http.Request) {
 					tempEventContent.Frequency = currBudget.Data.Frequency
 					tempEventContent.AmountLimit = currBudget.Data.AmountLimit
 					tempEventContent.Category = currBudget.Data.Category
-					tempEventContent.StartDate = eventDate.Format("01/02/2006")
-					tempEventContent.EndDate = eventDate.AddDate(0,int(currBudget.Data.CycleDuration),0).Format("01/02/2006")
+					tempEventContent.StartDate = eventDate.Format(time.RFC3339)
+					tempEventContent.EndDate = eventDate.AddDate(0,int(currBudget.Data.CycleDuration),0).Add(-1 * time.Second).Format(time.RFC3339)
 					tempEventContent.TotalSpent = 0
 					tempEvent.Data = tempEventContent
 					eventsResponse.Events = append(eventsResponse.Events, tempEvent)
@@ -124,8 +129,8 @@ func GetEvents(w http.ResponseWriter, r* http.Request) {
 					tempEventContent.Frequency = currBudget.Data.Frequency
 					tempEventContent.AmountLimit = currBudget.Data.AmountLimit
 					tempEventContent.Category = currBudget.Data.Category
-					tempEventContent.StartDate = eventDate.Format("01/02/2006")
-					tempEventContent.EndDate = eventDate.AddDate(int(currBudget.Data.CycleDuration),0,0).Format("01/02/2006")
+					tempEventContent.StartDate = eventDate.Format(time.RFC3339)
+					tempEventContent.EndDate = eventDate.AddDate(int(currBudget.Data.CycleDuration),0,0).Add(-1 * time.Second).Format(time.RFC3339)
 					tempEventContent.TotalSpent = 0
 					tempEvent.Data = tempEventContent
 					eventsResponse.Events = append(eventsResponse.Events, tempEvent)

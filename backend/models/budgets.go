@@ -44,3 +44,9 @@ type UpdateBudgetRequest struct {
 type BudgetCategoriesResponse struct {
 	Category []string `json:"categories"`
 }
+
+type CyclePeriodResponse struct {
+	Start string `json:"start"`
+	End   string `json:"end"`
+	Index int    `json:"index"`
+}

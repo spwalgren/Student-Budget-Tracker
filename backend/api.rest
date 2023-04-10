@@ -234,10 +234,13 @@ POST http://{{host}}/api/login
 content-type: application/json
 
 {
-    "email": "test@gmail.com",
-    "password": "test"
+    "email": "test2@gmail.com",
+    "password": "test2"
 }
 
 ###
 GET http://{{host}}/api/calendar/36
 content-type: application/json
+
+###
+GET http://{{host}}/api/budget/cycle/67/2023-04-14T04:00:00.000Z

@@ -4,11 +4,14 @@ import (
 	"budget-tracker/database"
 	"budget-tracker/models"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
-	"fmt"
+	"time"
+
 	"github.com/gorilla/mux"
 )
+
 
 func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "*")
@@ -18,8 +21,29 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userID := ReturnUserID(w,r)
+		if userID == "-1" {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
 	var newTransactionData models.CreateTransactionRequest
 	_ = json.NewDecoder(r.Body).Decode(&newTransactionData)
+	var budgets models.BudgetsResponse
+	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false, "category": newTransactionData.Data.Category}).Find(&budgets.Budgets)
+	var budget = budgets.Budgets[0]
+	transactionDate, _ := time.Parse(time.RFC3339, newTransactionData.Data.Date)
+	budgetStartDate, _ := time.Parse(time.RFC3339, budget.Data.StartDate)
+	var cycleIndex = 0
+	if (budget.Data.Frequency == "weekly") {
+		cycleIndex = int(transactionDate.Sub(budgetStartDate).Hours() / 24 / 7 / float64(budget.Data.CycleDuration))
+	} else if (budget.Data.Frequency == "monthly") {
+		year, month, _, _, _, _ := diff(transactionDate, budgetStartDate)
+		cycleIndex = int(float64(year*12.0 + month) / float64(budget.Data.CycleDuration))
+	} else {
+		year, _, _, _, _, _ := diff(transactionDate, budgetStartDate)
+		cycleIndex = int(float64(year) / float64(budget.Data.CycleDuration))
+	}
 	newTransaction := models.Transaction{
 		UserID:        0,
 		TransactionID: 0,
@@ -28,15 +52,8 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		Date:          newTransactionData.Data.Date,
 		Category:      newTransactionData.Data.Category,
 		Description:   newTransactionData.Data.Description,
+		CycleIndex:    cycleIndex,
 	}
-
-
-	userID := ReturnUserID(w,r)
-	if userID == "-1" {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-
 	var user models.UserInfo
 	database.DB.First(&user, userID)
 	newTransaction.UserID = user.ID
@@ -112,6 +129,24 @@ func UpdateTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	expenses = updateTransaction
+
+	// Gather new cycle index if date change
+	var budgets models.BudgetsResponse
+	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false, "category": expenses.Category}).Find(&budgets.Budgets)
+	var budget = budgets.Budgets[0]
+	transactionDate, _ := time.Parse(time.RFC3339, expenses.Date)
+	budgetStartDate, _ := time.Parse(time.RFC3339, budget.Data.StartDate)
+	var cycleIndex = 0
+	if (budget.Data.Frequency == "weekly") {
+		cycleIndex = int(transactionDate.Sub(budgetStartDate).Hours() / 24 / 7 / float64(budget.Data.CycleDuration))
+	} else if (budget.Data.Frequency == "monthly") {
+		year, month, _, _, _, _ := diff(transactionDate, budgetStartDate)
+		cycleIndex = int(float64(year*12.0 + month) / float64(budget.Data.CycleDuration))
+	} else {
+		year, _, _, _, _, _ := diff(transactionDate, budgetStartDate)
+		cycleIndex = int(float64(year) / float64(budget.Data.CycleDuration))
+	}
+	expenses.CycleIndex = cycleIndex
 	database.DB.Save(expenses)
 	w.WriteHeader(http.StatusOK)
 }
