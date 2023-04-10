@@ -104,7 +104,7 @@ export class DashBudgetsComponent {
 
   getPeriod(budgetContent: BudgetContent): { periodStart: Date, periodEnd: Date, daysLeft: number } | null {
     const startDate = new Date(budgetContent.startDate);
-    const today = new Date();
+    const today = new Date(this.getToday());
 
     let addOne: (current: Date) => Date;
     if (budgetContent.frequency === Period.monthly) {
@@ -172,7 +172,7 @@ export class DashBudgetsComponent {
             amountLimit: 100,
             frequency: Period.weekly,
             duration: 1,
-            startDate: new Date().toISOString()
+            startDate: this.getToday()
           }
         }
       } as BudgetsDialogData
@@ -218,6 +218,12 @@ export class DashBudgetsComponent {
     this.budgetService.deleteBudget(budget.budgetId).subscribe(_ => {
       this.rerenderBudgets();
     })
+  }
+
+  getToday(): string {
+    let today = new Date();
+    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+    return today.toISOString().split("T")[0];
   }
 }
 

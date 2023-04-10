@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { CalendarView, CalendarEvent } from 'angular-calendar';
 
 @Component({
   selector: 'app-dash-calendar',
@@ -7,5 +8,11 @@ import { Component } from '@angular/core';
 })
 export class DashCalendarComponent {
   viewDate: Date = new Date();
-  events = [];
+  events: CalendarEvent[] = [
+    {
+      start: new Date('2023-04-28'),
+      title: 'An event'
+    }
+  ];
+  view: CalendarView = CalendarView.Month;
 }
