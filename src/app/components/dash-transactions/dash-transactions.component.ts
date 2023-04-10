@@ -65,7 +65,7 @@ export class DashTransactionsComponent {
         data: {
           name: '',
           amount: 0,
-          date: new Date().toISOString(),
+          date: this.getToday(),
           category: '',
           description: '',
         },
@@ -152,4 +152,9 @@ export class DashTransactionsComponent {
     return new Date(str).toLocaleDateString();
   }
 
+  getToday(): string {
+    let today = new Date();
+    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+    return today.toISOString().split("T")[0];
+  }
 }
