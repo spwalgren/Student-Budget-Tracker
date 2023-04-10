@@ -241,7 +241,7 @@ func GetCyclePeriod(w http.ResponseWriter, r *http.Request) {
 	dateTemp := vars["date"]
 	tempBudgetId, _ := strconv.Atoi(vars["budgetId"])
 	budgetId := uint(tempBudgetId)
-	date, _ := time.Parse(time.RFC3339, dateTemp)
+	date, _ := time.Parse("2006-01-02", dateTemp)
 
 	var budgets models.BudgetsResponse
 	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false, "budgetId":budgetId}).Find(&budgets.Budgets)
@@ -252,7 +252,7 @@ func GetCyclePeriod(w http.ResponseWriter, r *http.Request) {
 	var cycleRangeEnd = time.Now()
 	if (budget.Data.Frequency == "weekly") {
 		cycleIndex = int(date.Sub(budgetStartDate).Hours() / 24 / 7 / float64(budget.Data.CycleDuration))
-		cycleRangeStart = budgetStartDate.AddDate(0,0,cycleIndex*7)
+		cycleRangeStart = budgetStartDate.AddDate(0,0,cycleIndex*7*int(budget.Data.CycleDuration))
 		cycleRangeEnd = cycleRangeStart.AddDate(0,0,7*int(budget.Data.CycleDuration)).Add(-1 * time.Second)
 	} else if (budget.Data.Frequency == "monthly") {
 		year, month, _, _, _, _ := diff(date, budgetStartDate)
