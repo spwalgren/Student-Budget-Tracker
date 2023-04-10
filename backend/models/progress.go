@@ -5,7 +5,7 @@ import (
 )
 
 type Progress struct {
-	UserID						uint					`json:"userId"`
+	UserID			  uint			`json:"userId"`
 	ProgressID        uint          `json:"progressId" gorm:"unique;primaryKey"`
 	TotalSpent        float32       `json:"totalSpent"`
 	TransactionIDList pq.Int32Array `json:"transactionIdList" gorm:"type:integer"`

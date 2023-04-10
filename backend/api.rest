@@ -240,3 +240,15 @@ content-type: application/json
 Get http://{{host}}/api/progress
 content-type: application/json
 
+###
+POST http://{{host}}/api/login
+content-type: application/json
+
+{
+    "email": "test@gmail.com",
+    "password": "test"
+}
+
+###
+GET http://{{host}}/api/calendar/36
+content-type: application/json

@@ -43,5 +43,7 @@ func main() {
 	r.HandleFunc("/api/progress", controllers.CreateProgress).Methods(http.MethodOptions, http.MethodPost)
 	r.HandleFunc("/api/progress", controllers.GetProgress).Methods(http.MethodOptions, http.MethodGet)
 
+	r.HandleFunc("/api/calendar/{month}", controllers.GetEvents).Methods(http.MethodGet, http.MethodOptions)
+
 	log.Fatal(http.ListenAndServe(":8080", corsObj.Handler(r)))
 }
