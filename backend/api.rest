@@ -105,11 +105,15 @@ POST http://{{host}}/api/transaction
 content-type: application/json
 
 {
-    "amount": 1000.00,
-    "name": "Wal-Mart",
-    "date": "12/23/2022",
-    "category": "Groceries",
-    "description": "Bought food for the week"
+    "data": {
+        "userId": 0,
+        "transactionId": 0,
+        "amount": 1000.00,
+        "name": "Wal-Mart",
+        "date": "12/23/2022",
+        "category": "Food",
+        "description": "Bought food for the week"
+    }
 }
 
 ###
@@ -219,27 +223,12 @@ content-type: application/json
 }
 
 ###
-POST http://{{host}}/api/progress
-content-type: application/json
-
-{
-    "totalSpent": 50,
-    "transactionIdList": "[]",
-    "budgetIdList": "[]",
-    "data": {
-        "category": "fast food",
-        "amountLimit": 50.5,
-        "frequency": "Weekly",
-        "duration": 2,
-        "count":1,
-        "startDate:": "12/23/2022"
-    }
-}
-
-###
 Get http://{{host}}/api/progress
 content-type: application/json
 
+{
+    "frequency": "Weekly"
+}
 ###
 POST http://{{host}}/api/login
 content-type: application/json

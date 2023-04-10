@@ -26,6 +26,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTabsModule } from '@angular/material/tabs';
 
 // Route components
 import { LandingComponent } from './routes/landing/landing.component';
@@ -45,6 +46,7 @@ import { DashSettingsComponent } from './components/dash-settings/dash-settings.
 import { DashCalendarComponent } from './components/dash-calendar/dash-calendar.component';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { DashProgressComponent } from './components/dash-progress/dash-progress.component';
 
 // Services
 
@@ -63,7 +65,8 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
     DashBudgetsComponent,
     BudgetsDialogComponent,
     DashSettingsComponent,
-    DashCalendarComponent
+    DashCalendarComponent,
+    DashProgressComponent
   ],
   imports: [
     BrowserModule,
@@ -87,6 +90,7 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
     MatNativeDateModule,
     MatSelectModule,
     MatCheckboxModule,
+    MatTabsModule,
     CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory })
   ],
   providers: [],

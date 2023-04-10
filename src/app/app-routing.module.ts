@@ -12,6 +12,7 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
 import { DashBudgetsComponent } from './components/dash-budgets/dash-budgets.component';
 import { DashCalendarComponent } from './components/dash-calendar/dash-calendar.component';
 import { DashSettingsComponent } from './components/dash-settings/dash-settings.component';
+import { DashProgressComponent } from './components/dash-progress/dash-progress.component'
 
 
 
@@ -48,6 +49,10 @@ const routes: Routes = [
       {
         path: 'budgets',
         component: DashBudgetsComponent
+      },
+      {
+        path: 'progress',
+        component: DashProgressComponent
       },
       {
         path: 'calendar',

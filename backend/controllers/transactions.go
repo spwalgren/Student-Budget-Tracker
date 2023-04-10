@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
-
+	"fmt"
 	"github.com/gorilla/mux"
 )
 
@@ -30,7 +30,6 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		Description:   newTransactionData.Data.Description,
 	}
 
-	// Retrieve transactions for user. If none exist, create one. Retrieve the current cookie to get the user info
 
 	userID := ReturnUserID(w,r)
 	if userID == "-1" {
@@ -38,10 +37,10 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Transactions do not exist. Create one before moving forward
 	var user models.UserInfo
 	database.DB.First(&user, userID)
 	newTransaction.UserID = user.ID
+	fmt.Println(newTransaction)
 	database.DB.Create(&newTransaction)
 	json.NewEncoder(w).Encode(models.CreateTransactionResponse{
 		UserID:newTransaction.UserID,
