@@ -8,6 +8,7 @@
           mwlCalendarPreviousView
           [view]="view"
           [(viewDate)]="viewDate"
+          (click)="closeActiveDay()"
         >
           <mat-icon>arrow_back</mat-icon>
         </button>
@@ -16,6 +17,7 @@
           mwlCalendarNextView
           [view]="view"
           [(viewDate)]="viewDate"
+          (click)="closeActiveDay()"
         >
           <mat-icon>arrow_forward</mat-icon>
         </button>
@@ -24,6 +26,7 @@
           color="primary"
           mwlCalendarToday
           [(viewDate)]="viewDate"
+          (click)="closeActiveDay()"
         >
           Today
         </button>

@@ -50,4 +50,8 @@ export class DashCalendarComponent {
     }
     this.viewDate = event.date;
   }
+
+  closeActiveDay(): void {
+    this.activeDayIsOpen = false;
+  }
 }
