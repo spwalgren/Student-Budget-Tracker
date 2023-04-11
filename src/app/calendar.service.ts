@@ -15,7 +15,7 @@ export class CalendarService {
 
   constructor(private http: HttpClient) { }
 
-  getBudgets(month: number): Observable<GetEventsResponse> {
+  getEvents(month: number): Observable<GetEventsResponse> {
     const url = `${this.requestBase}/calendar/${month}`;
     const options = {
       headers: this.httpOptions.headers,
