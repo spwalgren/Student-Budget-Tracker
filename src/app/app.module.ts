@@ -47,6 +47,7 @@ import { DashCalendarComponent } from './components/dash-calendar/dash-calendar.
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { DashProgressComponent } from './components/dash-progress/dash-progress.component';
+import { EventCardComponent } from './components/event-card/event-card.component';
 
 // Services
 
@@ -66,7 +67,8 @@ import { DashProgressComponent } from './components/dash-progress/dash-progress.
     BudgetsDialogComponent,
     DashSettingsComponent,
     DashCalendarComponent,
-    DashProgressComponent
+    DashProgressComponent,
+    EventCardComponent
   ],
   imports: [
     BrowserModule,

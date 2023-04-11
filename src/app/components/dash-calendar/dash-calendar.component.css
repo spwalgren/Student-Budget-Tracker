@@ -18,7 +18,23 @@ h3 {
 }
 
 .dash-calendar__header {
+  /* self align */
+  padding: 5px;
   /* content align */
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dash-calendar__header-btns {
+  /* content align */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dash-calendar__calendar {
+  /* self align */
+  height: 75vh;
+  overflow-y: scroll;
 }
