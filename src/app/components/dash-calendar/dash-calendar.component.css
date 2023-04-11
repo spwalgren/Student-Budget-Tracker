@@ -17,6 +17,11 @@ h3 {
   width: 80%;
 }
 
+.dash-calendar__side {
+  /* self align */
+  width: 20%;
+}
+
 .dash-calendar__header {
   /* self align */
   padding: 5px;
@@ -37,4 +42,23 @@ h3 {
   /* self align */
   height: 75vh;
   overflow-y: scroll;
+}
+
+@media screen and (max-width: 1024px) {
+  .dash-calendar {
+    flex-direction: column;
+  }
+
+  .dash-calendar__main {
+    width: 100%;
+  }
+
+  .dash-calendar__calendar {
+    height: min-content;
+    overflow: hidden;
+  }
+
+  .dash-calendar__side {
+    width: 100%;
+  }
 }

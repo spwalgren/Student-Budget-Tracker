@@ -1,0 +1,65 @@
+.event-card {
+  /* self align */
+  width: 100%;
+  /* self style */
+  background: white;
+  box-shadow: #ccc 2px 2px 5px;
+  border-radius: 5px;
+  overflow: hidden;
+  /* content align */
+  display: flex;
+}
+
+.event-card__indicator {
+  /* self align */
+  width: 5px;
+  /* self style */
+  background: #aaa;
+}
+
+.event-card--upcoming .event-card__indicator {
+  /* self style */
+  background: #1993D6;
+}
+
+.event-card--upcoming .event-card__status {
+  /* self style */
+  color: #1993D6;
+}
+
+.event-card--overspent .event-card__indicator {
+  /* self style */
+  background: #D74242;
+}
+
+.event-card--overspent .event-card__status {
+  /* self style */
+  color: #D74242;
+}
+
+.event-card--ontrack .event-card__indicator {
+  /* self style */
+  background: #418945;
+}
+
+.event-card--ontrack .event-card__status {
+  /* self style */
+  color: #418945;
+}
+
+.event-card__main {
+  /* content align */
+  padding: 8px;
+}
+
+h4,
+p {
+  /* self align */
+  margin: 0;
+}
+
+h4 {
+  /* self style */
+  font-size: 1.2em;
+  font-weight: 500;
+}
