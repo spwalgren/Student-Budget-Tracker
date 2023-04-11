@@ -40,22 +40,6 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Getting cycle index for current transaction based on matching transaction category with budget category
-	var budget = budgets.Budgets[0]
-	transactionDate, _ := time.Parse(time.RFC3339, newTransactionData.Data.Date)
-	budgetStartDate, _ := time.Parse(time.RFC3339, budget.Data.StartDate)
-	var cycleIndex = 0
-	if (budget.Data.Frequency == "weekly") {
-		cycleIndex = int(transactionDate.Sub(budgetStartDate).Hours() / 24 / 7 / float64(budget.Data.CycleDuration))
-	} else if (budget.Data.Frequency == "monthly") {
-		year, month, _, _, _, _ := diff(transactionDate, budgetStartDate)
-		cycleIndex = int(float64(year*12.0 + month) / float64(budget.Data.CycleDuration))
-	} else {
-		year, _, _, _, _, _ := diff(transactionDate, budgetStartDate)
-		cycleIndex = int(float64(year) / float64(budget.Data.CycleDuration))
-	}
-
-
 	newTransaction := models.Transaction{
 		UserID:        0,
 		TransactionID: 0,
@@ -64,18 +48,48 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		Date:          newTransactionData.Data.Date,
 		Category:      newTransactionData.Data.Category,
 		Description:   newTransactionData.Data.Description,
-		CycleIndex:    cycleIndex,
 	}
 	var user models.UserInfo
 	database.DB.First(&user, userID)
 	newTransaction.UserID = user.ID
 	fmt.Println(newTransaction)
 	database.DB.Create(&newTransaction)
+	
+
+	// Getting cycle index for current transaction based on matching transaction category with budget category
+	transactionDate, err := time.Parse(time.RFC3339, newTransactionData.Data.Date)
+	if err != nil {
+		transactionDate, _ = time.Parse("2006-01-02", newTransactionData.Data.Date)
+		transactionDate = time.Date(transactionDate.Year(), transactionDate.Month(), transactionDate.Day(), 4, 0, 0, 0, transactionDate.Location())
+	}
+	for i := 0; i < len(budgets.Budgets); i++ {
+		var budgetCycle models.BudgetTransaction
+		budgetStartDate, err := time.Parse(time.RFC3339, budgets.Budgets[i].Data.StartDate)
+		if err != nil {
+			budgetStartDate, _ = time.Parse("2006-01-02", budgets.Budgets[i].Data.StartDate)
+			budgetStartDate = time.Date(budgetStartDate.Year(), budgetStartDate.Month(), budgetStartDate.Day(), 4, 0, 0, 0, budgetStartDate.Location())
+		}
+		var cycleIndex = 0
+		if (budgets.Budgets[i].Data.Frequency == "weekly") {
+			cycleIndex = int(transactionDate.Sub(budgetStartDate).Hours() / 24 / 7 / float64(budgets.Budgets[i].Data.CycleDuration))
+		} else if (budgets.Budgets[i].Data.Frequency == "monthly") {
+			year, month, _, _, _, _ := diff(transactionDate, budgetStartDate)
+			cycleIndex = int(float64(year*12.0 + month) / float64(budgets.Budgets[i].Data.CycleDuration))
+		} else {
+			year, _, _, _, _, _ := diff(transactionDate, budgetStartDate)
+			cycleIndex = int(float64(year) / float64(budgets.Budgets[i].Data.CycleDuration))
+		}
+		budgetCycle.BudgetID = budgets.Budgets[i].BudgetID
+		budgetCycle.CycleIndex = cycleIndex
+		budgetCycle.TransactionID = newTransaction.TransactionID
+		database.DB.Create(&budgetCycle)
+	}
+
 	json.NewEncoder(w).Encode(models.CreateTransactionResponse{
 		UserID:newTransaction.UserID,
 		TransactionID: newTransaction.TransactionID,
 	})
-
+	
 }
 
 func GetTransactions(w http.ResponseWriter, r *http.Request) {
@@ -152,22 +166,34 @@ func UpdateTransaction(w http.ResponseWriter, r *http.Request) {
 	}
 	
 	// Gets cycle index for current transaction based on matching transaction category with budget category
-	var budget = budgets.Budgets[0]
-	transactionDate, _ := time.Parse(time.RFC3339, expenses.Date)
-	budgetStartDate, _ := time.Parse(time.RFC3339, budget.Data.StartDate)
-	var cycleIndex = 0
-	if (budget.Data.Frequency == "weekly") {
-		cycleIndex = int(transactionDate.Sub(budgetStartDate).Hours() / 24 / 7 / float64(budget.Data.CycleDuration))
-	} else if (budget.Data.Frequency == "monthly") {
-		year, month, _, _, _, _ := diff(transactionDate, budgetStartDate)
-		cycleIndex = int(float64(year*12.0 + month) / float64(budget.Data.CycleDuration))
-	} else {
-		year, _, _, _, _, _ := diff(transactionDate, budgetStartDate)
-		cycleIndex = int(float64(year) / float64(budget.Data.CycleDuration))
+	transactionDate, err := time.Parse(time.RFC3339, expenses.Date)
+	if err != nil {
+		transactionDate, _ = time.Parse("2006-01-02", expenses.Date)
+		transactionDate = time.Date(transactionDate.Year(), transactionDate.Month(), transactionDate.Day(), 4, 0, 0, 0, transactionDate.Location())
 	}
-
-
-	expenses.CycleIndex = cycleIndex
+	for i := 0; i < len(budgets.Budgets); i++ {
+		var budgetCycle models.BudgetTransaction
+		database.DB.Where(map[string]interface{}{"transaction_id": expenses.TransactionID, "budget_id": budgets.Budgets[i].BudgetID}).Find(&budgetCycle)
+		budgetStartDate, err := time.Parse(time.RFC3339, budgets.Budgets[i].Data.StartDate)
+		if err != nil {
+			budgetStartDate, _ = time.Parse("2006-01-02", budgets.Budgets[i].Data.StartDate)
+			budgetStartDate = time.Date(budgetStartDate.Year(), budgetStartDate.Month(), budgetStartDate.Day(), 4, 0, 0, 0, budgetStartDate.Location())
+		}
+		var cycleIndex = 0
+		if (budgets.Budgets[i].Data.Frequency == "weekly") {
+			cycleIndex = int(transactionDate.Sub(budgetStartDate).Hours() / 24 / 7 / float64(budgets.Budgets[i].Data.CycleDuration))
+		} else if (budgets.Budgets[i].Data.Frequency == "monthly") {
+			year, month, _, _, _, _ := diff(transactionDate, budgetStartDate)
+			cycleIndex = int(float64(year*12.0 + month) / float64(budgets.Budgets[i].Data.CycleDuration))
+		} else {
+			year, _, _, _, _, _ := diff(transactionDate, budgetStartDate)
+			cycleIndex = int(float64(year) / float64(budgets.Budgets[i].Data.CycleDuration))
+		}
+		budgetCycle.BudgetID = budgets.Budgets[i].BudgetID
+		budgetCycle.CycleIndex = cycleIndex
+		budgetCycle.TransactionID = expenses.TransactionID
+		database.DB.Save(&budgetCycle)
+	}
 	database.DB.Save(expenses)
 	w.WriteHeader(http.StatusOK)
 }
