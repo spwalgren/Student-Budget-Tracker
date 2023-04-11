@@ -226,9 +226,6 @@ content-type: application/json
 Get http://{{host}}/api/progress
 content-type: application/json
 
-{
-    "frequency": "Weekly"
-}
 ###
 POST http://{{host}}/api/login
 content-type: application/json
@@ -243,4 +240,8 @@ GET http://{{host}}/api/calendar/0
 content-type: application/json
 
 ###
-GET http://{{host}}/api/budget/cycle/66/2023-05-16
+GET http://{{host}}/api/budget/cycle/89/2023-05-16
+
+###
+GET http://{{host}}/api/budget
+Content-Type: application/json

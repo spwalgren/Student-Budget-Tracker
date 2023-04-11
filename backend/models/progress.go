@@ -1,21 +1,17 @@
 package models
 
-type ProgressByPeriod struct {
+type Progress struct {
 	UserID            uint    `json:"userId"`
 	TotalSpent        float32 `json:"totalSpent"`
 	TransactionIDList []uint  `json:"transactionIdList"`
-	BudgetIDList      []uint  `json:"budgetIdList"`
+	BudgetID      		uint  `json:"budgetId"`
 	Category          string  `json:"category"`
 	BudgetGoal        float32 `json:"budgetGoal"`
 	Frequency         Period  `json:"frequency"`
 }
 
-type GetProgressRequest struct {
-	Frequency Period `json:"frequency"`
-}
-
 type GetProgressResponse struct {
-	Data ProgressByPeriod `json:"data"`
+	Data []Progress `json:"data"`
 }
 
 /*

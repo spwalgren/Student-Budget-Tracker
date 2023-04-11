@@ -4,11 +4,13 @@ import (
 	"budget-tracker/database"
 	"budget-tracker/models"
 	"encoding/json"
-	//"fmt"
+
+	//"encoding/json"
+	"fmt"
 	"net/http"
-	"reflect"
 	"strconv"
 	//"github.com/gorilla/mux"
+	//"time"
 )
 
 func GetProgress(w http.ResponseWriter, r *http.Request) {
@@ -25,48 +27,40 @@ func GetProgress(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var progRequest models.GetProgressRequest
-	_ = json.NewDecoder(r.Body).Decode(&progRequest)
-
-	// Sets up response and initializes the response.Frequency field
 	var progResponse models.GetProgressResponse
-	progResponse.Data.Frequency = progRequest.Frequency
-	progResponse.Data.UserID = uint(userID)
+	var weeklyProgResponse models.GetProgressResponse
+	var monthlyProgResponse models.GetProgressResponse
+	var yearlyProgResponse models.GetProgressResponse
+	var weeklyBudgets models.BudgetsResponse
+	var monthlyBudgets models.BudgetsResponse
+	var yearlyBudgets	models.BudgetsResponse
 
-	var transactionData []models.Transaction
-	var budgetData []models.Budget
-	//var categories []string
-	 categoryMap := make(map[string]bool)
-
-	// Gets all budgets for specified period
-	database.DB.Where(map[string]interface{}{"user_id": userID, "frequency": progRequest.Frequency, "isDeleted": false}).Find(&budgetData)
-
-	// Gets all the categories from the budgets made with the requested frequency
-	var budgetGoal float32 = 0.0
-	for _ , element := range budgetData {
-		categoryMap[element.Data.Category] = true
-		progResponse.Data.BudgetIDList = append(progResponse.Data.BudgetIDList, element.BudgetID)
-		budgetGoal += element.Data.AmountLimit
+	// GET ALL WEEKLY BUDGETS
+	database.DB.Where(map[string]interface{}{"user_id": userID,"frequency": "weekly", "isDeleted": false}).Find(&weeklyBudgets.Budgets)
+	// CREATE A NEW PROGRESS ENTRY FOR EACH BUDGET
+	for i := 0; i < len(weeklyBudgets.Budgets); i++ {
+		temp := weeklyBudgets.Budgets[i]
+		weeklyProgResponse.Data = append(weeklyProgResponse.Data, models.Progress{UserID: temp.UserID, Frequency: temp.Data.Frequency, Category: temp.Data.Category, BudgetGoal: temp.Data.AmountLimit, BudgetID: temp.BudgetID})
 	}
 
-	progResponse.Data.BudgetGoal = budgetGoal
-
-	// Gets all transactions from categories previously collected and sums total spent
-	for _ , element := range reflect.ValueOf(categoryMap).MapKeys() {
-		category := element.Interface().(string)
-		database.DB.Where(map[string]interface{}{"user_id": userID, "category": category}).Find(&transactionData)
+	// ADD ALL MONTHLY PROGRESS
+	database.DB.Where(map[string]interface{}{"user_id": userID,"frequency": "monthly", "isDeleted": false}).Find(&monthlyBudgets.Budgets)
+	for i := 0; i < len(monthlyBudgets.Budgets); i++ {
+		fmt.Println("monthly")
+		temp := monthlyBudgets.Budgets[i]
+		monthlyProgResponse.Data = append(monthlyProgResponse.Data, models.Progress{UserID: temp.UserID, Frequency: temp.Data.Frequency, Category: temp.Data.Category, BudgetGoal: temp.Data.AmountLimit, BudgetID: temp.BudgetID})
 	}
 
-	var totalSpent float32 = 0.0
-	for _ , element := range transactionData {
-		totalSpent += element.Amount
-		progResponse.Data.TransactionIDList = append(progResponse.Data.TransactionIDList, element.TransactionID)
+	// ADD ALL YEARLY PROGRESS
+	database.DB.Where(map[string]interface{}{"user_id": userID,"frequency": "yearly", "isDeleted": false}).Find(&yearlyBudgets.Budgets)
+	for i := 0; i < len(yearlyBudgets.Budgets); i++ {
+		fmt.Println("yearly")
+		temp := yearlyBudgets.Budgets[i]
+		yearlyProgResponse.Data = append(yearlyProgResponse.Data, models.Progress{UserID: temp.UserID, Frequency: temp.Data.Frequency, Category: temp.Data.Category, BudgetGoal: temp.Data.AmountLimit, BudgetID: temp.BudgetID})
 	}
 
-	progResponse.Data.TotalSpent = totalSpent
-
-
-
+	temp1 := append(weeklyProgResponse.Data, monthlyProgResponse.Data...)
+	progResponse.Data = append(temp1, yearlyProgResponse.Data...)
 
 	json.NewEncoder(w).Encode(progResponse)
 	w.WriteHeader(http.StatusOK)
