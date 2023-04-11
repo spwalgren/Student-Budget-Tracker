@@ -1,3 +1,4 @@
+import { GenericResponse } from "./api-system"
 import { Period } from "./budget-system"
 
 export interface EventContent {
@@ -15,6 +16,6 @@ export interface Event {
   data: EventContent
 }
 
-export interface GetEventsResponse {
+export interface GetEventsResponse extends GenericResponse {
   events: Event[]
 }
