@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CalendarView, CalendarEvent, CalendarMonthViewDay } from 'angular-calendar';
+import { CalendarView, CalendarEvent } from 'angular-calendar';
 
 @Component({
   selector: 'app-dash-calendar',
