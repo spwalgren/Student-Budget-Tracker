@@ -28,15 +28,6 @@ func CreateBudget(w http.ResponseWriter, r *http.Request) {
 	var budgetData models.BudgetContent
 	_ = json.NewDecoder(r.Body).Decode(&budgetData)
 
-	var budgets models.BudgetsResponse
-	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false, "category": budgetData.Category}).Find(&budgets.Budgets)
-	
-	// If the transaction category is a duplicate
-	if (len(budgets.Budgets) != 0) {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
 	newBudget := models.Budget{
 		UserID:    uint(userID),
 		BudgetID:  0,
@@ -120,18 +111,8 @@ func UpdateBudget(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
 	
 	oldBudget = updateBudget.NewBudget
-	var budgets models.BudgetsResponse
-
-	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false, "category": oldBudget.Data.Category}).Find(&budgets.Budgets)
-	// If the transaction category is a duplicate
-	if (len(budgets.Budgets) != 1) {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
 	database.DB.Save(oldBudget)
 	w.WriteHeader(http.StatusOK)
 }

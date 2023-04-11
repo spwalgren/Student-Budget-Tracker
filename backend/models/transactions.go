@@ -1,5 +1,12 @@
 package models
 
+type BudgetTransaction struct {
+	BudgetTransactionID uint `json:"budgetTransactionId" gorm:"primaryKey;unique"`
+	BudgetID            uint `json:"budgetId"`
+	TransactionID       uint `json:"transactionId"`
+	CycleIndex          int  `json:"cycleIndex"`
+}
+
 type Transaction struct {
 	UserID        uint    `json:"userId"`
 	TransactionID uint    `json:"transactionId" gorm:"primaryKey;unique;column:transactionId"`
@@ -8,7 +15,6 @@ type Transaction struct {
 	Date          string  `json:"date"`
 	Category      string  `json:"category"`
 	Description   string  `json:"description"`
-	CycleIndex    int     `json:"cycleIndex"`
 }
 
 type CreateTransactionResponse struct {

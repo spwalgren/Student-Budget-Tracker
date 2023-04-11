@@ -65,6 +65,9 @@ func GetEvents(w http.ResponseWriter, r* http.Request) {
 				cycleRangeStart = 0
 			}
 			cycleRangeEnd = (int(lastOfMonth.Sub(budgetStartTime).Hours() / 24 / float64(currBudget.Data.CycleDuration) / 7))
+			if (int(currBudget.Data.CycleCount) != 0 && cycleRangeEnd > int(currBudget.Data.CycleCount)) {
+				cycleRangeEnd = int(currBudget.Data.CycleCount)
+			}
 		} else if (currBudget.Data.Frequency == "monthly") {
 			year, month, _, _, _, _ := diff(firstOfMonth, budgetStartTime)
 			cycleRangeStart = int(float64(year*12.0 + month) / float64(currBudget.Data.CycleDuration))
@@ -73,6 +76,9 @@ func GetEvents(w http.ResponseWriter, r* http.Request) {
 			}
 			year, month, _, _, _, _ = diff(lastOfMonth, budgetStartTime)
 			cycleRangeEnd = int(float64(year*12.0 + month) / float64(currBudget.Data.CycleDuration))
+			if (int(currBudget.Data.CycleCount) != 0 && cycleRangeEnd > int(currBudget.Data.CycleCount)) {
+				cycleRangeEnd = int(currBudget.Data.CycleCount)
+			}
 		} else {
 			year, _, _, _, _, _ := diff(firstOfMonth, budgetStartTime)
 			cycleRangeStart = int(float64(year) / float64(currBudget.Data.CycleDuration))
@@ -81,6 +87,9 @@ func GetEvents(w http.ResponseWriter, r* http.Request) {
 			}
 			year, _, _, _, _, _ = diff(lastOfMonth, budgetStartTime)
 			cycleRangeEnd = int(float64(year) / float64(currBudget.Data.CycleDuration))
+			if (int(currBudget.Data.CycleCount) != 0 && cycleRangeEnd > int(currBudget.Data.CycleCount)) {
+				cycleRangeEnd = int(currBudget.Data.CycleCount)
+			}
 		}
 		for j := cycleRangeStart; j <= cycleRangeEnd; j++ {
 			if (currBudget.Data.Frequency == "weekly") {
@@ -97,10 +106,14 @@ func GetEvents(w http.ResponseWriter, r* http.Request) {
 					tempEventContent.StartDate = eventDate.Format(time.RFC3339)
 					tempEventContent.EndDate = eventDate.AddDate(0,0,7*int(currBudget.Data.CycleDuration)).Add(-1 * time.Second).Format(time.RFC3339)
 					var transactions models.TransactionsResponse
-					database.DB.Where(map[string]interface{}{"user_id": userID, "category": currBudget.Data.Category, "cycle_index":j}).Find(&transactions.Data)
+					database.DB.Where(map[string]interface{}{"user_id": userID, "category": currBudget.Data.Category}).Find(&transactions.Data)
 					tempSpent := float32(0.0)
 					for k := 0; k < len(transactions.Data); k++ {
-						tempSpent += transactions.Data[k].Amount
+						var cycle []models.BudgetTransaction
+						database.DB.Where(map[string]interface{}{"budget_id": currBudget.BudgetID, "transaction_id": transactions.Data[k].TransactionID, "cycle_index":j}).Find(&cycle)
+						if (len(cycle) != 0) {
+							tempSpent += transactions.Data[k].Amount
+						}
 					}
 					tempEventContent.TotalSpent = tempSpent
 					tempEvent.Data = tempEventContent
@@ -121,10 +134,14 @@ func GetEvents(w http.ResponseWriter, r* http.Request) {
 					tempEventContent.StartDate = eventDate.Format(time.RFC3339)
 					tempEventContent.EndDate = eventDate.AddDate(0,int(currBudget.Data.CycleDuration),0).Add(-1 * time.Second).Format(time.RFC3339)
 					var transactions models.TransactionsResponse
-					database.DB.Where(map[string]interface{}{"user_id": userID, "category": currBudget.Data.Category, "cycle_index":j}).Find(&transactions.Data)
+					database.DB.Where(map[string]interface{}{"user_id": userID, "category": currBudget.Data.Category}).Find(&transactions.Data)
 					tempSpent := float32(0.0)
 					for k := 0; k < len(transactions.Data); k++ {
-						tempSpent += transactions.Data[k].Amount
+						var cycle []models.BudgetTransaction
+						database.DB.Where(map[string]interface{}{"budget_id": currBudget.BudgetID, "transaction_id": transactions.Data[k].TransactionID, "cycle_index":j}).Find(&cycle)
+						if (len(cycle) != 0) {
+							tempSpent += transactions.Data[k].Amount
+						}
 					}
 					tempEventContent.TotalSpent = tempSpent
 					tempEvent.Data = tempEventContent
@@ -144,10 +161,14 @@ func GetEvents(w http.ResponseWriter, r* http.Request) {
 					tempEventContent.StartDate = eventDate.Format(time.RFC3339)
 					tempEventContent.EndDate = eventDate.AddDate(int(currBudget.Data.CycleDuration),0,0).Add(-1 * time.Second).Format(time.RFC3339)
 					var transactions models.TransactionsResponse
-					database.DB.Where(map[string]interface{}{"user_id": userID, "category": currBudget.Data.Category, "cycle_index":j}).Find(&transactions.Data)
+					database.DB.Where(map[string]interface{}{"user_id": userID, "category": currBudget.Data.Category}).Find(&transactions.Data)
 					tempSpent := float32(0.0)
 					for k := 0; k < len(transactions.Data); k++ {
-						tempSpent += transactions.Data[k].Amount
+						var cycle []models.BudgetTransaction
+						database.DB.Where(map[string]interface{}{"budget_id": currBudget.BudgetID, "transaction_id": transactions.Data[k].TransactionID, "cycle_index":j}).Find(&cycle)
+						if (len(cycle) != 0) {
+							tempSpent += transactions.Data[k].Amount
+						}
 					}
 					tempEventContent.TotalSpent = tempSpent
 					tempEvent.Data = tempEventContent
