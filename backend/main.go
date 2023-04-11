@@ -40,7 +40,7 @@ func main() {
 	r.HandleFunc("/api/budget/categories", controllers.GetBudgetCategories).Methods(http.MethodOptions, http.MethodGet)
 	r.HandleFunc("/api/budget/cycle/{budgetId}/{date}", controllers.GetCyclePeriod).Methods(http.MethodOptions, http.MethodGet)
 	r.HandleFunc("/api/budget/{budgetId}", controllers.DeleteBudget).Methods(http.MethodOptions, http.MethodDelete)
-	r.HandleFunc("/api/progress", controllers.GetProgress).Methods(http.MethodOptions, http.MethodGet)
+	r.HandleFunc("/api/progress", controllers.GetProgress).Methods(http.MethodOptions, http.MethodGet, http.MethodPost)
 
 	r.HandleFunc("/api/calendar/{month}", controllers.GetEvents).Methods(http.MethodGet, http.MethodOptions)
 
