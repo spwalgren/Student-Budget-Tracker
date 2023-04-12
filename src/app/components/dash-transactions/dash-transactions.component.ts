@@ -145,6 +145,8 @@ export class DashTransactionsComponent {
               this.rerenderTable();
             }
           });
+        } else {
+          this.isChanging = false;
         }
         console.log('The dialog was closed');
       });
