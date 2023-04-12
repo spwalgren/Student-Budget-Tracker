@@ -20,22 +20,20 @@ export class ProgressService {
 
   GetProgress(): Observable<GetProgressResponse> {
     const url = `${this.requestBase}/progress`;
-    // const body = { ...requestData };
     const options = {
       headers: this.httpOptions.headers,
       withCredentials: true,
     };
 
-    return this.http.post<GetProgressResponse>(url, options)
-      .pipe(
+    return this.http.get<GetProgressResponse>(url, options).pipe(
         catchError((err) => {
           console.log(err);
           return of({
             err: "Could not get progress",
             data:[]
-          })
+          });
         })
-      )
+      );
   }
 
 }
