@@ -21,47 +21,21 @@ export class DashCalendarComponent {
 
   ngOnInit() {
 
-    this.calendarService.getEvents(0).subscribe(res => {
-      console.log(res);
-      if (!res.err) {
-        this.events.push(...res.events);
-        this.events.sort((a, b) => a.data.endDate > b.data.endDate ? 1 : -1);
-      }
-      this.calendarEvents = this.events.map(event => {
-        return {
-          start: new Date(event.data.endDate),
-          title: event.data.category,
+    for (let i = 0; i < 2; i++) {
+      this.calendarService.getEvents(i).subscribe(res => {
+        console.log(res);
+        if (!res.err) {
+          this.events.push(...res.events);
+          this.events.sort((a, b) => a.data.endDate > b.data.endDate ? 1 : -1);
         }
+        this.calendarEvents = this.events.map(event => {
+          return {
+            start: new Date(event.data.endDate),
+            title: event.data.category,
+          }
+        });
       });
-    });
-    this.calendarService.getEvents(1).subscribe(res => {
-      console.log(res);
-      if (!res.err) {
-        this.events.push(...res.events);
-        this.events.sort((a, b) => a.data.endDate > b.data.endDate ? 1 : -1);
-      }
-      this.calendarEvents = this.events.map(event => {
-        return {
-          start: new Date(event.data.endDate),
-          title: event.data.category,
-        }
-      });
-    });
-    // this.calendarService.getEvents(2).subscribe(res => {
-    //   console.log(res);
-    //   if (!res.err) {
-    //     this.events.push(...res.events);
-    //     this.events.sort((a, b) => a.data.endDate > b.data.endDate ? 1 : -1);
-    //   }
-    //   this.calendarEvents = this.events.map(event => {
-    //     return {
-    //       start: new Date(event.data.endDate),
-    //       title: event.data.category,
-    //     }
-    //   });
-    //   console.log(this.events);
-
-    // });
+    }
   }
 
   handleDayClick(event: { date: Date; events: CalendarEvent[] }): void {
