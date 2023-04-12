@@ -5,20 +5,16 @@ import { Period } from "./budget-system";
 //pie chart-> total spent / limit given freq
 
 
-export interface ProgressByPeriod {
+export interface Progress {
     userId: number,
     totalSpent: number,
     transactionIdList: number[],
-    budgetIdList: number[],
+    budgetId: number[],
     category: string,
     budgetGoal: number,
     frequency: Period
 }
 
-export interface GetProgressRequest {
-    frequency: Period
-}
-
 export interface GetProgressResponse extends GenericResponse {
-    data: ProgressByPeriod
+    data: Progress[]
 }
