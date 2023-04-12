@@ -14,12 +14,20 @@ h3 {
 
 .dash-calendar__main {
   /* self align */
-  width: 80%;
+  width: 75%;
 }
 
 .dash-calendar__side {
   /* self align */
-  width: 20%;
+  width: 25%;
+}
+
+.dash-calendar__events {
+  /* self align */
+  height: 75vh;
+  /* content align */
+  padding-right: 4px;
+  overflow-y: scroll;
 }
 
 .dash-calendar__header {

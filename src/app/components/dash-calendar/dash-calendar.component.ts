@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { CalendarView, CalendarEvent } from 'angular-calendar';
+import { firstValueFrom, from } from 'rxjs';
 import { CalendarService } from 'src/app/calendar.service';
-import { Event } from 'src/types/calendar-system';
+import { Period } from 'src/types/budget-system';
+import { Event, EventContent } from 'src/types/calendar-system';
 
 @Component({
   selector: 'app-dash-calendar',
@@ -12,30 +14,54 @@ export class DashCalendarComponent {
   viewDate: Date = new Date();
   activeDayIsOpen: boolean = false;
   events: Event[] = [];
-  calendarEvents: CalendarEvent[] = [
-    {
-      start: new Date('2023-04-28'),
-      title: 'An event',
-    }
-  ];
+  calendarEvents: CalendarEvent[] = [];
   view: CalendarView = CalendarView.Month;
 
   constructor(private calendarService: CalendarService) { }
 
   ngOnInit() {
-    this.calendarService.getEvents(this.viewDate.getMonth()).subscribe(res => {
-      console.log(res);
 
+    this.calendarService.getEvents(0).subscribe(res => {
+      console.log(res);
       if (!res.err) {
-        this.events = res.events;
-        this.calendarEvents = this.events.map(event => {
-          return {
-            start: new Date(event.data.endDate),
-            title: event.data.category,
-          }
-        });
+        this.events.push(...res.events);
+        this.events.sort((a, b) => a.data.endDate > b.data.endDate ? 1 : -1);
       }
+      this.calendarEvents = this.events.map(event => {
+        return {
+          start: new Date(event.data.endDate),
+          title: event.data.category,
+        }
+      });
     });
+    this.calendarService.getEvents(1).subscribe(res => {
+      console.log(res);
+      if (!res.err) {
+        this.events.push(...res.events);
+        this.events.sort((a, b) => a.data.endDate > b.data.endDate ? 1 : -1);
+      }
+      this.calendarEvents = this.events.map(event => {
+        return {
+          start: new Date(event.data.endDate),
+          title: event.data.category,
+        }
+      });
+    });
+    // this.calendarService.getEvents(2).subscribe(res => {
+    //   console.log(res);
+    //   if (!res.err) {
+    //     this.events.push(...res.events);
+    //     this.events.sort((a, b) => a.data.endDate > b.data.endDate ? 1 : -1);
+    //   }
+    //   this.calendarEvents = this.events.map(event => {
+    //     return {
+    //       start: new Date(event.data.endDate),
+    //       title: event.data.category,
+    //     }
+    //   });
+    //   console.log(this.events);
+
+    // });
   }
 
   handleDayClick(event: { date: Date; events: CalendarEvent[] }): void {
@@ -53,5 +79,12 @@ export class DashCalendarComponent {
 
   closeActiveDay(): void {
     this.activeDayIsOpen = false;
+  }
+
+  handleEventClick(eventContent?: EventContent): void {
+    if (eventContent) {
+      this.viewDate = new Date(eventContent.endDate);
+      this.activeDayIsOpen = true;
+    }
   }
 }

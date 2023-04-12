@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Period } from 'src/types/budget-system';
 import { EventContent } from 'src/types/calendar-system';
 
@@ -10,21 +10,26 @@ import { EventContent } from 'src/types/calendar-system';
 export class EventCardComponent {
 
   @Input()
-  eventData: EventContent = {
-    "frequency": Period.weekly,
-    "startDate": "2023-04-11T04:00:00Z",
-    "endDate": "2023-04-18T03:59:59Z",
-    "category": "General",
-    "totalSpent": 120,
-    "amountLimit": 100
-  };
+  eventData?: EventContent;
   numberFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
   });
-  statusText: string;
+  statusText: string = "";
+
+  @Output()
+  clickEvent = new EventEmitter<EventContent | undefined>();
+  emitEventContent(eventContent?: EventContent) {
+    this.clickEvent.emit(eventContent);
+  }
 
   constructor() {
+    console.log(this.eventData);
+    this.getStatusText();
+  }
+
+  getStatusText(): string {
+    if (!this.eventData) return "Loading";
     if (this.eventData.startDate > new Date().toISOString()) {
       this.statusText = "Upcoming";
     } else if (this.eventData.totalSpent > this.eventData.amountLimit) {
@@ -32,13 +37,16 @@ export class EventCardComponent {
     } else {
       this.statusText = "On Track";
     }
+    return this.statusText;
   }
 
   getDueDateString(): string {
+    if (!this.eventData) return "";
     return new Date(this.eventData.endDate).toLocaleDateString();
   }
 
   getDaysLeft(): number {
+    if (!this.eventData) return 0;
     const today = new Date();
     const endDate = new Date(this.eventData.endDate);
     const timeDiff = endDate.getTime() - today.getTime();

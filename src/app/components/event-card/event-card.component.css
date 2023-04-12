@@ -1,6 +1,7 @@
 .event-card {
   /* self align */
   width: 100%;
+  margin-bottom: 10px;
   /* self style */
   background: white;
   box-shadow: #ccc 2px 2px 5px;
@@ -8,6 +9,12 @@
   overflow: hidden;
   /* content align */
   display: flex;
+}
+
+.event-card:hover {
+  /* self style */
+  cursor: pointer;
+  background: #eee;
 }
 
 .event-card__indicator {

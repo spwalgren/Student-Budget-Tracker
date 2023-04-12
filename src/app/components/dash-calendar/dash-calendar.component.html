@@ -43,6 +43,12 @@
   </div>
   <div class="dash-calendar__side">
     <h3>Events</h3>
-    <app-event-card></app-event-card>
+    <div class="dash-calendar__events">
+      <app-event-card
+        *ngFor="let event of events"
+        [eventData]="event?.data"
+        (clickEvent)="handleEventClick($event)"
+      ></app-event-card>
+    </div>
   </div>
 </div>

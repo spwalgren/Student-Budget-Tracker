@@ -3,20 +3,27 @@
   [class.event-card--upcoming]="statusText === 'Upcoming'"
   [class.event-card--overspent]="statusText === 'Overspent'"
   [class.event-card--ontrack]="statusText === 'On Track'"
+  (click)="emitEventContent(eventData)"
 >
   <div class="event-card__indicator"></div>
   <div class="event-card__main">
-    <h4>{{ eventData.category }}</h4>
-    <p class="event-card__status">{{ statusText }}</p>
+    <h4>{{ eventData?.category }}</h4>
+    <p class="event-card__status">{{ getStatusText() }}</p>
     <p>Due {{ getDueDateString() }}, {{ getDaysLeft() }} day(s) left</p>
-    <p>Spending limit: {{ numberFormatter.format(eventData.amountLimit) }}</p>
-    <p *ngIf="statusText === 'On track'">
+    <p>
+      Spending limit:
+      {{ eventData && numberFormatter.format(eventData.amountLimit) }}
+    </p>
+    <p *ngIf="statusText === 'On Track'">
       Left to spend:
-      {{ numberFormatter.format(eventData.amountLimit - eventData.totalSpent) }}
+      {{
+        eventData &&
+          numberFormatter.format(eventData.amountLimit - eventData.totalSpent)
+      }}
     </p>
     <p *ngIf="statusText === 'Overspent'">
       Amount spent:
-      {{ numberFormatter.format(eventData.totalSpent) }}
+      {{ eventData && numberFormatter.format(eventData.totalSpent) }}
     </p>
   </div>
 </div>
