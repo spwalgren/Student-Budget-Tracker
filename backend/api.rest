@@ -236,7 +236,7 @@ content-type: application/json
 }
 
 ###
-GET http://{{host}}/api/calendar/0
+GET http://{{host}}/api/calendar/1
 content-type: application/json
 
 ###
