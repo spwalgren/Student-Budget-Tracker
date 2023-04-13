@@ -35,3 +35,7 @@ export interface CreateBudgetResponse extends GenericResponse {
 export interface GetBudgetsResponse extends GenericResponse {
   budgets: Budget[]
 }
+
+export interface GetBudgetCategoriesResponse extends GenericResponse {
+  categories: string[]
+}
