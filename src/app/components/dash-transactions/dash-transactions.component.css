@@ -1,3 +1,15 @@
+.transactions__heading-row {
+  /* content align */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+table {
+  /* self align */
+  margin-top: 20px;
+}
+
 .transaction__detail-row {
   /* self align */
   height: 0;
@@ -24,12 +36,6 @@ tr.transaction__row:hover {
   /* background: blue; */
   /* content align */
   padding: 5px 0;
-}
-
-.add-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
 }
 
 .transaction__detail-clickable:hover {

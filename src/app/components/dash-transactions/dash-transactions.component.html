@@ -1,18 +1,17 @@
+<div class="transactions__heading-row">
+  <h1>Transactions</h1>
+  <button
+    mat-fab
+    (click)="openAddDialog()"
+    color="primary"
+    data-cy="add-btn"
+    aria-label="add transaction"
+  >
+    <mat-icon>add</mat-icon>
+  </button>
+</div>
 <section>
-  <div>
-    <h1>Transactions</h1>
-
-    <!-- Icon for button -->
-    <button
-      mat-icon-button
-      (click)="openAddDialog()"
-      class="add-button"
-      data-cy="add-btn"
-      aria-label="add transaction"
-    >
-      <mat-icon>add</mat-icon>
-    </button>
-
+  <div *ngIf="transactionData.length > 0">
     <table
       mat-table
       [dataSource]="transactionData"

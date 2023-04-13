@@ -43,7 +43,7 @@ export class DashBudgetsComponent {
   ];
   isDeleting: boolean = false;
 
-  constructor(private budgetService: BudgetService, public dialog: MatDialog) {}
+  constructor(private budgetService: BudgetService, public dialog: MatDialog) { }
 
   ngOnInit() {
     this.rerenderBudgets();
@@ -76,10 +76,10 @@ export class DashBudgetsComponent {
       frequency === Period.monthly
         ? 'month'
         : frequency === Period.weekly
-        ? 'week'
-        : frequency === Period.yearly
-        ? 'year'
-        : 'period';
+          ? 'week'
+          : frequency === Period.yearly
+            ? 'year'
+            : 'period';
     if (duration > 1) {
       result += `${duration} ${frequencyString}s`;
     } else {
@@ -167,7 +167,7 @@ export class DashBudgetsComponent {
     };
   }
 
-  getFilteredData(category: string, budgetData: Budget[]) {
+  getFilteredData(category: string, budgetData: Budget[]): Budget[] {
     return budgetData.filter((elem) => elem.data.category === category);
   }
 
