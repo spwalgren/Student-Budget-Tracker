@@ -30,7 +30,9 @@ export class EventCardComponent {
 
   getStatusText(): string {
     if (!this.eventData) return "Loading";
-    if (this.eventData.startDate > new Date().toISOString()) {
+    if (this.eventData.endDate < new Date().toISOString()) {
+      this.statusText = "Completed";
+    } else if (this.eventData.startDate > new Date().toISOString()) {
       this.statusText = "Upcoming";
     } else if (this.eventData.totalSpent > this.eventData.amountLimit) {
       this.statusText = "Overspent";

@@ -9,7 +9,12 @@
   <div class="event-card__main">
     <h4>{{ eventData?.category }}</h4>
     <p class="event-card__status">{{ getStatusText() }}</p>
-    <p>Due {{ getDueDateString() }}, {{ getDaysLeft() }} day(s) left</p>
+    <p>
+      Due {{ getDueDateString() }}
+      <span *ngIf="statusText !== 'Completed'">
+        , {{ getDaysLeft() }} day(s) left
+      </span>
+    </p>
     <p>
       Spending limit:
       {{ eventData && numberFormatter.format(eventData.amountLimit) }}
@@ -21,7 +26,7 @@
           numberFormatter.format(eventData.amountLimit - eventData.totalSpent)
       }}
     </p>
-    <p *ngIf="statusText === 'Overspent'">
+    <p *ngIf="statusText === 'Overspent' || statusText === 'Completed'">
       Amount spent:
       {{ eventData && numberFormatter.format(eventData.totalSpent) }}
     </p>
