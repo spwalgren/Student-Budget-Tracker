@@ -38,7 +38,7 @@ import { BudgetService } from 'src/app/budget.service';
 export class DashTransactionsComponent {
   transactionData: Transaction[] = [];
   transactionTableData: MatTableDataSource<Transaction>;
-  displayedColumns = ['name', 'amount', 'category', 'date', 'expand'];
+  displayedColumns = ['name', 'amount', 'category', 'date', 'editAndDelete', 'expand'];
   expandedRow: Transaction | null = null;
   isChanging: boolean = false;
   categoryOptions = ['[None]'];

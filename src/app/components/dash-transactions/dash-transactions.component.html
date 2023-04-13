@@ -49,6 +49,31 @@
         </td>
       </ng-container>
 
+      <!-- Edit and delete -->
+      <ng-container matColumnDef="editAndDelete">
+        <th mat-header-cell *matHeaderCellDef>Edit/Delete</th>
+        <td mat-cell *matCellDef="let element">
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="openEditDialog(element)"
+            [disabled]="isChanging"
+            data-cy="edit-btn"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="goDeleteTransaction(element)"
+            [disabled]="isChanging"
+            data-cy="delete-btn"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td></ng-container
+      >
+
       <!-- Expand column -->
       <ng-container matColumnDef="expand">
         <th mat-header-cell *matHeaderCellDef aria-label="row actions">
@@ -75,7 +100,11 @@
       <ng-container matColumnDef="button">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let elem">
-          <button mat-icon-button aria-label="button">
+          <button
+            mat-icon-button
+            aria-label="button"
+            (click)="expandedRow = expandedRow === elem ? null : elem"
+          >
             <mat-icon>add_circle_outline</mat-icon>
           </button>
         </td>
@@ -95,20 +124,6 @@
           >
             <div class="transaction__detail-contents">
               <p>Description: {{ elem.description || "[none]" }}</p>
-              <p
-                class="transaction__detail-clickable transaction__detail-edit"
-                [class.transaction__detail-changing]="isChanging"
-                (click)="openEditDialog(elem)"
-              >
-                Edit this transaction
-              </p>
-              <p
-                class="transaction__detail-clickable transaction__detail-delete"
-                [class.transaction__detail-changing]="isChanging"
-                (click)="goDeleteTransaction(elem)"
-              >
-                Delete this transaction
-              </p>
             </div>
           </div>
         </td>
@@ -118,7 +133,6 @@
       <tr
         mat-row
         *matRowDef="let element; columns: displayedColumns"
-        (click)="expandedRow = expandedRow === element ? null : element"
         class="transaction__row"
       ></tr>
       <tr
