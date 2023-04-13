@@ -18,6 +18,7 @@ import {
 } from 'src/types/transaction-system';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { BudgetService } from 'src/app/budget.service';
 
 @Component({
   selector: 'app-dash-transactions',
@@ -39,9 +40,11 @@ export class DashTransactionsComponent {
   displayedColumns = ['name', 'amount', 'category', 'date', 'expand'];
   expandedRow: Transaction | null = null;
   isChanging: boolean = false;
+  categoryOptions = ['[None]'];
 
   constructor(
     public transactionService: TransactionService,
+    public budgetService: BudgetService,
     public dialog: MatDialog
   ) {
     this.transactionData = new MatTableDataSource<Transaction>([]);
@@ -59,6 +62,12 @@ export class DashTransactionsComponent {
       if (!res.err) {
         this.transactionData = new MatTableDataSource(res.data);
         this.transactionData.sort = this.sort;
+      }
+    });
+
+    this.budgetService.getBudgetCategories().subscribe((res) => {
+      if (!res.err) {
+        this.categoryOptions.push(...res.categories);
       }
     });
   }
@@ -80,10 +89,11 @@ export class DashTransactionsComponent {
           name: '',
           amount: 0,
           date: this.getToday(),
-          category: '',
+          category: '[None]',
           description: '',
         },
         mode: 'Add',
+        categoryOptions: this.categoryOptions,
       },
     });
 
@@ -123,6 +133,7 @@ export class DashTransactionsComponent {
         data: {
           data: transaction,
           mode: 'Edit',
+          categoryOptions: this.categoryOptions,
         },
       });
       // When the dialog closes...
@@ -184,9 +195,10 @@ export class DashTransactionsComponent {
   }
 }
 
-interface TransactionModalData {
+interface TransactionsDialogData {
   data: TransactionContent,
-  mode: "Add" | "Edit"
+  mode: "Add" | "Edit",
+  categoryOptions: string[],
 }
 
 @Component({
@@ -198,20 +210,22 @@ export class TransactionsDialogComponent {
 
   transactionForm: FormGroup;
   transactionId?: number;
+  categoryOptions: string[];
   mode: "Add" | "Edit";
 
   constructor(
     public dialogRef: MatDialogRef<TransactionsDialogComponent, CreateTransactionRequest>,
-    @Inject(MAT_DIALOG_DATA) public data: TransactionModalData,
+    @Inject(MAT_DIALOG_DATA) public data: TransactionsDialogData,
   ) {
     this.transactionForm = new FormGroup({
       name: new FormControl(data.data.name, [Validators.required]),
       amount: new FormControl(data.data.amount, [Validators.required]),
       date: new FormControl<Date>(new Date(data.data.date), [Validators.required]),
-      category: new FormControl(data.data.category),
+      category: new FormControl(data.data.category, [Validators.required]),
       description: new FormControl(data.data.description)
     });
     this.mode = data.mode;
+    this.categoryOptions = data.categoryOptions;
   } //data b/w data and source
 
   goSubmitTransaction() {
