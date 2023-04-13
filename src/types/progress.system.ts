@@ -9,7 +9,7 @@ export interface Progress {
     userId: number,
     totalSpent: number,
     transactionIdList: number[],
-    budgetId: number[],
+    budgetId: number,
     category: string,
     budgetGoal: number,
     frequency: Period
