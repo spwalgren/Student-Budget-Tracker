@@ -43,3 +43,11 @@ tr.transaction__row:hover {
   color: gray;
   cursor: default;
 }
+
+.transactions-dialog__form {
+  /* self align */
+  min-width: 500px;
+  /* content align */
+  display: flex;
+  flex-direction: column;
+}
