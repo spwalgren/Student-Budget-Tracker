@@ -227,6 +227,10 @@ Get http://{{host}}/api/progress
 content-type: application/json
 
 ###
+Get http://{{host}}/api/progress/previous
+content-type: application/json
+
+###
 POST http://{{host}}/api/login
 content-type: application/json
 
