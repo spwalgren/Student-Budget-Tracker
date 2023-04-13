@@ -111,7 +111,7 @@ func UpdateBudget(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	
+
 	oldBudget = updateBudget.NewBudget
 	database.DB.Save(oldBudget)
 	w.WriteHeader(http.StatusOK)
@@ -243,10 +243,10 @@ func GetCyclePeriod(w http.ResponseWriter, r *http.Request) {
 	tempBudgetId, _ := strconv.Atoi(vars["budgetId"])
 	budgetId := uint(tempBudgetId)
 	date, _ := time.Parse("2006-01-02", dateTemp)
-	
+
 	// Gets budget and checks if budgetId is valid
 	var budgets models.BudgetsResponse
-	err := database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false, "budgetId":budgetId}).Find(&budgets.Budgets)
+	err := database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false, "budgetId":budgetId}).Find(&budgets.Budgets).Error
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
