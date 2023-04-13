@@ -110,7 +110,7 @@ content-type: application/json
         "transactionId": 0,
         "amount": 1000.00,
         "name": "Wal-Mart",
-        "date": "12/23/2022",
+        "date": "12-23-2022T04:00:00Z",
         "category": "Food",
         "description": "Bought food for the week"
     }
@@ -139,7 +139,7 @@ content-type: application/json
         "transactionId": 31,
         "amount": 1200,
         "name": "Publix",
-        "date": "12/23/2022",
+        "date": "12-23-2022",
         "category": "Groceries",
         "description": "Bought food for the week"
     }
@@ -155,11 +155,11 @@ content-type: application/json
 
 {
     "data": {
-            "amount": 10,
+            "amount": 15,
             "name": "test2",
-            "date": "12/25/2022",
-            "category": "School",
-            "description": "Textbook"
+            "date": "2023-04-11T04:00:00.000Z",
+            "category": "Fun",
+            "description": "Movies"
     }
 }
 

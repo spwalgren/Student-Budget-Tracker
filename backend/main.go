@@ -41,7 +41,7 @@ func main() {
 	r.HandleFunc("/api/budget/cycle/{date}", controllers.GetCyclePeriod).Methods(http.MethodOptions, http.MethodGet)
 	r.HandleFunc("/api/budget/{budgetId}", controllers.DeleteBudget).Methods(http.MethodOptions, http.MethodDelete)
 	r.HandleFunc("/api/progress", controllers.GetProgress).Methods(http.MethodOptions, http.MethodGet, http.MethodPost)
-
+	r.HandleFunc("/api/budget/dates/{budgetId}/{date}", controllers.HelperGetStartEndDate).Methods(http.MethodOptions, http.MethodGet)
 	r.HandleFunc("/api/calendar/{month}", controllers.GetEvents).Methods(http.MethodGet, http.MethodOptions)
 
 	log.Fatal(http.ListenAndServe(":8080", corsObj.Handler(r)))

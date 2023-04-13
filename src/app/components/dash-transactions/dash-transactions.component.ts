@@ -36,8 +36,9 @@ import { BudgetService } from 'src/app/budget.service';
   ],
 })
 export class DashTransactionsComponent {
-  transactionData: MatTableDataSource<Transaction>;
-  displayedColumns = ['name', 'amount', 'category', 'date', 'expand'];
+  transactionData: Transaction[] = [];
+  transactionTableData: MatTableDataSource<Transaction>;
+  displayedColumns = ['name', 'amount', 'category', 'date', 'editAndDelete', 'expand'];
   expandedRow: Transaction | null = null;
   isChanging: boolean = false;
   categoryOptions = ['[None]'];
@@ -47,21 +48,22 @@ export class DashTransactionsComponent {
     public budgetService: BudgetService,
     public dialog: MatDialog
   ) {
-    this.transactionData = new MatTableDataSource<Transaction>([]);
+    this.transactionTableData = new MatTableDataSource<Transaction>([]);
   }
 
   @ViewChild(MatTable) table!: MatTable<Transaction>;
   @ViewChild(MatSort) sort!: MatSort;
 
   ngAfterViewInit() {
-    this.transactionData.sort = this.sort;
+    this.transactionTableData.sort = this.sort;
   }
 
   ngOnInit() {
     this.transactionService.getTransactions().subscribe((res) => {
       if (!res.err) {
-        this.transactionData = new MatTableDataSource(res.data);
-        this.transactionData.sort = this.sort;
+        this.transactionData = [...res.data];
+        this.transactionTableData = new MatTableDataSource(this.transactionData);
+        this.transactionTableData.sort = this.sort;
       }
     });
 
@@ -73,12 +75,21 @@ export class DashTransactionsComponent {
   }
 
   rerenderTable() {
-    this.transactionData = new MatTableDataSource([
-      ...this.transactionData.data,
+    this.transactionTableData = new MatTableDataSource([
+      ...this.transactionTableData.data,
     ]);
-    this.transactionData.sort = this.sort;
+    this.transactionTableData.sort = this.sort;
     this.table.renderRows();
     this.isChanging = false;
+  }
+
+  rerenderTransactions() {
+    this.transactionService.getTransactions().subscribe((res) => {
+      if (!res.err) {
+        this.transactionData = [...res.data];
+        this.rerenderTable();
+      }
+    });
   }
 
   openAddDialog(): void {
@@ -105,23 +116,11 @@ export class DashTransactionsComponent {
         // Create the data in the database
         this.transactionService
           .createTransaction(dialogOutput)
-          .subscribe((res) => {
-            // Add the data to the table
-            const newTransaction: Transaction = {
-              userId: res.userId,
-              transactionId: res.transactionId,
-              ...dialogOutput.data,
-            };
-            this.transactionData = new MatTableDataSource([
-              ...this.transactionData.data,
-              newTransaction,
-            ]);
-            this.transactionData.sort = this.sort;
-            this.table.renderRows();
+          .subscribe((_) => {
+            this.rerenderTransactions();
           });
       }
       console.log('The dialog was closed');
-      // console.log(dialogRes.data);
     });
   }
 
@@ -148,14 +147,8 @@ export class DashTransactionsComponent {
               ...dialogOutput.data,
             },
           };
-          this.transactionService.updateTransaction(req).subscribe((res) => {
-            if (!res.err) {
-              const targetIndex = this.transactionData.data.findIndex(
-                (elem) => elem.transactionId == transaction.transactionId
-              );
-              this.transactionData.data.splice(targetIndex, 1, req.data);
-              this.rerenderTable();
-            }
+          this.transactionService.updateTransaction(req).subscribe((_) => {
+            this.rerenderTransactions();
           });
         } else {
           this.isChanging = false;
@@ -170,14 +163,8 @@ export class DashTransactionsComponent {
       this.isChanging = true;
       this.transactionService
         .deleteTransaction(transaction)
-        .subscribe((res) => {
-          if (!res.err) {
-            const targetIndex = this.transactionData.data.findIndex(
-              (elem) => elem.transactionId == transaction.transactionId
-            );
-            this.transactionData.data.splice(targetIndex, 1);
-            this.rerenderTable();
-          }
+        .subscribe((_) => {
+          this.rerenderTransactions();
         });
     }
   }
