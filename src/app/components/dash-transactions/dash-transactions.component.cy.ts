@@ -64,14 +64,14 @@ describe('DashTransactionsComponent', () => {
 
   it('should have a button that opens a dialog', () => {
 
-    cy.get('div.transaction-modal').should('not.exist');
+    cy.get('div.transactions-dialog').should('not.exist');
     cy.get('button.add-button').click();
-    cy.get('div.transaction-modal')
+    cy.get('div.transactions-dialog')
       .should('exist')
       .should('be.visible');
 
     cy.get('body').click(0, 0);
-    cy.get('div.transaction-modal').should('not.exist');
+    cy.get('div.transactions-dialog').should('not.exist');
   });
 
   it('should have 2 entries', () => {

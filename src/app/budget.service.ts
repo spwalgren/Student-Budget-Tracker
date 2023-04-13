@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, catchError, of, map, from } from 'rxjs';
 import { createBudget, deleteBudget, getBudgets, updateBudget } from 'src/sample-budget-data';
 import { GenericResponse } from 'src/types/api-system';
-import { CreateBudgetRequest, CreateBudgetResponse, GetBudgetsResponse, UpdateBudgetRequest } from 'src/types/budget-system';
+import { CreateBudgetRequest, CreateBudgetResponse, GetBudgetCategoriesResponse, GetBudgetsResponse, UpdateBudgetRequest } from 'src/types/budget-system';
 
 @Injectable({
   providedIn: 'root'
@@ -55,6 +55,25 @@ export class BudgetService {
           })
         })
       )
+  }
+
+  getBudgetCategories(): Observable<GetBudgetCategoriesResponse> {
+    const url = `${this.requestBase}/budget/categories`;
+    const options = {
+      headers: this.httpOptions.headers,
+      withCredentials: true,
+    };
+
+    return this.http.get<GetBudgetCategoriesResponse>(url, options)
+      .pipe(
+        catchError((err) => {
+          console.log(err);
+          return of({
+            err: "Could not get budget categories",
+            categories: []
+          });
+        })
+      );
   }
 
   updateBudget(requestData: UpdateBudgetRequest): Observable<GenericResponse> {

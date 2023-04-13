@@ -31,7 +31,7 @@ export class DashCalendarComponent {
         this.calendarEvents = this.events.map(event => {
           return {
             start: new Date(event.data.endDate),
-            title: event.data.category,
+            title: `${event.data.category}; Amount spent: ${event.data.totalSpent}/${event.data.amountLimit}`,
           }
         });
       });

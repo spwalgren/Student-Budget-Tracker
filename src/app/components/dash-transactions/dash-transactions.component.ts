@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Inject, Input, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
@@ -14,9 +14,10 @@ import {
   UpdateTransactionRequest,
   Transaction,
   CreateTransactionRequest,
+  TransactionContent,
 } from 'src/types/transaction-system';
-import { MatDialog } from '@angular/material/dialog';
-import { TransactionsModalComponent } from '../transactions-modal/transactions-modal.component';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-dash-transactions',
@@ -73,7 +74,7 @@ export class DashTransactionsComponent {
 
   openAddDialog(): void {
     // Open the dialog and pass it blank data
-    let dialogRef = this.dialog.open(TransactionsModalComponent, {
+    let dialogRef = this.dialog.open(TransactionsDialogComponent, {
       data: {
         data: {
           name: '',
@@ -118,7 +119,7 @@ export class DashTransactionsComponent {
     if (!this.isChanging) {
       this.isChanging = true;
       // Open the dialog and pass it the current data
-      let dialogRef = this.dialog.open(TransactionsModalComponent, {
+      let dialogRef = this.dialog.open(TransactionsDialogComponent, {
         data: {
           data: transaction,
           mode: 'Edit',
@@ -145,6 +146,8 @@ export class DashTransactionsComponent {
               this.rerenderTable();
             }
           });
+        } else {
+          this.isChanging = false;
         }
         console.log('The dialog was closed');
       });
@@ -178,5 +181,53 @@ export class DashTransactionsComponent {
     let todayString = today.toISOString().split('T')[0] + 'T04:00:00.000Z';
     today = new Date(todayString);
     return today.toISOString();
+  }
+}
+
+interface TransactionModalData {
+  data: TransactionContent,
+  mode: "Add" | "Edit"
+}
+
+@Component({
+  selector: 'transactions-dialog',
+  templateUrl: 'transactions-dialog.html',
+  styleUrls: ['./dash-transactions.component.css']
+})
+export class TransactionsDialogComponent {
+
+  transactionForm: FormGroup;
+  transactionId?: number;
+  mode: "Add" | "Edit";
+
+  constructor(
+    public dialogRef: MatDialogRef<TransactionsDialogComponent, CreateTransactionRequest>,
+    @Inject(MAT_DIALOG_DATA) public data: TransactionModalData,
+  ) {
+    this.transactionForm = new FormGroup({
+      name: new FormControl(data.data.name, [Validators.required]),
+      amount: new FormControl(data.data.amount, [Validators.required]),
+      date: new FormControl<Date>(new Date(data.data.date), [Validators.required]),
+      category: new FormControl(data.data.category),
+      description: new FormControl(data.data.description)
+    });
+    this.mode = data.mode;
+  } //data b/w data and source
+
+  goSubmitTransaction() {
+    if (!this.transactionForm.invalid) {
+      console.log(this.transactionForm.get("date"));
+
+      const transactionRequest: CreateTransactionRequest = {
+        data: {
+          name: this.transactionForm.get("name")?.value,
+          amount: this.transactionForm.get("amount")?.value,
+          date: (this.transactionForm.get("date")?.value as Date).toISOString(),
+          category: this.transactionForm.get("category")?.value,
+          description: this.transactionForm.get("description")?.value,
+        }
+      }
+      this.dialogRef.close(transactionRequest);
+    }
   }
 }
