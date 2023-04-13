@@ -45,8 +45,13 @@ type BudgetCategoriesResponse struct {
 	Category []string `json:"categories"`
 }
 
+type Cycle struct {
+	Start    string `json:"start"`
+	End      string `json:"end"`
+	Index    int    `json:"index"`
+	BudgetID uint   `json:"budgetId"`
+}
+
 type CyclePeriodResponse struct {
-	Start string `json:"start"`
-	End   string `json:"end"`
-	Index int    `json:"index"`
+	Data []Cycle `json:"data"`
 }

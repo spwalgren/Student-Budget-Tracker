@@ -35,7 +35,7 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false, "category": newTransactionData.Data.Category}).Find(&budgets.Budgets)
 
 	// If the transaction category doesn't match a budget category
-	if (len(budgets.Budgets) == 0) {
+	if (len(budgets.Budgets) == 0 && newTransactionData.Data.Category != "") {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -53,6 +53,9 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	database.DB.First(&user, userID)
 	newTransaction.UserID = user.ID
 	fmt.Println(newTransaction)
+	if (newTransactionData.Data.Category == "") {
+		newTransactionData.Data.Category = "[None]"
+	}
 	database.DB.Create(&newTransaction)
 	
 
@@ -84,6 +87,7 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		budgetCycle.TransactionID = newTransaction.TransactionID
 		database.DB.Create(&budgetCycle)
 	}
+
 
 	json.NewEncoder(w).Encode(models.CreateTransactionResponse{
 		UserID:newTransaction.UserID,
@@ -160,7 +164,7 @@ func UpdateTransaction(w http.ResponseWriter, r *http.Request) {
 	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false, "category": expenses.Category}).Find(&budgets.Budgets)
 	
 	// If the transaction category doesn't match a budget category
-	if (len(budgets.Budgets) == 0) {
+	if (len(budgets.Budgets) == 0 && expenses.Category != "") {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -193,6 +197,9 @@ func UpdateTransaction(w http.ResponseWriter, r *http.Request) {
 		budgetCycle.CycleIndex = cycleIndex
 		budgetCycle.TransactionID = expenses.TransactionID
 		database.DB.Save(&budgetCycle)
+	}
+	if (expenses.Category == "") {
+		expenses.Category = "[None]"
 	}
 	database.DB.Save(expenses)
 	w.WriteHeader(http.StatusOK)
@@ -239,4 +246,6 @@ func DeleteTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	database.DB.Delete(&toDelete)
+	var budgetCycles models.BudgetTransaction
+	database.DB.Where(map[string]interface{}{"transaction_id": deletingTransactionId}).Delete(&budgetCycles)
 }

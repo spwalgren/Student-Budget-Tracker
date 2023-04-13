@@ -166,7 +166,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 func ReturnUserID(w http.ResponseWriter, r* http.Request) string {
 	cookie, err := r.Cookie("jtw")
 	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
+		// w.WriteHeader(http.StatusUnauthorized)
 		return "-1"
 	}
 	tempClaims := jwt.StandardClaims{}
@@ -175,7 +175,7 @@ func ReturnUserID(w http.ResponseWriter, r* http.Request) string {
 	})
 
 	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
+		// w.WriteHeader(http.StatusUnauthorized)
 		return "-1"
 	}
 

@@ -236,11 +236,11 @@ content-type: application/json
 }
 
 ###
-GET http://{{host}}/api/calendar/1
+GET http://{{host}}/api/calendar/0
 content-type: application/json
 
 ###
-GET http://{{host}}/api/budget/cycle/89/2023-05-16
+GET http://{{host}}/api/budget/cycle/2023-04-13
 
 ###
 GET http://{{host}}/api/budget

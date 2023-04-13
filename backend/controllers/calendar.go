@@ -104,8 +104,9 @@ func GetEvents(w http.ResponseWriter, r* http.Request) {
 		}
 		for j := cycleRangeStart; j <= cycleRangeEnd; j++ {
 			if (currBudget.Data.Frequency == "weekly") {
-				var eventDate = budgetStartTime.AddDate(0,0,7*j*int(currBudget.Data.CycleDuration))
-				if (eventDate.Equal(firstOfMonth) || eventDate.Equal(lastOfMonth) || (eventDate.After(firstOfMonth) && eventDate.Before(lastOfMonth))) {
+				var eventStartDate = budgetStartTime.AddDate(0,0,7*j*int(currBudget.Data.CycleDuration))
+				var eventEndDate = budgetStartTime.AddDate(0,0,7*(j+1)*int(currBudget.Data.CycleDuration)).Add(-1 * time.Second)
+				if (eventStartDate.Equal(firstOfMonth) || eventStartDate.Equal(lastOfMonth) || (eventStartDate.After(firstOfMonth) && eventStartDate.Before(lastOfMonth)) || (eventEndDate.After(firstOfMonth) && eventEndDate.Before(lastOfMonth))) {
 					var tempEvent models.Event
 					tempEvent.UserID = uint(userID)
 					tempEvent.EventID = uint(eventIdCount)
@@ -114,8 +115,8 @@ func GetEvents(w http.ResponseWriter, r* http.Request) {
 					tempEventContent.Frequency = currBudget.Data.Frequency
 					tempEventContent.AmountLimit = currBudget.Data.AmountLimit
 					tempEventContent.Category = currBudget.Data.Category
-					tempEventContent.StartDate = eventDate.Format(time.RFC3339)
-					tempEventContent.EndDate = budgetStartTime.AddDate(0,0,7*(j+1)*int(currBudget.Data.CycleDuration)).Add(-1 * time.Second).Format(time.RFC3339)
+					tempEventContent.StartDate = eventStartDate.Format(time.RFC3339)
+					tempEventContent.EndDate = eventEndDate.Format(time.RFC3339)
 					var transactions models.TransactionsResponse
 					database.DB.Where(map[string]interface{}{"user_id": userID, "category": currBudget.Data.Category}).Find(&transactions.Data)
 					tempSpent := float32(0.0)
@@ -132,8 +133,9 @@ func GetEvents(w http.ResponseWriter, r* http.Request) {
 				}
 
 			} else if (currBudget.Data.Frequency == "monthly") {
-				var eventDate = budgetStartTime.AddDate(0,j*int(currBudget.Data.CycleDuration),0)
-				if (eventDate.Equal(firstOfMonth) || eventDate.Equal(lastOfMonth) || (eventDate.After(firstOfMonth) && eventDate.Before(lastOfMonth))) {
+				var eventStartDate = budgetStartTime.AddDate(0,j*int(currBudget.Data.CycleDuration),0)
+				eventEndDate := budgetStartTime.AddDate(0,(j+1)*int(currBudget.Data.CycleDuration),0).Add(-1*time.Second)
+				if (eventStartDate.Equal(firstOfMonth) || eventStartDate.Equal(lastOfMonth) || (eventStartDate.After(firstOfMonth) && eventStartDate.Before(lastOfMonth)) || (eventEndDate.After(firstOfMonth) && eventEndDate.Before(lastOfMonth))) {
 					var tempEvent models.Event
 					tempEvent.UserID = uint(userID)
 					tempEvent.EventID = uint(eventIdCount)
@@ -142,8 +144,8 @@ func GetEvents(w http.ResponseWriter, r* http.Request) {
 					tempEventContent.Frequency = currBudget.Data.Frequency
 					tempEventContent.AmountLimit = currBudget.Data.AmountLimit
 					tempEventContent.Category = currBudget.Data.Category
-					tempEventContent.StartDate = eventDate.Format(time.RFC3339)
-					tempEventContent.EndDate = budgetStartTime.AddDate(0,(j+1)*int(currBudget.Data.CycleDuration),0).Add(-1*time.Second).Format(time.RFC3339)
+					tempEventContent.StartDate = eventStartDate.Format(time.RFC3339)
+					tempEventContent.EndDate = eventEndDate.Format(time.RFC3339)
 					var transactions models.TransactionsResponse
 					database.DB.Where(map[string]interface{}{"user_id": userID, "category": currBudget.Data.Category}).Find(&transactions.Data)
 					tempSpent := float32(0.0)
@@ -159,8 +161,9 @@ func GetEvents(w http.ResponseWriter, r* http.Request) {
 					eventsResponse.Events = append(eventsResponse.Events, tempEvent)
 				}
 			} else {
-				var eventDate = budgetStartTime.AddDate(j*int(currBudget.Data.CycleDuration),0,0)
-				if (eventDate.Equal(firstOfMonth) || eventDate.Equal(lastOfMonth) || (eventDate.After(firstOfMonth) && eventDate.Before(lastOfMonth))) {
+				var eventStartDate = budgetStartTime.AddDate(j*int(currBudget.Data.CycleDuration),0,0)
+				eventEndDate := budgetStartTime.AddDate((j+1)*int(currBudget.Data.CycleDuration),0,0).Add(-1 * time.Second)
+				if (eventStartDate.Equal(firstOfMonth) || eventStartDate.Equal(lastOfMonth) || (eventStartDate.After(firstOfMonth) && eventStartDate.Before(lastOfMonth)) || (eventEndDate.After(firstOfMonth) && eventEndDate.Before(lastOfMonth))) {
 					var tempEvent models.Event
 					tempEvent.UserID = uint(userID)
 					tempEvent.EventID = uint(eventIdCount)
@@ -169,8 +172,8 @@ func GetEvents(w http.ResponseWriter, r* http.Request) {
 					tempEventContent.Frequency = currBudget.Data.Frequency
 					tempEventContent.AmountLimit = currBudget.Data.AmountLimit
 					tempEventContent.Category = currBudget.Data.Category
-					tempEventContent.StartDate = eventDate.Format(time.RFC3339)
-					tempEventContent.EndDate = budgetStartTime.AddDate((j+1)*int(currBudget.Data.CycleDuration),0,0).Add(-1 * time.Second).Format(time.RFC3339)
+					tempEventContent.StartDate = eventStartDate.Format(time.RFC3339)
+					tempEventContent.EndDate = eventEndDate.Format(time.RFC3339)
 					var transactions models.TransactionsResponse
 					database.DB.Where(map[string]interface{}{"user_id": userID, "category": currBudget.Data.Category}).Find(&transactions.Data)
 					tempSpent := float32(0.0)
