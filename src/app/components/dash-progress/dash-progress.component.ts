@@ -8,7 +8,13 @@ import { Period } from 'src/types/budget-system';
 import { Observable, catchError, of, map, from } from 'rxjs';
 import { Injectable } from '@angular/core';
 
+export interface CategoryTotals {
+  weekly: number;
+  monthly: number;
+  yearly: number;
+}
 
+const categoryTotals: { [key: string]: CategoryTotals } = {};
 
 @Component({
   selector: 'app-dash-progress',
@@ -26,23 +32,28 @@ export class DashProgressComponent {
   constructor( private progressService: ProgressService) { };
 
   ngOnInit() {
-      this.progressService.GetProgress().subscribe((progress) => {
-        //this.progress = data;
-        if (!progress.err){
-          progress.data.forEach(elem => {
-            if ( elem.frequency == Period.weekly){
-              this.weeklyTotalSpent += elem.totalSpent;
-            }
-            if ( elem.frequency == Period.monthly){
-              this.monthlyTotalSpent += elem.totalSpent;
-            }
-            if ( elem.frequency == Period.yearly){
-              this.yearlyTotalSpent += elem.totalSpent;
-            }
-        
-          });
+    this.progressService.GetProgress().subscribe((progress) => {
+      if (!progress.err) {
+        progress.data.forEach(elem => {
+          const category = elem.category;
+          if (!categoryTotals[category]) {
+            categoryTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
           }
-      });
-    }
+          if (elem.frequency == Period.weekly) {
+            categoryTotals[category].weekly += elem.totalSpent;
+            this.weeklyTotalSpent += elem.totalSpent;
+          }
+          if (elem.frequency == Period.monthly) {
+            categoryTotals[category].monthly += elem.totalSpent;
+            this.monthlyTotalSpent += elem.totalSpent;
+          }
+          if (elem.frequency == Period.yearly) {
+            categoryTotals[category].yearly += elem.totalSpent;
+            this.yearlyTotalSpent += elem.totalSpent;
+          }
+        });
+      }
+    });
+  }
   
 }
