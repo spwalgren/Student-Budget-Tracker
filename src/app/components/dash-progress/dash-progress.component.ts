@@ -15,6 +15,7 @@ export interface CategoryTotals {
 }
 
 const categoryTotals: { [key: string]: CategoryTotals } = {};
+const prevCategoryTotals: { [key: string]: CategoryTotals } = {};
 
 @Component({
   selector: 'app-dash-progress',
@@ -28,6 +29,10 @@ export class DashProgressComponent {
   weeklyTotalSpent: number = 0;
   monthlyTotalSpent: number = 0;
   yearlyTotalSpent: number = 0;
+  prevWeeklyTotalSpent: number = 0;
+  prevMonthlyTotalSpent: number = 0;
+  prevYearlyTotalSpent: number = 0;
+ 
 
   constructor( private progressService: ProgressService) { };
 
@@ -54,6 +59,31 @@ export class DashProgressComponent {
         });
       }
     });
+
+    this.progressService.GetPreviousProgress().subscribe((progress) => {
+      if (!progress.err) {
+        progress.data.forEach(elem => {
+          const category = elem.category;
+          if (!prevCategoryTotals[category]) {
+            prevCategoryTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
+          }
+          if (elem.frequency == Period.weekly) {
+            prevCategoryTotals[category].weekly += elem.totalSpent;
+            this.prevWeeklyTotalSpent += elem.totalSpent;
+          }
+          if (elem.frequency == Period.monthly) {
+            prevCategoryTotals[category].monthly += elem.totalSpent;
+            this.prevMonthlyTotalSpent += elem.totalSpent;
+          }
+          if (elem.frequency == Period.yearly) {
+            prevCategoryTotals[category].yearly += elem.totalSpent;
+            this.prevYearlyTotalSpent += elem.totalSpent;
+          }
+        });
+      }
+    });
+
+
   }
   
 }

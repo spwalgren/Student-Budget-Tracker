@@ -6,9 +6,9 @@
         <div class="week-container">
           <div class="week-column">
             <p><strong>This Week</strong></p>
-            <p>You saved $550 this week!</p>
+            <p>You saved ${{ weeklyTotalSpent }} this week!</p>
             <p>Groceries: You saved $50 total for groceries</p>
-            <p>Housing: You saved $500 total for groceries</p>
+            <p>Housing: You saved $500 total for housing</p>
           </div>
           <div class="week-column">
             <p><strong>Last Week</strong></p>
@@ -23,7 +23,7 @@
           <div class="month-container">
             <div class="month-column">
               <p><strong>This Month</strong></p>
-              <p>You saved $550 this month!</p>
+              ${{ monthlyTotalSpent }}
               <p>Groceries: You saved $50 total for groceries</p>
               <p>Housing: You saved $500 total for groceries</p>
             </div>
@@ -40,7 +40,7 @@
           <div class="year-container">
             <div class="year-column">
               <p><strong>This Year</strong></p>
-              <p>You saved $5000 this year!</p>
+              <p>You saved ${{ yearlyTotalSpent }} this year!</p>
               <p>Groceries: You saved $50 total for groceries</p>
               <p>Housing: You saved $500 total for groceries</p>
             </div>
@@ -54,7 +54,7 @@
         </mat-tab>
         <mat-tab label="Total">
           <h2> Total </h2>
-          <p>You saved: $5000 Total!!!</p>
+          <p>You saved: $${{ weeklyTotalSpent + monthlyTotalSpent + yearlyTotalSpent}} total!!!</p> //fix this line!!
           <p>You don't exceed your budget 67% of the time </p>
           <p>Groceries: You saved $50 total for groceries</p>
           <p>Housing: You saved $500 total for groceries</p>
