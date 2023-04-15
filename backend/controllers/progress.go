@@ -204,7 +204,7 @@ func IsInPreviousBudget(transactions []models.Transaction, budget models.Budget,
 		endDate, _ := time.Parse(time.RFC3339, cycleResp.End)
 		startDate, _ := time.Parse(time.RFC3339, cycleResp.Start)
 
-		if transactionDate.Before(endDate) && transactionDate.After(startDate) {
+		if (transactionDate.Before(endDate) || DateEqual(transactionDate, endDate))&& (transactionDate.After(startDate) || DateEqual(transactionDate, startDate)) {
 			returnTransactions.Data = append(returnTransactions.Data, element)
 		}
 	}
@@ -376,4 +376,8 @@ func HelperGetPreviousStartEndDate(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(cycleResponse)
+}
+
+func DateEqual(time1 time.Time, time2 time.Time) bool {
+	return (time1.Year() == time2.Year()) && (time1.Month() == time2.Month()) && (time1.Day() == time2.Day())
 }

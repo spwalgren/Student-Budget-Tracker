@@ -249,3 +249,7 @@ GET http://{{host}}/api/budget/cycle/2023-04-13
 ###
 GET http://{{host}}/api/budget
 Content-Type: application/json
+
+###
+GET http://{{host}}/api/users
+Content-Type: application/json
