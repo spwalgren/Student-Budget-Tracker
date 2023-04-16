@@ -22,8 +22,6 @@ type Budget struct {
 	UserID    uint          `json:"userId"`
 	BudgetID  uint          `json:"budgetId" gorm:"primaryKey;unique;column:budgetId"`
 	IsDeleted bool          `json:"isDeleted" gorm:"column:isDeleted;type:boolean"`
-	CurrentPeriodStart string			`json:"currentPeriodStart"`
-	CurrentPeriodEnd		string			`json:"currentPeriodEnd"`
 }
 
 type CreateBudgetResponse struct {
