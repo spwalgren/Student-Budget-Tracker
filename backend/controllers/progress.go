@@ -4,9 +4,7 @@ import (
 	"budget-tracker/database"
 	"budget-tracker/models"
 	"encoding/json"
-	"fmt"
 
-	//"encoding/json"
 	"net/http"
 	"strconv"
 	"time"
@@ -50,7 +48,7 @@ func GetProgress(w http.ResponseWriter, r *http.Request) {
 		var totalSpent float32 = 0
 		budgetTransactions := IsInBudget(transactionResp.Data, temp, r)
 		for j := 0; j < len(budgetTransactions.Data); j++ {
-			idList = append(idList, transactionResp.Data[j].TransactionID)
+			idList = append(idList, budgetTransactions.Data[j].TransactionID)
 			totalSpent += budgetTransactions.Data[j].Amount
 		}
 		weeklyProgResponse.Data = append(weeklyProgResponse.Data, models.Progress{UserID: temp.UserID, Frequency: temp.Data.Frequency, Category: temp.Data.Category, BudgetGoal: temp.Data.AmountLimit, BudgetID: temp.BudgetID, TransactionIDList: idList, TotalSpent: totalSpent})
@@ -67,7 +65,7 @@ func GetProgress(w http.ResponseWriter, r *http.Request) {
 		var totalSpent float32 = 0
 		budgetTransactions := IsInBudget(transactionResp.Data, tempBudget, r)
 		for j := 0; j < len(budgetTransactions.Data); j++ {
-			idList = append(idList, transactionResp.Data[j].TransactionID)
+			idList = append(idList, budgetTransactions.Data[j].TransactionID)
 			totalSpent += budgetTransactions.Data[j].Amount
 		}
 
@@ -85,11 +83,11 @@ func GetProgress(w http.ResponseWriter, r *http.Request) {
 		var totalSpent float32 = 0
 		budgetTransactions := IsInBudget(transactionResp.Data, tempBudget, r)
 		for j := 0; j < len(budgetTransactions.Data); j++ {
-			idList = append(idList, transactionResp.Data[j].TransactionID)
+			idList = append(idList, budgetTransactions.Data[j].TransactionID)
 			totalSpent += budgetTransactions.Data[j].Amount
 		}
 
-		yearlyProgResponse.Data = append(yearlyProgResponse.Data, models.Progress{UserID: tempBudget.UserID, Frequency: tempBudget.Data.Frequency, Category: tempBudget.Data.Category, BudgetGoal: tempBudget.Data.AmountLimit, BudgetID: tempBudget.BudgetID})
+		yearlyProgResponse.Data = append(yearlyProgResponse.Data, models.Progress{UserID: tempBudget.UserID, Frequency: tempBudget.Data.Frequency, Category: tempBudget.Data.Category, BudgetGoal: tempBudget.Data.AmountLimit, BudgetID: tempBudget.BudgetID, TotalSpent: totalSpent, TransactionIDList: idList})
 	}
 
 	temp1 := append(weeklyProgResponse.Data, monthlyProgResponse.Data...)
@@ -132,7 +130,7 @@ func GetPreviousProgress(w http.ResponseWriter, r *http.Request) {
 		var totalSpent float32 = 0
 		budgetTransactions := IsInPreviousBudget(transactionResp.Data, temp, r)
 		for j := 0; j < len(budgetTransactions.Data); j++ {
-			idList = append(idList, transactionResp.Data[j].TransactionID)
+			idList = append(idList, budgetTransactions.Data[j].TransactionID)
 			totalSpent += budgetTransactions.Data[j].Amount
 		}
 		weeklyProgResponse.Data = append(weeklyProgResponse.Data, models.Progress{UserID: temp.UserID, Frequency: temp.Data.Frequency, Category: temp.Data.Category, BudgetGoal: temp.Data.AmountLimit, BudgetID: temp.BudgetID, TransactionIDList: idList, TotalSpent: totalSpent})
@@ -149,7 +147,7 @@ func GetPreviousProgress(w http.ResponseWriter, r *http.Request) {
 		var totalSpent float32 = 0
 		budgetTransactions := IsInPreviousBudget(transactionResp.Data, tempBudget, r)
 		for j := 0; j < len(budgetTransactions.Data); j++ {
-			idList = append(idList, transactionResp.Data[j].TransactionID)
+			idList = append(idList, budgetTransactions.Data[j].TransactionID)
 			totalSpent += budgetTransactions.Data[j].Amount
 		}
 
@@ -167,11 +165,11 @@ func GetPreviousProgress(w http.ResponseWriter, r *http.Request) {
 		var totalSpent float32 = 0
 		budgetTransactions := IsInPreviousBudget(transactionResp.Data, tempBudget, r)
 		for j := 0; j < len(budgetTransactions.Data); j++ {
-			idList = append(idList, transactionResp.Data[j].TransactionID)
+			idList = append(idList, budgetTransactions.Data[j].TransactionID)
 			totalSpent += budgetTransactions.Data[j].Amount
 		}
 
-		yearlyProgResponse.Data = append(yearlyProgResponse.Data, models.Progress{UserID: tempBudget.UserID, Frequency: tempBudget.Data.Frequency, Category: tempBudget.Data.Category, BudgetGoal: tempBudget.Data.AmountLimit, BudgetID: tempBudget.BudgetID})
+		yearlyProgResponse.Data = append(yearlyProgResponse.Data, models.Progress{UserID: tempBudget.UserID, Frequency: tempBudget.Data.Frequency, Category: tempBudget.Data.Category, BudgetGoal: tempBudget.Data.AmountLimit, BudgetID: tempBudget.BudgetID, TransactionIDList: idList, TotalSpent: totalSpent})
 	}
 
 	temp1 := append(weeklyProgResponse.Data, monthlyProgResponse.Data...)
@@ -183,7 +181,8 @@ func GetPreviousProgress(w http.ResponseWriter, r *http.Request) {
 
 func IsInPreviousBudget(transactions []models.Transaction, budget models.Budget, r *http.Request) models.TransactionsResponse {
 	// setup backend request
-	reqURL := "http://localhost:8080/api/budget/previousdates/" + strconv.Itoa(int(budget.BudgetID)) + "/" + time.Now().Format(time.RFC3339)[:10]
+	// Get dates of current cycle then set "current" date to be day before the start date of current cycle. Requires two calls
+	reqURL := "http://localhost:8080/api/budget/dates/" + strconv.Itoa(int(budget.BudgetID)) + "/" + time.Now().Format(time.RFC3339)[:10]
 
 	req, _ := http.NewRequest("GET", reqURL, nil)
 
@@ -196,13 +195,29 @@ func IsInPreviousBudget(transactions []models.Transaction, budget models.Budget,
 	}
 	var cycleResp models.Cycle
 	json.NewDecoder(resp.Body).Decode(&cycleResp)
-	//fmt.Println(cycleResp)
+
+
+	newTempDate, _ := time.Parse(time.RFC3339, cycleResp.Start)
+	newStartDate:= newTempDate.AddDate(0, 0, -1)
+	reqURL2 := "http://localhost:8080/api/budget/dates/" + strconv.Itoa(int(budget.BudgetID)) + "/" + newStartDate.String()[:10]
+
+	req2, _ := http.NewRequest("GET", reqURL2, nil)
+
+	// Set cookie to do backend get call to retrieve start and end date
+	cookie2, _ := r.Cookie("jtw")
+	req2.AddCookie(cookie2)
+	resp2, error2 := http.DefaultClient.Do(req2)
+	if error2 != nil {
+
+	}
+	var cycleResp2 models.Cycle
+	json.NewDecoder(resp2.Body).Decode(&cycleResp2)
 
 	var returnTransactions models.TransactionsResponse
 	for _, element := range transactions {
 		transactionDate, _ := time.Parse(time.RFC3339, element.Date)
-		endDate, _ := time.Parse(time.RFC3339, cycleResp.End)
-		startDate, _ := time.Parse(time.RFC3339, cycleResp.Start)
+		endDate, _ := time.Parse(time.RFC3339, cycleResp2.End)
+		startDate, _ := time.Parse(time.RFC3339, cycleResp2.Start)
 
 		if (transactionDate.Before(endDate) || DateEqual(transactionDate, endDate))&& (transactionDate.After(startDate) || DateEqual(transactionDate, startDate)) {
 			returnTransactions.Data = append(returnTransactions.Data, element)
@@ -230,7 +245,6 @@ func IsInBudget(transactions []models.Transaction, budget models.Budget, r *http
 	}
 	var cycleResp models.Cycle
 	json.NewDecoder(resp.Body).Decode(&cycleResp)
-	fmt.Println(cycleResp)
 
 	var returnTransactions models.TransactionsResponse
 	for _, element := range transactions {
@@ -238,7 +252,7 @@ func IsInBudget(transactions []models.Transaction, budget models.Budget, r *http
 		endDate, _ := time.Parse(time.RFC3339, cycleResp.End)
 		startDate, _ := time.Parse(time.RFC3339, cycleResp.Start)
 
-		if transactionDate.Before(endDate) && transactionDate.After(startDate) {
+		if (transactionDate.Before(endDate) || DateEqual(transactionDate, endDate)) && (transactionDate.After(startDate) || DateEqual(transactionDate, startDate)) {
 			returnTransactions.Data = append(returnTransactions.Data, element)
 		}
 	}
@@ -285,78 +299,6 @@ func HelperGetStartEndDate(w http.ResponseWriter, r *http.Request) {
 		cycleIndex = int(date.Sub(budgetStartDate).Hours() / 24 / 7 / float64(budget.Data.CycleDuration))
 		cycleRangeStart = budgetStartDate.AddDate(0, 0, cycleIndex*7*int(budget.Data.CycleDuration))
 		cycleRangeEnd = cycleRangeStart.AddDate(0, 0, 7*int(budget.Data.CycleDuration)).Add(-1 * time.Second)
-	} else if budget.Data.Frequency == "monthly" {
-		year, month, _, _, _, _ := diff(date, budgetStartDate)
-		cycleIndex = int(float64(year*12.0+month) / float64(budget.Data.CycleDuration))
-		cycleRangeStart = budgetStartDate.AddDate(0, cycleIndex, 0)
-		cycleRangeEnd = cycleRangeStart.AddDate(0, int(budget.Data.CycleDuration), 0).Add(-1 * time.Second)
-	} else {
-		year, _, _, _, _, _ := diff(date, budgetStartDate)
-		cycleIndex = int(float64(year) / float64(budget.Data.CycleDuration))
-		cycleRangeStart = budgetStartDate.AddDate(cycleIndex, 0, 0)
-		cycleRangeEnd = cycleRangeStart.AddDate(int(budget.Data.CycleDuration), 0, 0).Add(-1 * time.Second)
-	}
-
-	var cycleResponse models.Cycle
-	cycleResponse.Index = cycleIndex
-	cycleResponse.Start = cycleRangeStart.Format(time.RFC3339)
-	cycleResponse.End = cycleRangeEnd.Format(time.RFC3339)
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(cycleResponse)
-}
-
-// Copy of GetCyclePeriod()
-func HelperGetPreviousStartEndDate(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "*")
-
-	if r.Method == "OPTIONS" {
-		w.WriteHeader(http.StatusOK)
-		return
-	}
-
-	userID, _ := strconv.ParseInt(ReturnUserID(w, r), 10, 32)
-	if userID == -1 {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-
-	// Getting budgetId and date params
-	vars := mux.Vars(r)
-	//dateTemp := vars["date"]
-	tempBudgetId, _ := strconv.Atoi(vars["budgetId"])
-	budgetId := uint(tempBudgetId)
-	//tempDate, _ := time.Parse("2006-01-02", dateTemp)
-
-	// Gets budget and checks if budgetId is valid
-	var budgets models.BudgetsResponse
-	err := database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false, "budgetId": budgetId}).Find(&budgets.Budgets).Error
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-	var budget = budgets.Budgets[0]
-	tempBudgetStartDate, _ := time.Parse(time.RFC3339, budget.Data.StartDate)
-	var budgetStartDate time.Time
-
-	if budget.Data.Frequency == "weekly" {
-		budgetStartDate = tempBudgetStartDate.AddDate(0, 0, -7)
-	} else if budget.Data.Frequency == "monthly" {
-		budgetStartDate = tempBudgetStartDate.AddDate(0, -1, 0)
-	} else if budget.Data.Frequency == "yearly" {
-		budgetStartDate = tempBudgetStartDate.AddDate(-1, 0, 0)
-	}
-	date := budgetStartDate.AddDate(0, 0, -1)
-
-	// Gets cycle index and start/end
-	var cycleIndex = 0
-	var cycleRangeStart = time.Now()
-	var cycleRangeEnd = time.Now()
-	if budget.Data.Frequency == "weekly" {
-		cycleIndex = int(date.Sub(budgetStartDate).Hours() / 24 / 7 / float64(budget.Data.CycleDuration))
-		cycleRangeStart = budgetStartDate.AddDate(0, 0, cycleIndex*7*int(budget.Data.CycleDuration))
-		cycleRangeEnd = cycleRangeStart.AddDate(0, 0, 7*int(budget.Data.CycleDuration)).Add(-1 * time.Second)
-		fmt.Println(budgetStartDate, cycleRangeStart)
 	} else if budget.Data.Frequency == "monthly" {
 		year, month, _, _, _, _ := diff(date, budgetStartDate)
 		cycleIndex = int(float64(year*12.0+month) / float64(budget.Data.CycleDuration))
