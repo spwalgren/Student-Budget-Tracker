@@ -35,7 +35,7 @@ func CreateBudget(w http.ResponseWriter, r *http.Request) {
 		Data:      budgetData,
 	}
 
-	
+
 	database.DB.Create(&newBudget)
 	var transactionsFromOld []models.Transaction
 	database.DB.Where(map[string]interface{}{"category": newBudget.Data.Category, "user_id": userID}).Find(&transactionsFromOld)
@@ -91,6 +91,21 @@ func GetBudgets(w http.ResponseWriter, r *http.Request) {
 
 	var budgets models.BudgetsResponse
 	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false}).Find(&budgets.Budgets)
+
+	for i := 0; i < len(budgets.Budgets); i++ {
+		// Setup backend call to get current start and end date of current period
+		reqURL := "http://localhost:8080/api/budget/dates/" + strconv.Itoa(int(budgets.Budgets[i].BudgetID)) + "/" + time.Now().Format(time.RFC3339)[:10]
+		req, _ := http.NewRequest("GET", reqURL, nil)
+		cookie, _ := r.Cookie("jtw")
+		req.AddCookie(cookie)
+		resp, _ := http.DefaultClient.Do(req)
+		var cycleResp models.Cycle
+		json.NewDecoder(resp.Body).Decode(&cycleResp)
+
+		budgets.Budgets[i].CurrentPeriodEnd = cycleResp.End
+		budgets.Budgets[i].CurrentPeriodStart = cycleResp.Start
+	}
+
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(budgets)
 }
@@ -142,7 +157,7 @@ func UpdateBudget(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	
+
 	var remainingBudgets models.BudgetsResponse
 	database.DB.Where(map[string]interface{}{"category":oldBudget.Data.Category, "user_id": userID, "isDeleted": false}).Find(&remainingBudgets.Budgets)
 	if (len(remainingBudgets.Budgets) == 1) {
@@ -322,7 +337,7 @@ func GetCyclePeriod(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	dateTemp := vars["date"]
 	date, _ := time.Parse("2006-01-02", dateTemp)
-	
+
 	// Gets budgets
 	var budgets models.BudgetsResponse
 	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false}).Find(&budgets.Budgets)
@@ -331,7 +346,7 @@ func GetCyclePeriod(w http.ResponseWriter, r *http.Request) {
 		budget := budgets.Budgets[i]
 		budgetStartDate, _ := time.Parse(time.RFC3339, budget.Data.StartDate)
 		budgetStartDate = time.Date(budgetStartDate.Year(), budgetStartDate.Month(), budgetStartDate.Day(), 0, 0, 0, 0, budgetStartDate.Location())
-	
+
 		// Gets cycle index and start/end
 		var cycleIndex = 0
 		var cycleRangeStart = time.Now()
@@ -351,7 +366,7 @@ func GetCyclePeriod(w http.ResponseWriter, r *http.Request) {
 			cycleRangeStart = budgetStartDate.AddDate(cycleIndex,0,0)
 			cycleRangeEnd = cycleRangeStart.AddDate(int(budget.Data.CycleDuration),0,0).Add(-1 * time.Second)
 		}
-	
+
 		var cycle models.Cycle
 		cycle.Index = cycleIndex
 		cycle.Start = cycleRangeStart.Format(time.RFC3339)
