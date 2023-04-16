@@ -19,6 +19,15 @@ export interface Budget {
   userId: number,
   budgetId: number,
   data: BudgetContent
+  currentPeriodStart?: string,
+  currentPeriodEnd?: string,
+}
+
+export interface CycleInfo {
+  start: string,
+  end: string,
+  index: number,
+  budgetId: number,
 }
 
 export interface CreateBudgetRequest extends BudgetContent { }
@@ -38,4 +47,8 @@ export interface GetBudgetsResponse extends GenericResponse {
 
 export interface GetBudgetCategoriesResponse extends GenericResponse {
   categories: string[]
+}
+
+export interface GetCyclePeriodResponse extends GenericResponse {
+  data: CycleInfo[]
 }

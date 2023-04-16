@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, catchError, of, map, from } from 'rxjs';
 import { createBudget, deleteBudget, getBudgets, updateBudget } from 'src/sample-budget-data';
 import { GenericResponse } from 'src/types/api-system';
-import { CreateBudgetRequest, CreateBudgetResponse, GetBudgetCategoriesResponse, GetBudgetsResponse, UpdateBudgetRequest } from 'src/types/budget-system';
+import { CreateBudgetRequest, CreateBudgetResponse, GetBudgetCategoriesResponse, GetBudgetsResponse, GetCyclePeriodResponse, UpdateBudgetRequest } from 'src/types/budget-system';
 
 @Injectable({
   providedIn: 'root'
@@ -71,6 +71,28 @@ export class BudgetService {
           return of({
             err: "Could not get budget categories",
             categories: []
+          });
+        })
+      );
+  }
+
+  getCyclePeriod(): Observable<GetCyclePeriodResponse> {
+    let today = new Date();
+    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+    const todayString = today.toISOString().split('T')[0];
+    const url = `${this.requestBase}/budget/cycle/${todayString}`;
+    const options = {
+      headers: this.httpOptions.headers,
+      withCredentials: true,
+    };
+
+    return this.http.get<GetCyclePeriodResponse>(url, options)
+      .pipe(
+        catchError((err) => {
+          console.log(err);
+          return of({
+            err: "Could not get cycle period",
+            data: []
           });
         })
       );

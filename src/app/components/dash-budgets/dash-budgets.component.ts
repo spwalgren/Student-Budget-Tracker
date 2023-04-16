@@ -4,6 +4,7 @@ import {
   Budget,
   BudgetContent,
   CreateBudgetRequest,
+  CycleInfo,
   Period,
   UpdateBudgetRequest,
 } from 'src/types/budget-system';
@@ -26,6 +27,7 @@ export interface BudgetsDialogData {
 })
 export class DashBudgetsComponent {
   budgetData: Budget[] = [];
+  cycleData: CycleInfo[] = [];
   existingCategories: string[] = [];
   budgetForm!: FormGroup;
   budgetId?: number;
@@ -65,6 +67,11 @@ export class DashBudgetsComponent {
       }
       this.isDeleting = false;
     });
+    this.budgetService.getCyclePeriod().subscribe((res) => {
+      if (!res.err) {
+        this.cycleData = [...res.data];
+      }
+    });
   }
 
   getPeriodDef(budgetContent: BudgetContent) {
@@ -99,73 +106,89 @@ export class DashBudgetsComponent {
     return new Date(str).toLocaleDateString();
   }
 
-  getPeriodString(budgetContent: BudgetContent) {
-    const currentPeriod = this.getPeriod(budgetContent);
-    if (currentPeriod === null) {
+  getCycleInfoString(budget: Budget) {
+    const cycleInfo = this.cycleData.find((elem) => elem.budgetId === budget.budgetId);
+    if (!cycleInfo) {
+      return '';
+    }
+    if (budget.data.count && cycleInfo.index > budget.data.count) {
       return 'Expired';
     }
-    return `${currentPeriod.periodStart.toLocaleDateString()} 
-    to ${currentPeriod.periodEnd.toLocaleDateString()}
-    (${currentPeriod.daysLeft} day(s) left)`;
+    const periodStart = new Date(cycleInfo.start);
+    const periodEnd = new Date(cycleInfo.end);
+    const daysLeft = Math.floor((periodEnd.getTime() - Date.now()) / 86400000);
+    return `${periodStart.toLocaleDateString()} 
+    to ${periodEnd.toLocaleDateString()}
+    (${daysLeft} day(s) left)`;
   }
 
-  getPeriod(
-    budgetContent: BudgetContent
-  ): { periodStart: Date; periodEnd: Date; daysLeft: number } | null {
-    const startDate = new Date(budgetContent.startDate);
-    const today = new Date(this.getToday());
+  // getPeriodString(budgetContent: BudgetContent) {
+  //   const currentPeriod = this.getPeriod(budgetContent);
+  //   if (currentPeriod === null) {
+  //     return 'Expired';
+  //   }
+  //   return `${currentPeriod.periodStart.toLocaleDateString()} 
+  //   to ${currentPeriod.periodEnd.toLocaleDateString()}
+  //   (${currentPeriod.daysLeft} day(s) left)`;
+  // }
 
-    let addOne: (current: Date) => Date;
-    if (budgetContent.frequency === Period.monthly) {
-      addOne = (current) => {
-        current.setMonth(current.getMonth() + 1);
-        return current;
-      };
-    } else if (budgetContent.frequency === Period.yearly) {
-      addOne = (current) => {
-        current.setFullYear(current.getFullYear() + 1);
-        return current;
-      };
-    } else if (budgetContent.frequency === Period.weekly) {
-      addOne = (current) => {
-        current.setDate(current.getDate() + 7);
-        return current;
-      };
-    } else {
-      addOne = (current) => {
-        current.setDate(current.getDate() + 1);
-        return current;
-      };
-    }
+  // getPeriod(
+  //   budgetContent: BudgetContent
+  // ): { periodStart: Date; periodEnd: Date; daysLeft: number } | null {
+  //   const startDate = new Date(budgetContent.startDate);
+  //   const today = new Date(this.getToday());
 
-    let periodStart = new Date(startDate);
-    let periodEnd = new Date(startDate);
-    for (let i = 0; i < budgetContent.duration; i++) {
-      periodEnd = addOne(periodEnd);
-    }
+  //   let addOne: (current: Date) => Date;
+  //   if (budgetContent.frequency === Period.monthly) {
+  //     addOne = (current) => {
+  //       current.setMonth(current.getMonth() + 1);
+  //       return current;
+  //     };
+  //   } else if (budgetContent.frequency === Period.yearly) {
+  //     addOne = (current) => {
+  //       current.setFullYear(current.getFullYear() + 1);
+  //       return current;
+  //     };
+  //   } else if (budgetContent.frequency === Period.weekly) {
+  //     addOne = (current) => {
+  //       current.setDate(current.getDate() + 7);
+  //       return current;
+  //     };
+  //   } else {
+  //     addOne = (current) => {
+  //       current.setDate(current.getDate() + 1);
+  //       return current;
+  //     };
+  //   }
 
-    let periodsPassed = 0;
+  //   let periodStart = new Date(startDate);
+  //   let periodEnd = new Date(startDate);
+  //   for (let i = 0; i < budgetContent.duration; i++) {
+  //     periodEnd = addOne(periodEnd);
+  //   }
 
-    while (
-      periodEnd < today &&
-      (!budgetContent.count || periodsPassed < budgetContent.count)
-    ) {
-      for (let i = 0; i < budgetContent.duration; i++) {
-        periodStart = addOne(periodStart);
-        periodEnd = addOne(periodEnd);
-      }
-      periodsPassed++;
-    }
+  //   let periodsPassed = 0;
 
-    if (budgetContent.count && periodsPassed >= budgetContent.count) {
-      return null;
-    }
-    return {
-      periodStart: periodStart,
-      periodEnd: periodEnd,
-      daysLeft: Math.floor((periodEnd.getTime() - today.getTime()) / 86400000),
-    };
-  }
+  //   while (
+  //     periodEnd < today &&
+  //     (!budgetContent.count || periodsPassed < budgetContent.count)
+  //   ) {
+  //     for (let i = 0; i < budgetContent.duration; i++) {
+  //       periodStart = addOne(periodStart);
+  //       periodEnd = addOne(periodEnd);
+  //     }
+  //     periodsPassed++;
+  //   }
+
+  //   if (budgetContent.count && periodsPassed >= budgetContent.count) {
+  //     return null;
+  //   }
+  //   return {
+  //     periodStart: periodStart,
+  //     periodEnd: periodEnd,
+  //     daysLeft: Math.floor((periodEnd.getTime() - today.getTime()) / 86400000),
+  //   };
+  // }
 
   getFilteredData(category: string, budgetData: Budget[]): Budget[] {
     return budgetData.filter((elem) => elem.data.category === category);
