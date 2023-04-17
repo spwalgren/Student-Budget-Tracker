@@ -35,7 +35,7 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false, "category": newTransactionData.Data.Category}).Find(&budgets.Budgets)
 
 	// If the transaction category doesn't match a budget category
-	if (len(budgets.Budgets) == 0 && newTransactionData.Data.Category != "") {
+	if (len(budgets.Budgets) == 0 && (newTransactionData.Data.Category != "[None]" && newTransactionData.Data.Category != "")) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -164,7 +164,7 @@ func UpdateTransaction(w http.ResponseWriter, r *http.Request) {
 	database.DB.Where(map[string]interface{}{"user_id": userID, "isDeleted": false, "category": expenses.Category}).Find(&budgets.Budgets)
 	
 	// If the transaction category doesn't match a budget category
-	if (len(budgets.Budgets) == 0 && expenses.Category != "") {
+	if (len(budgets.Budgets) == 0 && (expenses.Category != "[None]" && expenses.Category != "")) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
