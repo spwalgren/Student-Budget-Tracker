@@ -38,3 +38,41 @@ Changed to test the component more thoroughly with add, edit, and delete functio
 **routes/login** - Tests if it automatically attempts to log in and tests various inputs to see what will permit the user to log in.
 
 **routes/signup** - Tests various inputs to see what will allow the user to log in.
+
+# Frontend Cypress E2E Tests
+
+## New/Changed for Sprint 4
+
+**dashboard**
+
+- Tests that it opens when the user is logged in.
+- Tests if the buttons link to different parts of the app.
+- Tests if the 404 page works.
+- Tests the logout button and checks that the user cannot easily log back in.
+- Changed to account for new button for progress page.
+
+**transactions**
+
+- Tests if the user can access the transaction page and transaction modal.
+- Tests if the user can add data to the table.
+- Tests if the user will still have their data after logging out and logging back in.
+- Tests if old data does not appear when the user recreates their account after deletion.
+- Changed to account for the new method for selecting transaction categories.
+
+**budgets**
+
+- Tests if the user can access the budget page and budget modal.
+- Tests if the user can add data to the table.
+- Tests if the user will still have their data after logging out and logging back in.
+- Tests if old data does not appear when the user recreates their account after deletion.
+- Changed to now test how adding budget categories influences the category options in transactions.
+- Now tests how renaming/deleting budget categories influence existing transactions.
+
+## Unchanged from Sprint 3
+
+**login**
+
+- Runs several tests to see what permits the user to log in.
+- Logs the user in and tests if the user is directed to the dashboard.
+- Tests if going to the login page when already logged in will redirect the user.
+- Tests user registration and user deletion.
