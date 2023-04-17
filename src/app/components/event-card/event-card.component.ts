@@ -23,8 +23,9 @@ export class EventCardComponent {
     this.clickEvent.emit(eventContent);
   }
 
-  constructor() {
-    console.log(this.eventData);
+  constructor() { }
+
+  ngOnInit(): void {
     this.getStatusText();
   }
 
