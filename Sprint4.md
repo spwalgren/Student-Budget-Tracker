@@ -1,6 +1,8 @@
 # Work Completed in Sprint 4
 
 **Main Points:**
+- Added a Progress and Calendar System so the user can have a visual tracking system
+- Updated the current Budget System so that a Transaction can only be added to an active Budget.
 
 # Frontend Unit Tests
 
@@ -76,3 +78,28 @@ Changed to test the component more thoroughly with add, edit, and delete functio
 - Logs the user in and tests if the user is directed to the dashboard.
 - Tests if going to the login page when already logged in will redirect the user.
 - Tests user registration and user deletion.
+
+## Backend Unit Tests on Functions Added in Sprint 4
+
+## Documentation on Functions Added in Sprint 4
+### backend/progress.go
+
+#### GetProgress()
+**Description:**
+Retrieves progress information for all budgets associated with a user from the database and sends it in the HTTP response body as a JSON object. It returns the progress of all budgets, including weekly, monthly, and yearly budgets. It also includes the transactions that have been made on each budget.
+
+**Parameters:**
+w http.ResponseWriter - an interface that allows the handler to construct an HTTP response.
+r *http.Request - a pointer to a data structure that represents the client HTTP request.
+
+**Behavior:**
+Set the "Content-Type" header of the HTTP response to "\*".  
+Check if the HTTP request method is "OPTIONS". If yes, it sets the HTTP status code of the response to 200 (OK) and returns from the function.  
+Extract the user ID from the HTTP request by calling the ReturnUserID() function and converts it to an integer using the ParseInt function. If the user ID is -1, it sets the HTTP status code of the response to 401 (Unauthorized) and returns from the function.  
+Define variables for the response structs: progResponse, weeklyProgResponse, monthlyProgResponse, yearlyProgResponse, weeklyBudgets, monthlyBudgets, yearlyBudgets.
+Retrieve all weekly budgets from the database where user_id matches with the extracted user ID, frequency is "weekly", and isDeleted flag is false. Then, create a new progress entry for each budget. To do this, it retrieves transactions for the corresponding category using IsInBudget function and saves them in the progress struct along with the budget information. The weekly progress entries are added to weeklyProgResponse.  
+Retrieve all monthly budgets from the database where user_id matches with the extracted user ID, frequency is "monthly", and isDeleted flag is false. Then, create a new progress entry for each budget by following the same steps used for weekly budgets. The monthly progress entries are added to monthlyProgResponse.  
+Retrieve all yearly budgets from the database where user_id matches with the extracted user ID, frequency is "yearly", and isDeleted flag is false. Then, create a new progress entry for each budget by following the same steps used for weekly budgets. The yearly progress entries are added to yearlyProgResponse.  
+Concatenate the progress entries for weekly, monthly, and yearly budgets into a single array called progResponse.  
+Encode the progress response in JSON format and send it in the HTTP response body.  
+Set the HTTP status code of the response to 200 (OK).  
