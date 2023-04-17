@@ -70,6 +70,12 @@ Changed to test the component more thoroughly with add, edit, and delete functio
 - Changed to now test how adding budget categories influences the category options in transactions.
 - Now tests how renaming/deleting budget categories influence existing transactions.
 
+**calendar**
+
+- Tests if the user can access the calendar page.
+- Tests if the user can add budgets and have them appear as calendar events.
+- Tests if the user can add transactions and have them count toward calendar events.
+
 ## Unchanged from Sprint 3
 
 **login**
