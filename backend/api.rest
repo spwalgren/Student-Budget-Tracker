@@ -227,6 +227,10 @@ Get http://{{host}}/api/progress
 content-type: application/json
 
 ###
+GET http://{{host}}/api/transaction
+content-type: applicaiton/json
+
+###
 Get http://{{host}}/api/progress/previous
 content-type: application/json
 
@@ -253,3 +257,12 @@ Content-Type: application/json
 ###
 GET http://{{host}}/api/users
 Content-Type: application/json
+
+###
+POST http://{{host}}/api/login
+Content-Type: application/json
+
+{
+    "email": "bobbydylan@gmail.com",
+    "password": "1234567"
+}
