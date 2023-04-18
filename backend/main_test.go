@@ -335,6 +335,7 @@ func TestLogout(t *testing.T) {
 func TestCreateTransaction(t *testing.T) {
 	clearTransactionTable()
 	clearBudgetTransactionTable()
+	clearBudgetTable()
 
 	payload := []byte(`{"firstName": "test-firstName",
     "lastName": "test-lastName",
@@ -382,6 +383,7 @@ func TestCreateTransaction(t *testing.T) {
 
 func TestCreateTransactionMissingBudget(t *testing.T) {
 	clearTransactionTable()
+	clearBudgetTable()
 	clearBudgetTransactionTable()
 
 	payload := []byte(`{"firstName": "test-firstName",
@@ -1332,6 +1334,7 @@ func TestGetEventsNextMonth (t *testing.T) {
 func TestGetProgress (t *testing.T) {
 	clearBudgetTable()
 	clearBudgetTransactionTable()
+	clearTransactionTable()
 
 	payload := []byte(`{"firstName": "test-firstName",
     "lastName": "test-lastName",
@@ -1344,7 +1347,7 @@ func TestGetProgress (t *testing.T) {
     req, _ = http.NewRequest("POST", "/api/login", bytes.NewBuffer(payload))
     response := executeRequest(req)
 
-	payload = []byte(`{"category": "test-category", "amountLimit": 100, "frequency": "weekly", "duration": 2, "count": 1, "startDate": "2023-03-27T00:00:00Z"}`)
+	payload = []byte(`{"category": "test-category", "amountLimit": 100, "frequency": "weekly", "duration": 2, "count": 3, "startDate": "2023-03-27T00:00:00Z"}`)
 
 	cookie := response.Result().Cookies()[0]
 
@@ -1358,13 +1361,13 @@ func TestGetProgress (t *testing.T) {
 	req.AddCookie(cookie)
     executeRequest(req)
 
-	payload = []byte(`{"data":{"amount": 30, "name": "test-name", "date": "2023-03-31T00:00:00Z", "category": "test-category", "description": "test-description"}}`)
+	payload = []byte(`{"data":{"amount": 30, "name": "test-name", "date": "2023-04-12T00:00:00Z", "category": "test-category", "description": "test-description"}}`)
 
 	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
 	req.AddCookie(cookie)
   	executeRequest(req)
 
-	payload = []byte(`{"data":{"amount": 200, "name": "test-name2", "date": "2023-04-03T00:00:00Z", "category": "test-category2", "description": "test-description2"}}`)
+	payload = []byte(`{"data":{"amount": 200, "name": "test-name2", "date": "2023-04-17T00:00:00Z", "category": "test-category2", "description": "test-description2"}}`)
 
 	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
 	req.AddCookie(cookie)
@@ -1372,24 +1375,68 @@ func TestGetProgress (t *testing.T) {
 
 	req, _ = http.NewRequest("GET", "/api/progress", nil)
 	req.AddCookie(cookie)
-    response = executeRequest(req)
+	w := httptest.NewRecorder()
+	actual := controllers.GetProgressTest(w, req, Router)
 
 	a := assert.New(t)
 
-	a.Equal(http.MethodGet, req.Method, "HTTP request method error")
-	a.Equal(http.StatusOK, response.Code, "HTTP request status code error")
+	expected := models.GetProgressResponse{}
+	expected.Data = append(expected.Data, models.Progress{UserID: 1,BudgetID: 1,Category: "test-category",Frequency: "weekly",BudgetGoal: 100,TotalSpent: 30,TransactionIDList: []uint{1}})
+	expected.Data = append(expected.Data, models.Progress{UserID: 1,BudgetID: 2,Category: "test-category2",Frequency: "weekly",BudgetGoal: 100,TotalSpent: 200,TransactionIDList: []uint{2}})
+	a.Equal(expected, actual)
+}
+func TestGetPreviousProgress (t *testing.T) {
+	clearBudgetTable()
+	clearBudgetTransactionTable()
+	clearTransactionTable()
 
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		a.Error(err)
-	}
-    actual := models.GetProgressResponse{}
-	if err := json.Unmarshal(body, &actual); err != nil {
-		a.Error(err)
-	}
+	payload := []byte(`{"firstName": "test-firstName",
+    "lastName": "test-lastName",
+    "email": "test-email",
+    "password": "test-password"}`)
+    req, _ := http.NewRequest("POST", "/api/signup", bytes.NewBuffer(payload))
+    executeRequest(req)
+
+    payload = []byte(`{"email": "test-email", "password": "test-password"}`)
+    req, _ = http.NewRequest("POST", "/api/login", bytes.NewBuffer(payload))
+    response := executeRequest(req)
+
+	payload = []byte(`{"category": "test-category", "amountLimit": 100, "frequency": "weekly", "duration": 2, "count": 3, "startDate": "2023-03-27T00:00:00Z"}`)
+
+	cookie := response.Result().Cookies()[0]
+
+	req, _ = http.NewRequest("POST", "/api/budget", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+  	executeRequest(req)
+
+	payload = []byte(`{"category": "test-category2", "amountLimit": 100, "frequency": "weekly", "duration": 1, "count": 0, "startDate": "2023-03-29T00:00:00Z"}`)
+
+	req, _ = http.NewRequest("POST", "/api/budget", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    executeRequest(req)
+
+	payload = []byte(`{"data":{"amount": 30, "name": "test-name", "date": "2023-04-03T00:00:00Z", "category": "test-category", "description": "test-description"}}`)
+
+	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+  	executeRequest(req)
+
+	payload = []byte(`{"data":{"amount": 200, "name": "test-name2", "date": "2023-04-10T00:00:00Z", "category": "test-category2", "description": "test-description2"}}`)
+
+	req, _ = http.NewRequest("POST", "/api/transaction", bytes.NewBuffer(payload))
+	req.AddCookie(cookie)
+    executeRequest(req)
+
+	req, _ = http.NewRequest("GET", "/api/progress", nil)
+	req.AddCookie(cookie)
+	w := httptest.NewRecorder()
+	actual := controllers.GetPreviousProgressTest(w, req, Router)
+
+	a := assert.New(t)
 
 	expected := models.GetProgressResponse{}
 	expected.Data = append(expected.Data, models.Progress{UserID: 1,BudgetID: 1,Category: "test-category",Frequency: "weekly",BudgetGoal: 100,TotalSpent: 30,TransactionIDList: []uint{1}})
+	expected.Data = append(expected.Data, models.Progress{UserID: 1,BudgetID: 2,Category: "test-category2",Frequency: "weekly",BudgetGoal: 100,TotalSpent: 200,TransactionIDList: []uint{2}})
 	a.Equal(expected, actual)
 }
 

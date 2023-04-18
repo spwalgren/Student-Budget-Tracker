@@ -20,21 +20,31 @@ export class DashCalendarComponent {
   constructor(private calendarService: CalendarService) { }
 
   ngOnInit() {
+    this.updateCalendarEvents();
+  }
 
-    for (let i = 0; i < 2; i++) {
-      this.calendarService.getEvents(i).subscribe(res => {
-        if (!res.err) {
-          this.events.push(...res.events);
-          this.events.sort((a, b) => a.data.endDate > b.data.endDate ? 1 : -1);
-        }
-        this.calendarEvents = this.events.map(event => {
-          return {
-            start: new Date(event.data.endDate),
-            title: `${event.data.category}; Amount spent: ${event.data.totalSpent}/${event.data.amountLimit}`,
-          }
-        });
-      });
+  updateCalendarEvents() {
+
+    const yearOffset = this.viewDate.getFullYear() - new Date().getFullYear();
+    const monthOffset = (this.viewDate.getMonth() - new Date().getMonth()) + (yearOffset * 12);
+    if (monthOffset < 0) {
+      this.events = [];
+      this.calendarEvents = [];
+      return;
     }
+
+    this.calendarService.getEvents(monthOffset).subscribe(res => {
+      if (!res.err) {
+        this.events = [...res.events];
+        this.events.sort((a, b) => a.data.endDate > b.data.endDate ? 1 : -1);
+      }
+      this.calendarEvents = this.events.map(event => {
+        return {
+          start: new Date(event.data.endDate),
+          title: `${event.data.category}; Amount spent: ${event.data.totalSpent}/${event.data.amountLimit}`,
+        }
+      });
+    });
   }
 
   handleDayClick(event: { date: Date; events: CalendarEvent[] }): void {
@@ -52,12 +62,14 @@ export class DashCalendarComponent {
 
   closeActiveDay(): void {
     this.activeDayIsOpen = false;
+    this.updateCalendarEvents();
   }
 
   handleEventClick(eventContent?: EventContent): void {
     if (eventContent) {
       this.viewDate = new Date(eventContent.endDate);
       this.activeDayIsOpen = true;
+      this.updateCalendarEvents();
     }
   }
 }
