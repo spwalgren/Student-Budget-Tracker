@@ -6,10 +6,9 @@
         <div class="week-container">
           <div class="week-column">
             <p><strong>This Week</strong></p>
-            ${{ weeklyTotalSpent }}
-            ${{ weeklyTotalBudget }} 
-            $ {{ subWeekly }}
-            <p>You saved ${{ weeklyTotalBudget - weeklyTotalSpent }} this week!</p>
+            You Spent: ${{ weeklyTotalSpent }}
+            Your Budget: ${{ weeklyTotalBudget }} 
+            <p>You saved ${{ subWeekly }} this week!</p>
             <ul>
               <li *ngFor="let category of weeklyCategories">
                 <td>{{ category }}</td>
@@ -22,9 +21,14 @@
           </div>
           <div class="week-column">
             <p><strong>Last Week</strong></p>
-            <p>You saved $437 last week!</p>
-            <p>Groceries: You saved $37 total for groceries</p>
-            <p>Housing: You saved $400 total for groceries</p>
+            You Spent: ${{ prevWeeklyTotalSpent }}
+            Your Budget: ${{ prevWeeklyTotalBudget }} 
+            <p>You saved ${{ subPrevWeekly }} this week!</p>
+            <ul>
+              <li *ngFor="let category of prevWeeklyCategories">
+               <!-- <td>You saved {{ categorySavings[category].weekly | currency }} ${{ category }}</td> -->
+              </li>
+            </ul>
           </div>
         </div>
       </mat-tab>      

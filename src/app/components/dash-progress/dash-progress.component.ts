@@ -53,6 +53,10 @@ export class DashProgressComponent {
   monthlyCategories: string[] = [];
   yearlyCategories: string[] = [];
 
+  prevWeeklyCategories: string[] = [];
+  prevMonthlyCategories: string[] = [];
+  prevYearlyCategories: string[] = [];
+
   constructor( private progressService: ProgressService) { };
 
   ngOnInit() {
@@ -109,52 +113,59 @@ export class DashProgressComponent {
       } 
     });
   
-    // this.progressService.GetPreviousProgress().subscribe((progress) => {
-    //   if (!progress.err) {
-    //     progress.data.forEach(elem => {
-    //       const category = elem.category;
-    //       if (!prevCategoryTotals[category]) {
-    //         prevCategoryTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
-    //         prevBudgCategoryTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
-    //       }
-    //       if (elem.frequency == Period.weekly) {
-    //         prevCategoryTotals[category].weekly += elem.totalSpent;
-    //         prevBudgCategoryTotals[category].weekly += elem.totalSpent;
-    //         this.prevWeeklyTotalSpent += elem.totalSpent;
-    //         this.prevWeeklyTotalBudget += elem.totalSpent;
-    //       }
-    //       if (elem.frequency == Period.monthly) {
-    //         prevCategoryTotals[category].monthly += elem.totalSpent;
-    //         prevBudgCategoryTotals[category].monthly += elem.totalSpent;
-    //         this.prevMonthlyTotalSpent += elem.totalSpent;
-    //         this.prevMonthlyTotalBudget += elem.totalSpent;
-    //       }
-    //       if (elem.frequency == Period.yearly) {
-    //         prevCategoryTotals[category].yearly += elem.totalSpent;
-    //         prevBudgCategoryTotals[category].yearly += elem.totalSpent;
-    //         this.prevYearlyTotalSpent += elem.totalSpent;
-    //         this.prevYearlyTotalBudget += elem.totalSpent;
-    //       }
-    //     });
-    //   }
+    this.progressService.GetPreviousProgress().subscribe((progress) => {
+      if (!progress.err) {
+        progress.data.forEach(elem => {
+          const category = elem.category;
+          if (!prevCategoryTotals[category]) {
+            prevCategoryTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
+            prevBudgCategoryTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
+            if (elem.frequency == Period.weekly) {
+              this.prevWeeklyCategories.push(category);
+            } else if (elem.frequency == Period.monthly){
+              this.prevMonthlyCategories.push(category);
+            } else {
+              this.prevYearlyCategories.push(category);
+            }
+          }
+          if (elem.frequency == Period.weekly) {
+            prevCategoryTotals[category].weekly += elem.totalSpent;
+            prevBudgCategoryTotals[category].weekly += elem.totalSpent;
+            this.prevWeeklyTotalSpent += elem.totalSpent;
+            this.prevWeeklyTotalBudget += elem.totalSpent;
+          }
+          if (elem.frequency == Period.monthly) {
+            prevCategoryTotals[category].monthly += elem.totalSpent;
+            prevBudgCategoryTotals[category].monthly += elem.totalSpent;
+            this.prevMonthlyTotalSpent += elem.totalSpent;
+            this.prevMonthlyTotalBudget += elem.totalSpent;
+          }
+          if (elem.frequency == Period.yearly) {
+            prevCategoryTotals[category].yearly += elem.totalSpent;
+            prevBudgCategoryTotals[category].yearly += elem.totalSpent;
+            this.prevYearlyTotalSpent += elem.totalSpent;
+            this.prevYearlyTotalBudget += elem.totalSpent;
+          }
+        });
+      }
 
-    //   if(this.prevWeeklyTotalBudget - this.prevWeeklyTotalSpent < 0){
-    //     this.subPrevWeekly = 0;
-    //   }else {
-    //     this.subPrevWeekly = this.prevWeeklyTotalBudget - this.prevWeeklyTotalSpent;
-    //   } 
-    //   if(this.prevMonthlyTotalBudget - this.prevMonthlyTotalSpent < 0){
-    //     this.subPrevMonthly = 0;
-    //   }else {
-    //     this.subPrevMonthly = this.monthlyTotalBudget - this.monthlyTotalSpent;
-    //   } 
-    //   if(this.prevYearlyTotalBudget - this.prevYearlyTotalSpent < 0){
-    //     this.subPrevYearly = 0;
-    //   }else {
-    //     this.subPrevYearly = this.prevYearlyTotalBudget - this.prevYearlyTotalSpent;
-    //   } 
+      if(this.prevWeeklyTotalBudget - this.prevWeeklyTotalSpent < 0){
+        this.subPrevWeekly = 0;
+      }else {
+        this.subPrevWeekly = this.prevWeeklyTotalBudget - this.prevWeeklyTotalSpent;
+      } 
+      if(this.prevMonthlyTotalBudget - this.prevMonthlyTotalSpent < 0){
+        this.subPrevMonthly = 0;
+      }else {
+        this.subPrevMonthly = this.monthlyTotalBudget - this.monthlyTotalSpent;
+      } 
+      if(this.prevYearlyTotalBudget - this.prevYearlyTotalSpent < 0){
+        this.subPrevYearly = 0;
+      }else {
+        this.subPrevYearly = this.prevYearlyTotalBudget - this.prevYearlyTotalSpent;
+      } 
   
-    // });
+    });
 
     
   
