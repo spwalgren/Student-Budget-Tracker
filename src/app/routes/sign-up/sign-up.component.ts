@@ -64,7 +64,6 @@ export class SignUpComponent {
         email: this.signUpForm.get('email')?.value.toLowerCase(),
         password: this.signUpForm.get('password')?.value,
       }
-      console.log(signUpRequest);
 
       this.showAlert = false;
       this.awaitingRes = true;
@@ -72,7 +71,6 @@ export class SignUpComponent {
         .signUp(signUpRequest)
         .subscribe((res) => {
           this.awaitingRes = false;
-          console.log(res);
           if (res.err) {
             this.showAlert = true;
             this.alertType = 'error';
