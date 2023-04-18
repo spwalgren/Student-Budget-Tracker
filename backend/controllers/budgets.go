@@ -317,7 +317,7 @@ func GetCyclePeriod(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Getting budgetId and date params
+	// Getting date param
 	vars := mux.Vars(r)
 	dateTemp := vars["date"]
 	date, _ := time.Parse("2006-01-02", dateTemp)
