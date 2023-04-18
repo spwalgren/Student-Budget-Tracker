@@ -36,6 +36,9 @@
               You Spent: ${{ monthlyTotalSpent }};
               Your Budget: ${{ monthlyTotalBudget }};
               <p>You saved ${{ subMonthly }} this month!</p>
+              <li *ngFor="let category of weeklyCategories">
+                <td>{{ category }}: You saved ${{categoryBudgetTotals[category].monthly - categorySpentTotals[category].monthly}} </td>
+              </li>
             </div>
             <div class="month-column">
               <p><strong>Last Month</strong></p>
