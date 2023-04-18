@@ -36,7 +36,7 @@
               You Spent: ${{ monthlyTotalSpent }};
               Your Budget: ${{ monthlyTotalBudget }};
               <p>You saved ${{ subMonthly }} this month!</p>
-              <li *ngFor="let category of weeklyCategories">
+              <li *ngFor="let category of monthlyCategories">
                 <td>{{ category }}: You saved ${{categoryBudgetTotals[category].monthly - categorySpentTotals[category].monthly}} </td>
               </li>
             </div>
@@ -45,6 +45,9 @@
               You Spent: ${{ monthlyTotalSpent }};
               Your Budget: ${{ monthlyTotalBudget }};
               <p>You saved ${{ subPrevMonthly }} this month!</p>
+              <li *ngFor="let category of monthlyCategories">
+                <td>{{ category }}: You saved ${{prevBudgCategoryTotals[category].monthly - prevBudgCategoryTotals[category].monthly}} </td>
+              </li>
             </div>
           </div>
         </mat-tab>
@@ -53,6 +56,9 @@
           <div class="year-container">
             <div class="year-column">
               <p><strong>This Year</strong></p>
+              You Spent: ${{ yearlyTotalSpent }};
+              Your Budget: ${{ yearlyTotalBudget }};
+              <p>You saved ${{ subYearly }} this month!</p>
               <p>You spent ${{ yearlyTotalSpent }} this year!</p>
               <p>Your saved x this year!</p>
               <p>Groceries: You saved $50 total for groceries</p>
