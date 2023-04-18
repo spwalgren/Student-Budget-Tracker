@@ -11,13 +11,9 @@
             <p>You saved ${{ subWeekly }} this week!</p>
             <ul>
               <li *ngFor="let category of weeklyCategories">
-                <td>{{ category }}</td>
-                <!-- <td>{{ categorySavings[category].weekly | currency }}</td> -->
+                <td>{{ category }}: You saved ${{categoryBudgetTotals[category].weekly - categorySpentTotals[category].weekly}} </td>
               </li>
             </ul>
-            
-            <p>Groceries: You saved $50 total for groceries</p>
-            <p>Housing: You saved $500 total for housing</p>
           </div>
           <div class="week-column">
             <p><strong>Last Week</strong></p>
@@ -26,7 +22,7 @@
             <p>You saved ${{ subPrevWeekly }} this week!</p>
             <ul>
               <li *ngFor="let category of prevWeeklyCategories">
-               <td>{{ category }}: You saved ${{categorySpentTotals[category].weekly}} </td>
+               <td>{{ category }}: You saved ${{prevBudgCategoryTotals[category].weekly}} </td>
               </li>
             </ul>
           </div>
