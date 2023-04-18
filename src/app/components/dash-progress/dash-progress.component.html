@@ -33,16 +33,15 @@
           <div class="month-container">
             <div class="month-column">
               <p><strong>This Month</strong></p>
-              ${{ monthlyTotalSpent }}
-             
-              <p>Groceries: You saved $50 total for groceries</p>
-              <p>Housing: You saved $500 total for groceries</p>
+              You Spent: ${{ monthlyTotalSpent }};
+              Your Budget: ${{ monthlyTotalBudget }};
+              <p>You saved ${{ subMonthly }} this month!</p>
             </div>
             <div class="month-column">
               <p><strong>Last Month</strong></p>
-              <p>You saved $437 last month!</p>
-              <p>Groceries: You saved $37 total for groceries</p>
-              <p>Housing: You saved $400 total for groceries</p>
+              You Spent: ${{ monthlyTotalSpent }};
+              Your Budget: ${{ monthlyTotalBudget }};
+              <p>You saved ${{ subPrevMonthly }} this month!</p>
             </div>
           </div>
         </mat-tab>
