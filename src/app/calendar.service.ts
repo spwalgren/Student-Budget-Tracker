@@ -25,7 +25,7 @@ export class CalendarService {
     return this.http.get<GetEventsResponse>(url, options)
       .pipe(
         catchError((err) => {
-          console.log(err);
+          (err);
           return of({
             err: "Could not get events",
             events: []

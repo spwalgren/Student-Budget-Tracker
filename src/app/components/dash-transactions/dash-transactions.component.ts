@@ -120,7 +120,6 @@ export class DashTransactionsComponent {
             this.rerenderTransactions();
           });
       }
-      console.log('The dialog was closed');
     });
   }
 
@@ -153,7 +152,6 @@ export class DashTransactionsComponent {
         } else {
           this.isChanging = false;
         }
-        console.log('The dialog was closed');
       });
     }
   }
@@ -217,7 +215,6 @@ export class TransactionsDialogComponent {
 
   goSubmitTransaction() {
     if (!this.transactionForm.invalid) {
-      console.log(this.transactionForm.get("date"));
 
       const transactionRequest: CreateTransactionRequest = {
         data: {

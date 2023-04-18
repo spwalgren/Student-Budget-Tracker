@@ -23,7 +23,6 @@ export class DashCalendarComponent {
 
     for (let i = 0; i < 2; i++) {
       this.calendarService.getEvents(i).subscribe(res => {
-        console.log(res);
         if (!res.err) {
           this.events.push(...res.events);
           this.events.sort((a, b) => a.data.endDate > b.data.endDate ? 1 : -1);

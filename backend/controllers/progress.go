@@ -4,7 +4,7 @@ import (
 	"budget-tracker/database"
 	"budget-tracker/models"
 	"encoding/json"
-	"log"
+	"fmt"
 
 	"net/http"
 	"net/http/httptest"
@@ -50,7 +50,6 @@ func GetProgress(w http.ResponseWriter, r *http.Request) {
 		var totalSpent float32 = 0
 		budgetTransactions , error:= IsInBudget(transactionResp.Data, temp, r)
 		if error != nil {
-			log.Println(error)
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
@@ -142,7 +141,6 @@ func GetProgressTest(w http.ResponseWriter, r *http.Request, Router *mux.Router)
 		var totalSpent float32 = 0
 		budgetTransactions , error:= IsInBudgetTest(transactionResp.Data, temp, r, Router)
 		if error != nil {
-			log.Println(error)
 			w.WriteHeader(http.StatusBadRequest)
 		}
 		for j := 0; j < len(budgetTransactions.Data); j++ {
@@ -409,10 +407,11 @@ func IsInPreviousBudget(transactions []models.Transaction, budget models.Budget,
 	req2.AddCookie(cookie2)
 	resp2, error2 := http.DefaultClient.Do(req2)
 	if error2 != nil {
-
+		return models.TransactionsResponse{}, error
 	}
 	var cycleResp2 models.Cycle
 	json.NewDecoder(resp2.Body).Decode(&cycleResp2)
+	fmt.Println(cycleResp2)
 
 	var returnTransactions models.TransactionsResponse
 	for _, element := range transactions {
