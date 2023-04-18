@@ -38,7 +38,6 @@ export class ProgressService {
 
   GetPreviousProgress(): Observable<GetProgressResponse> {
     const url = `${this.requestBase}/progress/previous`;
-    
     const options = {
       headers: this.httpOptions.headers,
       withCredentials: true,

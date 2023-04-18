@@ -10,15 +10,22 @@
             ${{ weeklyTotalBudget }} 
             $ {{ subWeekly }}
             <p>You saved ${{ weeklyTotalBudget - weeklyTotalSpent }} this week!</p>
+            <ul>
+              <li *ngFor="let category of weeklyCategories">
+                <td>{{ category }}</td>
+                <!-- <td>{{ categorySavings[category].weekly | currency }}</td> -->
+              </li>
+            </ul>
+            
             <p>Groceries: You saved $50 total for groceries</p>
             <p>Housing: You saved $500 total for housing</p>
           </div>
-          <div class="week-column">
+          <!-- <div class="week-column">
             <p><strong>Last Week</strong></p>
             <p>You saved $437 last week!</p>
             <p>Groceries: You saved $37 total for groceries</p>
             <p>Housing: You saved $400 total for groceries</p>
-          </div>
+          </div> -->
         </div>
       </mat-tab>      
         <mat-tab label="Monthly">
@@ -31,12 +38,12 @@
               <p>Groceries: You saved $50 total for groceries</p>
               <p>Housing: You saved $500 total for groceries</p>
             </div>
-            <div class="month-column">
+            <!-- <div class="month-column">
               <p><strong>Last Month</strong></p>
               <p>You saved $437 last month!</p>
               <p>Groceries: You saved $37 total for groceries</p>
               <p>Housing: You saved $400 total for groceries</p>
-            </div>
+            </div> -->
           </div>
         </mat-tab>
         <mat-tab label="Yearly">
@@ -49,20 +56,20 @@
               <p>Groceries: You saved $50 total for groceries</p>
               <p>Housing: You saved $500 total for groceries</p>
             </div>
-            <div class="year-column">
+            <!-- <div class="year-column">
               <p><strong>Last Year</strong></p>
               <p>You saved $4000 last year!</p>
               <p>Groceries: You saved $37 total for groceries</p>
               <p>Housing: You saved $400 total for groceries</p>
-            </div>
+            </div> -->
           </div>
         </mat-tab>
-        <mat-tab label="Total">
+        <!-- <mat-tab label="Total">
           <h2> Total </h2>
-          <p>You saved: $${{ weeklyTotalSpent + monthlyTotalSpent + yearlyTotalSpent}} total!!!</p> //fix this line!!
+          //<p>You saved: ${{ subWeekly + subMonthly}} total!!!</p> //fix this line!!
           <p>You don't exceed your budget 67% of the time </p>
           <p>Groceries: You saved $50 total for groceries</p>
           <p>Housing: You saved $500 total for groceries</p>
-        </mat-tab>
+        </mat-tab> -->
       </mat-tab-group>      
 </section>
