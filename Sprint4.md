@@ -86,10 +86,15 @@ Changed to test the component more thoroughly with add, edit, and delete functio
 - Tests user registration and user deletion.
 
 ## Backend Unit Tests on Functions Added in Sprint 4
-
+**
+TestGetCyclePeriod()
+TestGetEventsCurrMonth()
+TestGetEventsNextMonth()
+TestGetProgress()
+TestGetPreviousProgress()
+**
 ## Documentation on Functions Added in Sprint 4
 ### backend/budgets.go
-
 #### GetCyclePeriod()
 Retrieves the cycle period for a given date and budget associated with a user from the database and sends it in the HTTP response body as a JSON object. It returns the cycle period, including start and end dates, for a given budget, including weekly, monthly, and yearly budgets.
 
@@ -301,3 +306,8 @@ Function Behavior:
 - Functionality added to incorporate a transaction index and cycle index to better track which cycle of the budget it is currently on
 #### UpdateBudget()
 - Functionality added to update the category, cycle index, and transaction index added to the budget
+### backend/transactions.go
+#### CreateTransaction()
+- Functionality added to create a budget cycle tracking system along with the created transaction
+#### UpdateTransaction()
+- Functionality added to update the cycle period associated with a transaction.
