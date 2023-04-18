@@ -86,7 +86,6 @@ export async function createTransaction(createTransactionRequest: CreateTransact
 export async function updateTransaction(updateTransactionRequest: UpdateTransactionRequest): Promise<GenericResponse> {
   const targetIndex = transactions.findIndex((elem) => elem.transactionId == updateTransactionRequest.data.transactionId);
   transactions[targetIndex] = updateTransactionRequest.data;
-  console.log(transactions);
   await pause<void>(1000);
   return {};
 }
