@@ -7,8 +7,9 @@
           <div class="week-column">
             <p><strong>This Week</strong></p>
             ${{ weeklyTotalSpent }}
-          
-            <p>You saved  this week!</p>
+            ${{ weeklyTotalBudget }} 
+            $ {{ subWeekly }}
+            <p>You saved ${{ weeklyTotalBudget - weeklyTotalSpent }} this week!</p>
             <p>Groceries: You saved $50 total for groceries</p>
             <p>Housing: You saved $500 total for housing</p>
           </div>
