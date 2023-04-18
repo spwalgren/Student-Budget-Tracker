@@ -46,7 +46,11 @@ func GetProgress(w http.ResponseWriter, r *http.Request) {
 		database.DB.Where(map[string]interface{}{"user_id": userID, "category": temp.Data.Category}).Find(&transactionResp.Data)
 		var idList []uint
 		var totalSpent float32 = 0
-		budgetTransactions := IsInBudget(transactionResp.Data, temp, r)
+		budgetTransactions , error:= IsInBudget(transactionResp.Data, temp, r)
+		if error != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 		for j := 0; j < len(budgetTransactions.Data); j++ {
 			idList = append(idList, budgetTransactions.Data[j].TransactionID)
 			totalSpent += budgetTransactions.Data[j].Amount
@@ -63,7 +67,11 @@ func GetProgress(w http.ResponseWriter, r *http.Request) {
 		database.DB.Where(map[string]interface{}{"user_id": userID, "category": tempBudget.Data.Category}).Find(&transactionResp.Data)
 		var idList []uint
 		var totalSpent float32 = 0
-		budgetTransactions := IsInBudget(transactionResp.Data, tempBudget, r)
+		budgetTransactions , error:= IsInBudget(transactionResp.Data, tempBudget, r)
+		if error != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 		for j := 0; j < len(budgetTransactions.Data); j++ {
 			idList = append(idList, budgetTransactions.Data[j].TransactionID)
 			totalSpent += budgetTransactions.Data[j].Amount
@@ -81,7 +89,11 @@ func GetProgress(w http.ResponseWriter, r *http.Request) {
 		database.DB.Where(map[string]interface{}{"user_id": userID, "category": tempBudget.Data.Category}).Find(&transactionResp.Data)
 		var idList []uint
 		var totalSpent float32 = 0
-		budgetTransactions := IsInBudget(transactionResp.Data, tempBudget, r)
+		budgetTransactions , error:= IsInBudget(transactionResp.Data, tempBudget, r)
+		if error != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 		for j := 0; j < len(budgetTransactions.Data); j++ {
 			idList = append(idList, budgetTransactions.Data[j].TransactionID)
 			totalSpent += budgetTransactions.Data[j].Amount
@@ -128,7 +140,11 @@ func GetPreviousProgress(w http.ResponseWriter, r *http.Request) {
 		database.DB.Where(map[string]interface{}{"user_id": userID, "category": temp.Data.Category}).Find(&transactionResp.Data)
 		var idList []uint
 		var totalSpent float32 = 0
-		budgetTransactions := IsInPreviousBudget(transactionResp.Data, temp, r)
+		budgetTransactions, error:= IsInPreviousBudget(transactionResp.Data, temp, r)
+		if error != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 		for j := 0; j < len(budgetTransactions.Data); j++ {
 			idList = append(idList, budgetTransactions.Data[j].TransactionID)
 			totalSpent += budgetTransactions.Data[j].Amount
@@ -145,7 +161,11 @@ func GetPreviousProgress(w http.ResponseWriter, r *http.Request) {
 		database.DB.Where(map[string]interface{}{"user_id": userID, "category": tempBudget.Data.Category}).Find(&transactionResp.Data)
 		var idList []uint
 		var totalSpent float32 = 0
-		budgetTransactions := IsInPreviousBudget(transactionResp.Data, tempBudget, r)
+		budgetTransactions, error := IsInPreviousBudget(transactionResp.Data, tempBudget, r)
+		if error != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 		for j := 0; j < len(budgetTransactions.Data); j++ {
 			idList = append(idList, budgetTransactions.Data[j].TransactionID)
 			totalSpent += budgetTransactions.Data[j].Amount
@@ -163,7 +183,11 @@ func GetPreviousProgress(w http.ResponseWriter, r *http.Request) {
 		database.DB.Where(map[string]interface{}{"user_id": userID, "category": tempBudget.Data.Category}).Find(&transactionResp.Data)
 		var idList []uint
 		var totalSpent float32 = 0
-		budgetTransactions := IsInPreviousBudget(transactionResp.Data, tempBudget, r)
+		budgetTransactions , error:= IsInPreviousBudget(transactionResp.Data, tempBudget, r)
+		if error != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 		for j := 0; j < len(budgetTransactions.Data); j++ {
 			idList = append(idList, budgetTransactions.Data[j].TransactionID)
 			totalSpent += budgetTransactions.Data[j].Amount
@@ -179,7 +203,7 @@ func GetPreviousProgress(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func IsInPreviousBudget(transactions []models.Transaction, budget models.Budget, r *http.Request) models.TransactionsResponse {
+func IsInPreviousBudget(transactions []models.Transaction, budget models.Budget, r *http.Request) (models.TransactionsResponse, error) {
 	// setup backend request
 	// Get dates of current cycle then set "current" date to be day before the start date of current cycle. Requires two calls
 	reqURL := "http://localhost:8080/api/budget/dates/" + strconv.Itoa(int(budget.BudgetID)) + "/" + time.Now().Format(time.RFC3339)[:10]
@@ -191,7 +215,7 @@ func IsInPreviousBudget(transactions []models.Transaction, budget models.Budget,
 	req.AddCookie(cookie)
 	resp, error := http.DefaultClient.Do(req)
 	if error != nil {
-
+		return models.TransactionsResponse{}, error
 	}
 	var cycleResp models.Cycle
 	json.NewDecoder(resp.Body).Decode(&cycleResp)
@@ -223,25 +247,23 @@ func IsInPreviousBudget(transactions []models.Transaction, budget models.Budget,
 			returnTransactions.Data = append(returnTransactions.Data, element)
 		}
 	}
-	return returnTransactions
+	return returnTransactions, nil
 }
 
 // Take in an array of transactions that match the category of the budget
 // Loop through the input transactions, check if transaction date is within the date of the budget
 // Return transactions that fall within range
-func IsInBudget(transactions []models.Transaction, budget models.Budget, r *http.Request) models.TransactionsResponse {
+func IsInBudget(transactions []models.Transaction, budget models.Budget, r *http.Request) (models.TransactionsResponse, error){
 	// setup backend request
 	reqURL := "http://localhost:8080/api/budget/dates/" + strconv.Itoa(int(budget.BudgetID)) + "/" + time.Now().Format(time.RFC3339)[:10]
 	req, _ := http.NewRequest("GET", reqURL, nil)
 
 	// Set cookie to do backend get call to retrieve start and end date
-
-	// ERROR HERE FIXME
 	cookie, _ := r.Cookie("jtw")
 	req.AddCookie(cookie)
 	resp, error := http.DefaultClient.Do(req)
 	if error != nil {
-
+		return models.TransactionsResponse{}, error
 	}
 	var cycleResp models.Cycle
 	json.NewDecoder(resp.Body).Decode(&cycleResp)
@@ -256,7 +278,7 @@ func IsInBudget(transactions []models.Transaction, budget models.Budget, r *http
 			returnTransactions.Data = append(returnTransactions.Data, element)
 		}
 	}
-	return returnTransactions
+	return returnTransactions, nil
 }
 
 // Copy of GetCyclePeriod()

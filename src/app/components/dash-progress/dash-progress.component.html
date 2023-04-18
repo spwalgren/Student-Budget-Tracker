@@ -6,7 +6,10 @@
         <div class="week-container">
           <div class="week-column">
             <p><strong>This Week</strong></p>
-            <p>You saved ${{ weeklyTotalSpent }} this week!</p>
+            ${{ weeklyTotalSpent }}
+            ${{ weeklyTotalBudget }} 
+            $ {{ subWeekly }}
+            <p>You saved ${{ weeklyTotalBudget - weeklyTotalSpent }} this week!</p>
             <p>Groceries: You saved $50 total for groceries</p>
             <p>Housing: You saved $500 total for housing</p>
           </div>
@@ -24,6 +27,7 @@
             <div class="month-column">
               <p><strong>This Month</strong></p>
               ${{ monthlyTotalSpent }}
+             
               <p>Groceries: You saved $50 total for groceries</p>
               <p>Housing: You saved $500 total for groceries</p>
             </div>
@@ -40,7 +44,8 @@
           <div class="year-container">
             <div class="year-column">
               <p><strong>This Year</strong></p>
-              <p>You saved ${{ yearlyTotalSpent }} this year!</p>
+              <p>You spent ${{ yearlyTotalSpent }} this year!</p>
+              <p>Your saved x this year!</p>
               <p>Groceries: You saved $50 total for groceries</p>
               <p>Housing: You saved $500 total for groceries</p>
             </div>
