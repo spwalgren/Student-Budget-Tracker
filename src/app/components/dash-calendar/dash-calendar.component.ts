@@ -69,6 +69,7 @@ export class DashCalendarComponent {
     if (eventContent) {
       this.viewDate = new Date(eventContent.endDate);
       this.activeDayIsOpen = true;
+      this.updateCalendarEvents();
     }
   }
 }
