@@ -14,11 +14,6 @@ export interface CategoryTotals {
   yearly: number;
 }
 
-const categorySpentTotals: { [key: string]: CategoryTotals } = {};
-const categoryBudgetTotals: { [key: string]: CategoryTotals } = {};
-const prevCategoryTotals: { [key: string]: CategoryTotals } = {};
-const prevBudgCategoryTotals: { [key: string]: CategoryTotals } = {};
-
 
 @Component({
   selector: 'app-dash-progress',
@@ -57,6 +52,11 @@ export class DashProgressComponent {
   prevMonthlyCategories: string[] = [];
   prevYearlyCategories: string[] = [];
 
+  categorySpentTotals: { [key: string]: CategoryTotals } = {};
+  categoryBudgetTotals: { [key: string]: CategoryTotals } = {};
+  prevCategoryTotals: { [key: string]: CategoryTotals } = {};
+  prevBudgCategoryTotals: { [key: string]: CategoryTotals } = {};
+
   constructor( private progressService: ProgressService) { };
 
   ngOnInit() {
@@ -65,9 +65,9 @@ export class DashProgressComponent {
         progress.data.forEach(elem => {
           const category = elem.category;
 
-          if (!categorySpentTotals[category]) {
-            categorySpentTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
-            categoryBudgetTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
+          if (!this.categorySpentTotals[category]) {
+            this.categorySpentTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
+            this.categoryBudgetTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
             if (elem.frequency == Period.weekly) {
               this.weeklyCategories.push(category);
             } else if (elem.frequency == Period.monthly){
@@ -77,20 +77,20 @@ export class DashProgressComponent {
             }
           }
           if (elem.frequency == Period.weekly) {
-            categorySpentTotals[category].weekly += elem.totalSpent;
-            categoryBudgetTotals[category].weekly += elem.budgetGoal;
+            this.categorySpentTotals[category].weekly += elem.totalSpent;
+            this.categoryBudgetTotals[category].weekly += elem.budgetGoal;
             this.weeklyTotalSpent += elem.totalSpent;
             this.weeklyTotalBudget += elem.budgetGoal;
           }
           if (elem.frequency == Period.monthly) {
-            categorySpentTotals[category].monthly += elem.totalSpent;
-            categoryBudgetTotals[category].monthly += elem.budgetGoal;
+            this.categorySpentTotals[category].monthly += elem.totalSpent;
+            this.categoryBudgetTotals[category].monthly += elem.budgetGoal;
             this.monthlyTotalSpent += elem.totalSpent;
             this.monthlyTotalBudget += elem.budgetGoal;
           }
           if (elem.frequency == Period.yearly) {
-            categorySpentTotals[category].yearly += elem.totalSpent;
-            categoryBudgetTotals[category].yearly += elem.budgetGoal;
+            this.categorySpentTotals[category].yearly += elem.totalSpent;
+            this.categoryBudgetTotals[category].yearly += elem.budgetGoal;
             this.yearlyTotalSpent += elem.totalSpent;
             this.yearlyTotalBudget += elem.budgetGoal;
           }
@@ -117,9 +117,9 @@ export class DashProgressComponent {
       if (!progress.err) {
         progress.data.forEach(elem => {
           const category = elem.category;
-          if (!prevCategoryTotals[category]) {
-            prevCategoryTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
-            prevBudgCategoryTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
+          if (!this.prevCategoryTotals[category]) {
+            this.prevCategoryTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
+            this.prevBudgCategoryTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
             if (elem.frequency == Period.weekly) {
               this.prevWeeklyCategories.push(category);
             } else if (elem.frequency == Period.monthly){
@@ -129,22 +129,22 @@ export class DashProgressComponent {
             }
           }
           if (elem.frequency == Period.weekly) {
-            prevCategoryTotals[category].weekly += elem.totalSpent;
-            prevBudgCategoryTotals[category].weekly += elem.totalSpent;
+            this.prevCategoryTotals[category].weekly += elem.totalSpent;
+            this.prevBudgCategoryTotals[category].weekly += elem.totalSpent;
             this.prevWeeklyTotalSpent += elem.totalSpent;
-            this.prevWeeklyTotalBudget += elem.totalSpent;
+            this.prevWeeklyTotalBudget += elem.budgetGoal;
           }
           if (elem.frequency == Period.monthly) {
-            prevCategoryTotals[category].monthly += elem.totalSpent;
-            prevBudgCategoryTotals[category].monthly += elem.totalSpent;
+            this.prevCategoryTotals[category].monthly += elem.totalSpent;
+            this.prevBudgCategoryTotals[category].monthly += elem.totalSpent;
             this.prevMonthlyTotalSpent += elem.totalSpent;
-            this.prevMonthlyTotalBudget += elem.totalSpent;
+            this.prevMonthlyTotalBudget += elem.budgetGoal;
           }
           if (elem.frequency == Period.yearly) {
-            prevCategoryTotals[category].yearly += elem.totalSpent;
-            prevBudgCategoryTotals[category].yearly += elem.totalSpent;
+            this.prevCategoryTotals[category].yearly += elem.totalSpent;
+            this.prevBudgCategoryTotals[category].yearly += elem.budgetGoal;
             this.prevYearlyTotalSpent += elem.totalSpent;
-            this.prevYearlyTotalBudget += elem.totalSpent;
+            this.prevYearlyTotalBudget += elem.budgetGoal;
           }
         });
       }

@@ -26,7 +26,7 @@
             <p>You saved ${{ subPrevWeekly }} this week!</p>
             <ul>
               <li *ngFor="let category of prevWeeklyCategories">
-               <!-- <td>You saved {{ categorySavings[category].weekly | currency }} ${{ category }}</td> -->
+               <td>{{ category }}: You saved ${{categorySpentTotals[category].weekly}} </td>
               </li>
             </ul>
           </div>
