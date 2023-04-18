@@ -17,8 +17,10 @@ describe('dashboard', () => {
     cy.get('mat-sidenav button').eq(2).click();
     cy.url().should('contain', '/dashboard/budgets');
     cy.get('mat-sidenav button').eq(3).click();
-    cy.url().should('contain', '/dashboard/calendar');
+    cy.url().should('contain', '/dashboard/progress');
     cy.get('mat-sidenav button').eq(4).click();
+    cy.url().should('contain', '/dashboard/calendar');
+    cy.get('mat-sidenav button').eq(5).click();
     cy.url().should('contain', '/dashboard/settings');
   })
 
