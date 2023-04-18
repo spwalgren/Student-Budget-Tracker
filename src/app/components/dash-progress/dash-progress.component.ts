@@ -74,19 +74,19 @@ export class DashProgressComponent {
           }
           if (elem.frequency == Period.weekly) {
             categorySpentTotals[category].weekly += elem.totalSpent;
-            categoryBudgetTotals[category].weekly += elem.totalSpent;
+            categoryBudgetTotals[category].weekly += elem.budgetGoal;
             this.weeklyTotalSpent += elem.totalSpent;
             this.weeklyTotalBudget += elem.budgetGoal;
           }
           if (elem.frequency == Period.monthly) {
             categorySpentTotals[category].monthly += elem.totalSpent;
-            categoryBudgetTotals[category].monthly += elem.totalSpent;
+            categoryBudgetTotals[category].monthly += elem.budgetGoal;
             this.monthlyTotalSpent += elem.totalSpent;
             this.monthlyTotalBudget += elem.budgetGoal;
           }
           if (elem.frequency == Period.yearly) {
             categorySpentTotals[category].yearly += elem.totalSpent;
-            categoryBudgetTotals[category].yearly += elem.totalSpent;
+            categoryBudgetTotals[category].yearly += elem.budgetGoal;
             this.yearlyTotalSpent += elem.totalSpent;
             this.yearlyTotalBudget += elem.budgetGoal;
           }
