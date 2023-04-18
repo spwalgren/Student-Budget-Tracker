@@ -4,6 +4,7 @@ import (
 	"budget-tracker/database"
 	"budget-tracker/models"
 	"encoding/json"
+	"fmt"
 
 	"net/http"
 	"strconv"
@@ -232,10 +233,11 @@ func IsInPreviousBudget(transactions []models.Transaction, budget models.Budget,
 	req2.AddCookie(cookie2)
 	resp2, error2 := http.DefaultClient.Do(req2)
 	if error2 != nil {
-
+		return models.TransactionsResponse{}, error
 	}
 	var cycleResp2 models.Cycle
 	json.NewDecoder(resp2.Body).Decode(&cycleResp2)
+	fmt.Println(cycleResp2)
 
 	var returnTransactions models.TransactionsResponse
 	for _, element := range transactions {
