@@ -19,6 +19,7 @@ const categoryBudgetTotals: { [key: string]: CategoryTotals } = {};
 const prevCategoryTotals: { [key: string]: CategoryTotals } = {};
 const prevBudgCategoryTotals: { [key: string]: CategoryTotals } = {};
 
+
 @Component({
   selector: 'app-dash-progress',
   templateUrl: './dash-progress.component.html',
@@ -48,7 +49,9 @@ export class DashProgressComponent {
   subPrevMonthly: number = 0;
   subPrevYearly: number = 0;
 
- 
+  weeklyCategories: string[] = [];
+  monthlyCategories: string[] = [];
+  yearlyCategories: string[] = [];
 
   constructor( private progressService: ProgressService) { };
 
@@ -57,9 +60,17 @@ export class DashProgressComponent {
       if (!progress.err) {
         progress.data.forEach(elem => {
           const category = elem.category;
+
           if (!categorySpentTotals[category]) {
             categorySpentTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
             categoryBudgetTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
+            if (elem.frequency == Period.weekly) {
+              this.weeklyCategories.push(category);
+            } else if (elem.frequency == Period.monthly){
+              this.monthlyCategories.push(category);
+            } else {
+              this.yearlyCategories.push(category);
+            }
           }
           if (elem.frequency == Period.weekly) {
             categorySpentTotals[category].weekly += elem.totalSpent;
@@ -98,52 +109,52 @@ export class DashProgressComponent {
       } 
     });
   
-    this.progressService.GetPreviousProgress().subscribe((progress) => {
-      if (!progress.err) {
-        progress.data.forEach(elem => {
-          const category = elem.category;
-          if (!prevCategoryTotals[category]) {
-            prevCategoryTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
-            prevBudgCategoryTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
-          }
-          if (elem.frequency == Period.weekly) {
-            prevCategoryTotals[category].weekly += elem.totalSpent;
-            prevBudgCategoryTotals[category].weekly += elem.totalSpent;
-            this.prevWeeklyTotalSpent += elem.totalSpent;
-            this.prevWeeklyTotalBudget += elem.totalSpent;
-          }
-          if (elem.frequency == Period.monthly) {
-            prevCategoryTotals[category].monthly += elem.totalSpent;
-            prevBudgCategoryTotals[category].monthly += elem.totalSpent;
-            this.prevMonthlyTotalSpent += elem.totalSpent;
-            this.prevMonthlyTotalBudget += elem.totalSpent;
-          }
-          if (elem.frequency == Period.yearly) {
-            prevCategoryTotals[category].yearly += elem.totalSpent;
-            prevBudgCategoryTotals[category].yearly += elem.totalSpent;
-            this.prevYearlyTotalSpent += elem.totalSpent;
-            this.prevYearlyTotalBudget += elem.totalSpent;
-          }
-        });
-      }
+    // this.progressService.GetPreviousProgress().subscribe((progress) => {
+    //   if (!progress.err) {
+    //     progress.data.forEach(elem => {
+    //       const category = elem.category;
+    //       if (!prevCategoryTotals[category]) {
+    //         prevCategoryTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
+    //         prevBudgCategoryTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
+    //       }
+    //       if (elem.frequency == Period.weekly) {
+    //         prevCategoryTotals[category].weekly += elem.totalSpent;
+    //         prevBudgCategoryTotals[category].weekly += elem.totalSpent;
+    //         this.prevWeeklyTotalSpent += elem.totalSpent;
+    //         this.prevWeeklyTotalBudget += elem.totalSpent;
+    //       }
+    //       if (elem.frequency == Period.monthly) {
+    //         prevCategoryTotals[category].monthly += elem.totalSpent;
+    //         prevBudgCategoryTotals[category].monthly += elem.totalSpent;
+    //         this.prevMonthlyTotalSpent += elem.totalSpent;
+    //         this.prevMonthlyTotalBudget += elem.totalSpent;
+    //       }
+    //       if (elem.frequency == Period.yearly) {
+    //         prevCategoryTotals[category].yearly += elem.totalSpent;
+    //         prevBudgCategoryTotals[category].yearly += elem.totalSpent;
+    //         this.prevYearlyTotalSpent += elem.totalSpent;
+    //         this.prevYearlyTotalBudget += elem.totalSpent;
+    //       }
+    //     });
+    //   }
 
-      if(this.prevWeeklyTotalBudget - this.prevWeeklyTotalSpent < 0){
-        this.subPrevWeekly = 0;
-      }else {
-        this.subPrevWeekly = this.prevWeeklyTotalBudget - this.prevWeeklyTotalSpent;
-      } 
-      if(this.prevMonthlyTotalBudget - this.prevMonthlyTotalSpent < 0){
-        this.subPrevMonthly = 0;
-      }else {
-        this.subPrevMonthly = this.monthlyTotalBudget - this.monthlyTotalSpent;
-      } 
-      if(this.prevYearlyTotalBudget - this.prevYearlyTotalSpent < 0){
-        this.subPrevYearly = 0;
-      }else {
-        this.subPrevYearly = this.prevYearlyTotalBudget - this.prevYearlyTotalSpent;
-      } 
+    //   if(this.prevWeeklyTotalBudget - this.prevWeeklyTotalSpent < 0){
+    //     this.subPrevWeekly = 0;
+    //   }else {
+    //     this.subPrevWeekly = this.prevWeeklyTotalBudget - this.prevWeeklyTotalSpent;
+    //   } 
+    //   if(this.prevMonthlyTotalBudget - this.prevMonthlyTotalSpent < 0){
+    //     this.subPrevMonthly = 0;
+    //   }else {
+    //     this.subPrevMonthly = this.monthlyTotalBudget - this.monthlyTotalSpent;
+    //   } 
+    //   if(this.prevYearlyTotalBudget - this.prevYearlyTotalSpent < 0){
+    //     this.subPrevYearly = 0;
+    //   }else {
+    //     this.subPrevYearly = this.prevYearlyTotalBudget - this.prevYearlyTotalSpent;
+    //   } 
   
-    });
+    // });
 
     
   
