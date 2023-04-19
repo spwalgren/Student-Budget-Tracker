@@ -39,6 +39,10 @@ const routes: Routes = [
     component: DashboardComponent,
     children: [
       {
+        path: '',
+        component: DashHomeComponent
+      },
+      {
         path: 'transactions',
         component: DashTransactionsComponent
       },
