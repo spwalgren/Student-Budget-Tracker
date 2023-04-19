@@ -33,8 +33,8 @@
           <div class="month-container">
             <div class="month-column">
               <p><strong>This Month</strong></p>
-              You Spent: ${{ monthlyTotalSpent }};
-              Your Budget: ${{ monthlyTotalBudget }};
+              You Spent: ${{ monthlyTotalSpent }}
+              Your Budget: ${{ monthlyTotalBudget }}
               <p>You saved ${{ subMonthly }} this month!</p>
               <li *ngFor="let category of monthlyCategories">
                 <td>{{ category }}: You saved ${{categoryBudgetTotals[category].monthly - categorySpentTotals[category].monthly}} </td>
@@ -42,8 +42,8 @@
             </div>
             <div class="month-column">
               <p><strong>Last Month</strong></p>
-              You Spent: ${{ monthlyTotalSpent }};
-              Your Budget: ${{ monthlyTotalBudget }};
+              You Spent: ${{ monthlyTotalSpent }}
+              Your Budget: ${{ monthlyTotalBudget }}
               <p>You saved ${{ subPrevMonthly }} this month!</p>
               <li *ngFor="let category of monthlyCategories">
                 <td>{{ category }}: You saved ${{prevBudgCategoryTotals[category].monthly - prevBudgCategoryTotals[category].monthly}} </td>
@@ -56,18 +56,22 @@
           <div class="year-container">
             <div class="year-column">
               <p><strong>This Year</strong></p>
-              You Spent: ${{ yearlyTotalSpent }};
-              Your Budget: ${{ yearlyTotalBudget }};
+              You Spent: ${{ yearlyTotalSpent }}
+              Your Budget: ${{ yearlyTotalBudget }}
               <p>You saved ${{ subYearly }} this month!</p>
               <li *ngFor="let category of yearlyCategories">
+                {{categoryBudgetTotals[category].yearly}}
+                {{categorySpentTotals[category].yearly}}
                 <td>{{ category }}: You saved ${{categoryBudgetTotals[category].yearly - categorySpentTotals[category].yearly}} </td>
               </li>
             </div>
             <div class="year-column">
               <p><strong>Last Year</strong></p>
-              <p>You saved $4000 last year!</p>
-              <li *ngFor="let category of monthlyCategories">
-                <td>{{ category }}: You saved ${{prevBudgCategoryTotals[category].monthly - prevBudgCategoryTotals[category].monthly}} </td>
+              You Spent: ${{ prevYearlyTotalSpent }}
+              Your Budget: ${{ prevYearlyTotalBudget }}
+              <p>You saved ${{ subPrevYearly }} this month!</p>
+              <li *ngFor="let category of yearlyCategories">
+                <td>{{ category }}: You saved ${{prevBudgCategoryTotals[category].yearly - prevBudgCategoryTotals[category].yearly}} </td>
               </li>
             </div>
           </div>

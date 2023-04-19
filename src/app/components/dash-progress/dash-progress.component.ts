@@ -70,7 +70,7 @@ export class DashProgressComponent {
             this.categoryBudgetTotals[category] = { weekly: 0, monthly: 0, yearly: 0 };
             if (elem.frequency == Period.weekly) {
               this.weeklyCategories.push(category);
-            } else if (elem.frequency == Period.monthly){
+            } else if (elem.frequency == Period.monthly) {
               this.monthlyCategories.push(category);
             } else {
               this.yearlyCategories.push(category);
