@@ -11,9 +11,8 @@ export class DashboardComponent {
 
   yourName: string = "";
   routes = Object.entries({
-    "Home": "/dashboard",
-    "Transactions": "/dashboard/transactions",
     "Budgets": "/dashboard/budgets",
+    "Transactions": "/dashboard/transactions", 
     "Progress": "/dashboard/progress",
     "Calendar": "/dashboard/calendar",
     "Settings": "/dashboard/settings",
