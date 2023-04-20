@@ -1,78 +1,92 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Budget, BudgetContent, CreateBudgetRequest, Period, UpdateBudgetRequest } from 'src/types/budget-system';
+import {
+  Budget,
+  BudgetContent,
+  CreateBudgetRequest,
+  CycleInfo,
+  Period,
+  UpdateBudgetRequest,
+} from 'src/types/budget-system';
 import { BudgetService } from 'src/app/budget.service';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 
 export interface BudgetsDialogData {
-  mode: "Add" | "Edit",
-  data: Budget
+  mode: 'Add' | 'Edit';
+  data: Budget;
 }
 
 @Component({
   selector: 'app-dash-budgets',
   templateUrl: './dash-budgets.component.html',
-  styleUrls: ['./dash-budgets.component.css']
+  styleUrls: ['./dash-budgets.component.css'],
 })
 export class DashBudgetsComponent {
-
-  budgetData: Budget[] = []
-  existingCategories: string[] = []
+  budgetData: Budget[] = [];
+  cycleData: CycleInfo[] = [];
+  existingCategories: string[] = [];
   budgetForm!: FormGroup;
   budgetId?: number;
-  mode!: "Add" | "Edit";
+  mode!: 'Add' | 'Edit';
   numberFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'USD'
-  })
+    currency: 'USD',
+  });
   displayedColumns = [
-    "amountLimit",
-    "period",
-    "startDate",
-    "currentPeriod",
-    "editAndDelete"
-  ]
-  isDeleting: boolean = false
+    'amountLimit',
+    'period',
+    'startDate',
+    'currentPeriod',
+    'editAndDelete',
+  ];
+  isDeleting: boolean = false;
 
-  constructor(
-    private budgetService: BudgetService,
-    public dialog: MatDialog
-  ) { }
+  constructor(private budgetService: BudgetService, public dialog: MatDialog) { }
 
   ngOnInit() {
-    this.rerenderBudgets()
+    this.rerenderBudgets();
   }
 
   rerenderBudgets() {
-    this.budgetService.getBudgets()
-      .subscribe((res) => {
-        if (!res.err) {
-          this.budgetData = [...res.budgets];
-          this.existingCategories = []
-          this.budgetData.forEach((elem) => {
-            if (!this.existingCategories.find((str) => str === elem.data.category)) {
-              this.existingCategories.push(elem.data.category);
-            }
-          })
-          this.existingCategories.sort();
-        }
-        this.isDeleting = false;
-      })
+    this.budgetService.getBudgets().subscribe((res) => {
+      if (!res.err) {
+        this.budgetData = [...res.budgets];
+        this.existingCategories = [];
+        this.budgetData.forEach((elem) => {
+          if (
+            !this.existingCategories.find((str) => str === elem.data.category)
+          ) {
+            this.existingCategories.push(elem.data.category);
+          }
+        });
+        this.existingCategories.sort();
+      }
+      this.isDeleting = false;
+    });
+    this.budgetService.getCyclePeriod().subscribe((res) => {
+      if (!res.err) {
+        this.cycleData = [...res.data];
+      }
+    });
   }
 
   getPeriodDef(budgetContent: BudgetContent) {
     const frequency = budgetContent.frequency;
     const duration = budgetContent.duration;
     const count = budgetContent.count;
-    let result = "Every ";
+    let result = 'Every ';
     let frequencyString =
       frequency === Period.monthly
-        ? "month"
+        ? 'month'
         : frequency === Period.weekly
-          ? "week"
+          ? 'week'
           : frequency === Period.yearly
-            ? "year"
-            : "period"
+            ? 'year'
+            : 'period';
     if (duration > 1) {
       result += `${duration} ${frequencyString}s`;
     } else {
@@ -92,102 +106,120 @@ export class DashBudgetsComponent {
     return new Date(str).toLocaleDateString();
   }
 
-  getPeriodString(budgetContent: BudgetContent) {
-    const currentPeriod = this.getPeriod(budgetContent);
-    if (currentPeriod === null) {
-      return "Expired";
+  getCycleInfoString(budget: Budget) {
+    const cycleInfo = this.cycleData.find((elem) => elem.budgetId === budget.budgetId);
+    if (!cycleInfo) {
+      return '';
     }
-    return `${currentPeriod.periodStart.toLocaleDateString()} 
-    to ${currentPeriod.periodEnd.toLocaleDateString()}
-    (${currentPeriod.daysLeft} day(s) left)`
+    if (budget.data.count && cycleInfo.index > budget.data.count) {
+      return 'Expired';
+    }
+    const periodStart = new Date(cycleInfo.start);
+    const periodEnd = new Date(cycleInfo.end);
+    const daysLeft = Math.floor((periodEnd.getTime() - Date.now()) / 86400000);
+    return `${periodStart.toLocaleDateString()} 
+    to ${periodEnd.toLocaleDateString()}
+    (${daysLeft} day(s) left)`;
   }
 
-  getPeriod(budgetContent: BudgetContent): { periodStart: Date, periodEnd: Date, daysLeft: number } | null {
-    const startDate = new Date(budgetContent.startDate);
-    const today = new Date();
+  // getPeriodString(budgetContent: BudgetContent) {
+  //   const currentPeriod = this.getPeriod(budgetContent);
+  //   if (currentPeriod === null) {
+  //     return 'Expired';
+  //   }
+  //   return `${currentPeriod.periodStart.toLocaleDateString()} 
+  //   to ${currentPeriod.periodEnd.toLocaleDateString()}
+  //   (${currentPeriod.daysLeft} day(s) left)`;
+  // }
 
-    let addOne: (current: Date) => Date;
-    if (budgetContent.frequency === Period.monthly) {
-      addOne = (current) => {
-        current.setMonth(current.getMonth() + 1);
-        return current;
-      }
-    } else if (budgetContent.frequency === Period.yearly) {
-      addOne = (current) => {
-        current.setFullYear(current.getFullYear() + 1);
-        return current;
-      }
-    } else if (budgetContent.frequency === Period.weekly) {
-      addOne = (current) => {
-        current.setDate(current.getDate() + 7);
-        return current;
-      }
-    } else {
-      addOne = (current) => {
-        current.setDate(current.getDate() + 1);
-        return current;
-      }
-    }
+  // getPeriod(
+  //   budgetContent: BudgetContent
+  // ): { periodStart: Date; periodEnd: Date; daysLeft: number } | null {
+  //   const startDate = new Date(budgetContent.startDate);
+  //   const today = new Date(this.getToday());
 
-    let periodStart = new Date(startDate);
-    let periodEnd = new Date(startDate);
-    for (let i = 0; i < budgetContent.duration; i++) {
-      periodEnd = addOne(periodEnd);
-    }
+  //   let addOne: (current: Date) => Date;
+  //   if (budgetContent.frequency === Period.monthly) {
+  //     addOne = (current) => {
+  //       current.setMonth(current.getMonth() + 1);
+  //       return current;
+  //     };
+  //   } else if (budgetContent.frequency === Period.yearly) {
+  //     addOne = (current) => {
+  //       current.setFullYear(current.getFullYear() + 1);
+  //       return current;
+  //     };
+  //   } else if (budgetContent.frequency === Period.weekly) {
+  //     addOne = (current) => {
+  //       current.setDate(current.getDate() + 7);
+  //       return current;
+  //     };
+  //   } else {
+  //     addOne = (current) => {
+  //       current.setDate(current.getDate() + 1);
+  //       return current;
+  //     };
+  //   }
 
+  //   let periodStart = new Date(startDate);
+  //   let periodEnd = new Date(startDate);
+  //   for (let i = 0; i < budgetContent.duration; i++) {
+  //     periodEnd = addOne(periodEnd);
+  //   }
 
-    let periodsPassed = 0;
+  //   let periodsPassed = 0;
 
-    while (periodEnd < today && (!budgetContent.count || periodsPassed < budgetContent.count)) {
-      for (let i = 0; i < budgetContent.duration; i++) {
-        periodStart = addOne(periodStart);
-        periodEnd = addOne(periodEnd);
-      }
-      periodsPassed++;
+  //   while (
+  //     periodEnd < today &&
+  //     (!budgetContent.count || periodsPassed < budgetContent.count)
+  //   ) {
+  //     for (let i = 0; i < budgetContent.duration; i++) {
+  //       periodStart = addOne(periodStart);
+  //       periodEnd = addOne(periodEnd);
+  //     }
+  //     periodsPassed++;
+  //   }
 
-    }
+  //   if (budgetContent.count && periodsPassed >= budgetContent.count) {
+  //     return null;
+  //   }
+  //   return {
+  //     periodStart: periodStart,
+  //     periodEnd: periodEnd,
+  //     daysLeft: Math.floor((periodEnd.getTime() - today.getTime()) / 86400000),
+  //   };
+  // }
 
-    if (budgetContent.count && periodsPassed >= budgetContent.count) {
-      return null;
-    }
-    return ({
-      periodStart: periodStart,
-      periodEnd: periodEnd,
-      daysLeft: Math.floor((periodEnd.getTime() - today.getTime()) / 86400000)
-    })
-  }
-
-  getFilteredData(category: string, budgetData: Budget[]) {
+  getFilteredData(category: string, budgetData: Budget[]): Budget[] {
     return budgetData.filter((elem) => elem.data.category === category);
   }
 
   openAddDialog(): void {
     const dialogRef = this.dialog.open(BudgetsDialogComponent, {
       data: {
-        mode: "Add", data: {
+        mode: 'Add',
+        data: {
           userId: 0,
           budgetId: 0,
           data: {
-            category: "General",
+            category: 'General',
             amountLimit: 100,
             frequency: Period.weekly,
             duration: 1,
-            startDate: new Date().toISOString()
-          }
-        }
-      } as BudgetsDialogData
+            startDate: this.getToday(),
+          },
+        },
+      } as BudgetsDialogData,
     });
 
     dialogRef.afterClosed().subscribe((res?: Budget) => {
-
       if (res) {
-
         const budgetRequest: CreateBudgetRequest = {
-          ...res.data
-        }
-        this.budgetService.createBudget(budgetRequest).subscribe(_ => {
+          ...res.data,
+        };
+        this.budgetService.createBudget(budgetRequest).subscribe((_) => {
           this.rerenderBudgets();
-        })
+        });
       }
     });
   }
@@ -195,43 +227,50 @@ export class DashBudgetsComponent {
   openEditDialog(budget: Budget): void {
     const dialogRef = this.dialog.open(BudgetsDialogComponent, {
       data: {
-        mode: "Edit", data: {
-          ...budget
-        }
-      } as BudgetsDialogData
+        mode: 'Edit',
+        data: {
+          ...budget,
+        },
+      } as BudgetsDialogData,
     });
 
     dialogRef.afterClosed().subscribe((res?: Budget) => {
       if (res) {
         const budgetRequest: UpdateBudgetRequest = {
-          newBudget: res
-        }
-        this.budgetService.updateBudget(budgetRequest).subscribe(_ => {
+          newBudget: res,
+        };
+        this.budgetService.updateBudget(budgetRequest).subscribe((_) => {
           this.rerenderBudgets();
-        })
+        });
       }
     });
   }
 
   deleteBudget(budget: Budget) {
     this.isDeleting = true;
-    this.budgetService.deleteBudget(budget.budgetId).subscribe(_ => {
+    this.budgetService.deleteBudget(budget.budgetId).subscribe((_) => {
       this.rerenderBudgets();
-    })
+    });
+  }
+
+  getToday(): string {
+    let today = new Date();
+    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+    let todayString = today.toISOString().split('T')[0] + 'T04:00:00.000Z';
+    today = new Date(todayString);
+    return today.toISOString();
   }
 }
 
 @Component({
   selector: 'budgets-dialog',
   templateUrl: 'budgets-dialog.html',
-  styleUrls: ['./dash-budgets.component.css']
+  styleUrls: ['./dash-budgets.component.css'],
 })
 export class BudgetsDialogComponent {
-
   budgetForm: FormGroup;
   frequencyOptions = ['weekly', 'monthly', 'yearly'];
-  mode: "Add" | "Edit";
-
+  mode: 'Add' | 'Edit';
 
   constructor(
     public dialogRef: MatDialogRef<BudgetsDialogComponent>,
@@ -239,14 +278,20 @@ export class BudgetsDialogComponent {
   ) {
     this.budgetForm = new FormGroup({
       category: new FormControl(data.data.data.category),
-      amount: new FormControl(data.data.data.amountLimit, [Validators.required]),
-      frequency: new FormControl(data.data.data.frequency, [Validators.required]),
+      amount: new FormControl(data.data.data.amountLimit, [
+        Validators.required,
+      ]),
+      frequency: new FormControl(data.data.data.frequency, [
+        Validators.required,
+      ]),
       duration: new FormControl(data.data.data.duration),
-      repeats: new FormControl(data.data.data.count ? true : false, [Validators.required]),
+      repeats: new FormControl(data.data.data.count ? true : false, [
+        Validators.required,
+      ]),
       count: new FormControl(data.data.data.count),
-      startDate: new FormControl(data.data.data.startDate)
+      startDate: new FormControl(data.data.data.startDate),
     });
-    this.mode = data.mode
+    this.mode = data.mode;
   }
 
   onNoClick(): void {
@@ -263,8 +308,7 @@ export class BudgetsDialogComponent {
 
   goSubmitBudget() {
     if (!this.budgetForm.invalid) {
-
-      const repeats: boolean = this.budgetForm.get('repeats')?.value as boolean
+      const repeats: boolean = this.budgetForm.get('repeats')?.value as boolean;
       const budget: Budget = {
         userId: this.data.data.userId,
         budgetId: this.data.data.budgetId,
@@ -273,10 +317,12 @@ export class BudgetsDialogComponent {
           amountLimit: this.budgetForm.get('amount')?.value as number,
           frequency: this.budgetForm.get('frequency')?.value as Period,
           duration: this.budgetForm.get('duration')?.value as number,
-          count: repeats ? this.budgetForm.get('count')?.value as number : undefined,
+          count: repeats
+            ? (this.budgetForm.get('count')?.value as number)
+            : undefined,
           startDate: this.budgetForm.get('startDate')?.value as string,
         },
-      }
+      };
       this.dialogRef.close(budget);
     }
   }

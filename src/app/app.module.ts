@@ -26,6 +26,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTabsModule } from '@angular/material/tabs';
 
 // Route components
 import { LandingComponent } from './routes/landing/landing.component';
@@ -37,14 +38,16 @@ import { AppComponent } from './app.component';
 import { AlertComponent } from './components/alert/alert.component';
 import { DashboardComponent } from './routes/dashboard/dashboard.component';
 import { DashHomeComponent } from './components/dash-home/dash-home.component';
-import { DashTransactionsComponent } from './components/dash-transactions/dash-transactions.component';
+import { DashTransactionsComponent, TransactionsDialogComponent } from './components/dash-transactions/dash-transactions.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
-import { TransactionsModalComponent } from './components/transactions-modal/transactions-modal.component';
 import { BudgetsDialogComponent, DashBudgetsComponent } from './components/dash-budgets/dash-budgets.component';
 import { DashSettingsComponent } from './components/dash-settings/dash-settings.component';
 import { DashCalendarComponent } from './components/dash-calendar/dash-calendar.component';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { DashProgressComponent } from './components/dash-progress/dash-progress.component';
+import { EventCardComponent } from './components/event-card/event-card.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 // Services
 
@@ -58,12 +61,14 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
     DashboardComponent,
     DashHomeComponent,
     DashTransactionsComponent,
+    TransactionsDialogComponent,
     PageNotFoundComponent,
-    TransactionsModalComponent,
     DashBudgetsComponent,
     BudgetsDialogComponent,
     DashSettingsComponent,
-    DashCalendarComponent
+    DashCalendarComponent,
+    DashProgressComponent,
+    EventCardComponent
   ],
   imports: [
     BrowserModule,
@@ -87,6 +92,8 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
     MatNativeDateModule,
     MatSelectModule,
     MatCheckboxModule,
+    MatTabsModule,
+    MatFormFieldModule,
     CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory })
   ],
   providers: [],

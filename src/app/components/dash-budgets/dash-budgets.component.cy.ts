@@ -5,8 +5,8 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { BudgetService } from 'src/app/budget.service'
-import { Observable, from } from 'rxjs'
-import { CreateBudgetRequest, CreateBudgetResponse, GetBudgetsResponse, UpdateBudgetRequest } from 'src/types/budget-system'
+import { Observable, from, of } from 'rxjs'
+import { CreateBudgetRequest, CreateBudgetResponse, GetBudgetsResponse, GetCyclePeriodResponse, UpdateBudgetRequest } from 'src/types/budget-system'
 import { createBudget, deleteBudget, getBudgets, updateBudget } from 'src/sample-budget-data'
 import { GenericResponse } from 'src/types/api-system'
 import { MatFormFieldModule } from '@angular/material/form-field'
@@ -33,6 +33,11 @@ describe('DashBudgetsComponent', () => {
     },
     deleteBudget(budgetId: number): Observable<GenericResponse> {
       return from(deleteBudget(budgetId));
+    },
+    getCyclePeriod(): Observable<GetCyclePeriodResponse> {
+      return of({
+        data: []
+      })
     }
   };
 

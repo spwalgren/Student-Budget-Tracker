@@ -1,25 +1,17 @@
 package models
 
-import (
-	"github.com/lib/pq"
-)
-
 type Progress struct {
-	UserID						uint					`json:"userId"`
-	ProgressID        uint          `json:"progressId" gorm:"unique;primaryKey"`
-	TotalSpent        float32       `json:"totalSpent"`
-	TransactionIDList pq.Int32Array `json:"transactionIdList" gorm:"type:integer"`
-	BudgetIDList      pq.Int32Array `json:"budgetIdList" gorm:"type:integer"`
-	Data              BudgetContent `json:"data" gorm:"embedded"`
+	UserID            uint    `json:"userId"`
+	TotalSpent        float32 `json:"totalSpent"`
+	TransactionIDList []uint  `json:"transactionIdList"`
+	BudgetID      		uint  `json:"budgetId"`
+	Category          string  `json:"category"`
+	BudgetGoal        float32 `json:"budgetGoal"`
+	Frequency         Period  `json:"frequency"`
 }
 
-type CreateProgressResponse struct {
-	UserID	uint	`json:"userId"`
-	ProgressID uint	`json:"progressId"`
-}
-
-type ProgressResponse struct {
-	ProgressData []Progress `json:"progressData"`
+type GetProgressResponse struct {
+	Data []Progress `json:"data"`
 }
 
 /*

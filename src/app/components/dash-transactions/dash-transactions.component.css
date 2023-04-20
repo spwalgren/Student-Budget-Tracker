@@ -1,3 +1,15 @@
+.transactions__heading-row {
+  /* content align */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+table {
+  /* self align */
+  margin-top: 20px;
+}
+
 .transaction__detail-row {
   /* self align */
   height: 0;
@@ -26,20 +38,10 @@ tr.transaction__row:hover {
   padding: 5px 0;
 }
 
-.add-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
-
-.transaction__detail-clickable:hover {
-  /* self style */
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-.transaction__detail-clickable.transaction__detail-changing {
-  /* self style */
-  color: gray;
-  cursor: default;
+.transactions-dialog__form {
+  /* self align */
+  min-width: 500px;
+  /* content align */
+  display: flex;
+  flex-direction: column;
 }

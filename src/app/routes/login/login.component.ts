@@ -37,14 +37,12 @@ export class LoginComponent {
   }
 
   goSubmitForm() {
-    console.log('I was called');
 
     if (!this.logInForm.invalid) {
       const logInRequest: LogInRequest = {
         email: this.logInForm.get('email')?.value.toLowerCase(),
         password: this.logInForm.get('password')?.value
       }
-      console.log(logInRequest);
       this.awaitingRes = true;
       this.showAlert = false;
       this.loginService.logIn(logInRequest)

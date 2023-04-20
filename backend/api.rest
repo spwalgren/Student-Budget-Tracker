@@ -105,11 +105,15 @@ POST http://{{host}}/api/transaction
 content-type: application/json
 
 {
-    "amount": 1000.00,
-    "name": "Wal-Mart",
-    "date": "12/23/2022",
-    "category": "Groceries",
-    "description": "Bought food for the week"
+    "data": {
+        "userId": 0,
+        "transactionId": 0,
+        "amount": 1000.00,
+        "name": "Wal-Mart",
+        "date": "12-23-2022T04:00:00Z",
+        "category": "Food",
+        "description": "Bought food for the week"
+    }
 }
 
 ###
@@ -135,7 +139,7 @@ content-type: application/json
         "transactionId": 31,
         "amount": 1200,
         "name": "Publix",
-        "date": "12/23/2022",
+        "date": "12-23-2022",
         "category": "Groceries",
         "description": "Bought food for the week"
     }
@@ -151,11 +155,11 @@ content-type: application/json
 
 {
     "data": {
-            "amount": 10,
+            "amount": 15,
             "name": "test2",
-            "date": "12/25/2022",
-            "category": "School",
-            "description": "Textbook"
+            "date": "2023-04-11T04:00:00.000Z",
+            "category": "Fun",
+            "description": "Movies"
     }
 }
 
@@ -219,24 +223,46 @@ content-type: application/json
 }
 
 ###
-POST http://{{host}}/api/progress
-content-type: application/json
-
-{
-    "totalSpent": 50,
-    "transactionIdList": "[]",
-    "budgetIdList": "[]",
-    "data": {
-        "category": "fast food",
-        "amountLimit": 50.5,
-        "frequency": "Weekly",
-        "duration": 2,
-        "count":1,
-        "startDate:": "12/23/2022"
-    }
-}
-
-###
 Get http://{{host}}/api/progress
 content-type: application/json
 
+###
+GET http://{{host}}/api/transaction
+content-type: applicaiton/json
+
+###
+Get http://{{host}}/api/progress/previous
+content-type: application/json
+
+###
+POST http://{{host}}/api/login
+content-type: application/json
+
+{
+    "email": "test2@gmail.com",
+    "password": "test2"
+}
+
+###
+GET http://{{host}}/api/calendar/0
+content-type: application/json
+
+###
+GET http://{{host}}/api/budget/cycle/2023-04-13
+
+###
+GET http://{{host}}/api/budget
+Content-Type: application/json
+
+###
+GET http://{{host}}/api/users
+Content-Type: application/json
+
+###
+POST http://{{host}}/api/login
+Content-Type: application/json
+
+{
+    "email": "bobbydylan@gmail.com",
+    "password": "1234567"
+}

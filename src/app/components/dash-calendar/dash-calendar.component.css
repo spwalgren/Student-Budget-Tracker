@@ -14,11 +14,59 @@ h3 {
 
 .dash-calendar__main {
   /* self align */
-  width: 80%;
+  width: 75%;
+}
+
+.dash-calendar__side {
+  /* self align */
+  width: 25%;
+}
+
+.dash-calendar__events {
+  /* self align */
+  height: 75vh;
+  /* content align */
+  padding-right: 4px;
+  overflow-y: scroll;
 }
 
 .dash-calendar__header {
+  /* self align */
+  padding: 5px;
   /* content align */
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dash-calendar__header-btns {
+  /* content align */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dash-calendar__calendar {
+  /* self align */
+  height: 75vh;
+  overflow-y: scroll;
+}
+
+@media screen and (max-width: 1024px) {
+  .dash-calendar {
+    flex-direction: column;
+  }
+
+  .dash-calendar__main {
+    width: 100%;
+  }
+
+  .dash-calendar__calendar {
+    height: min-content;
+    overflow: hidden;
+  }
+
+  .dash-calendar__side {
+    width: 100%;
+  }
 }

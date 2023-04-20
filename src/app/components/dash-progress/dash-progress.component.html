@@ -1,0 +1,85 @@
+<section>
+    <h1>Progress</h1>
+    <mat-tab-group>
+      <mat-tab label="Weekly">
+        <h2> Weekly </h2>
+        <div class="week-container">
+          <div class="week-column">
+            <p><strong>This Week</strong></p>
+            You Spent: ${{ weeklyTotalSpent }}
+            Your Budget: ${{ weeklyTotalBudget }} 
+            <p>You saved ${{ subWeekly }} this week!</p>
+            <ul>
+              <li *ngFor="let category of weeklyCategories">
+                <td>{{ category }}: You saved ${{categoryBudgetTotals[category].weekly - categorySpentTotals[category].weekly}} </td>
+              </li>
+            </ul>
+          </div>
+          <div class="week-column">
+            <p><strong>Last Week</strong></p>
+            You Spent: ${{ prevWeeklyTotalSpent }}
+            Your Budget: ${{ prevWeeklyTotalBudget }} 
+            <p>You saved ${{ subPrevWeekly }} this week!</p>
+            <ul>
+              <li *ngFor="let category of prevWeeklyCategories">
+               <td>{{ category }}: You saved ${{prevBudgCategoryTotals[category].weekly}} </td>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </mat-tab>      
+        <mat-tab label="Monthly">
+          <h2> Monthly </h2>
+          <div class="month-container">
+            <div class="month-column">
+              <p><strong>This Month</strong></p>
+              You Spent: ${{ monthlyTotalSpent }}
+              Your Budget: ${{ monthlyTotalBudget }}
+              <p>You saved ${{ subMonthly }} this month!</p>
+              <li *ngFor="let category of monthlyCategories">
+                <td>{{ category }}: You saved ${{categoryBudgetTotals[category].monthly - categorySpentTotals[category].monthly}} </td>
+              </li>
+            </div>
+            <div class="month-column">
+              <p><strong>Last Month</strong></p>
+              You Spent: ${{ monthlyTotalSpent }}
+              Your Budget: ${{ monthlyTotalBudget }}
+              <p>You saved ${{ subPrevMonthly }} this month!</p>
+              <li *ngFor="let category of monthlyCategories">
+                <td>{{ category }}: You saved ${{prevBudgCategoryTotals[category].monthly - prevBudgCategoryTotals[category].monthly}} </td>
+              </li>
+            </div>
+          </div>
+        </mat-tab>
+        <mat-tab label="Yearly">
+          <h2> Yearly </h2>
+          <div class="year-container">
+            <div class="year-column">
+              <p><strong>This Year</strong></p>
+              You Spent: ${{ yearlyTotalSpent }}
+              Your Budget: ${{ yearlyTotalBudget }}
+              <p>You saved ${{ subYearly }} this month!</p>
+              <!-- <li *ngFor="let category of yearlyCategories">
+                <td>{{ category }}: You saved ${{categoryBudgetTotals[category].yearly - categorySpentTotals[category].yearly}} </td>
+              </li> -->
+            </div>
+            <div class="year-column">
+              <p><strong>Last Year</strong></p>
+              You Spent: ${{ prevYearlyTotalSpent }}
+              Your Budget: ${{ prevYearlyTotalBudget }}
+              <p>You saved ${{ subPrevYearly }} this month!</p>
+              <!-- <li *ngFor="let category of yearlyCategories">
+                <td>{{ category }}: You saved ${{prevBudgCategoryTotals[category].yearly - prevBudgCategoryTotals[category].yearly}} </td>
+              </li> -->
+            </div>
+          </div>
+        </mat-tab>
+        <!-- <mat-tab label="Total">
+          <h2> Total </h2>
+          //<p>You saved: ${{ subWeekly + subMonthly}} total!!!</p> //fix this line!!
+          <p>You don't exceed your budget 67% of the time </p>
+          <p>Groceries: You saved $50 total for groceries</p>
+          <p>Housing: You saved $500 total for groceries</p>
+        </mat-tab> -->
+      </mat-tab-group>      
+</section>
